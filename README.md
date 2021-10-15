@@ -43,9 +43,6 @@ $ yarn build
 
 ## 开发环境
 
-* VS Code
-  * `ESLint`，`Prettier - Code formatter`，`Prettier ESLint`插件
-* 
-
-
-
+- VS Code
+  - `ESLint`，`Prettier - Code formatter`，`Prettier ESLint`插件
+-

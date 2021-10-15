@@ -11,7 +11,8 @@
     "dev": "remax build -t wechat -w",
     "build": "cross-env NODE_ENV=production remax build -t wechat",
     "lint": "eslint src --ext .ts,.tsx",
-    "fix": "npx prettier --write ."
+    "fix": "npx prettier --write .",
+    "prepare": "husky install"
   },
   "dependencies": {
     "react": "^16.14.0",
@@ -25,7 +26,7 @@
     "eslint": "^8.0.1",
     "eslint-config-alloy": "^4.4.0",
     "eslint-plugin-react": "^7.26.1",
-    "husky": "^7.0.2",
+    "husky": "^7.0.0",
     "prettier": "^2.4.1",
     "typescript": "^4.4.4"
   }
