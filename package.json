@@ -9,15 +9,24 @@
   "license": "MIT",
   "scripts": {
     "dev": "remax build -t wechat -w",
-    "build": "cross-env NODE_ENV=production remax build -t wechat"
+    "build": "cross-env NODE_ENV=production remax build -t wechat",
+    "lint": "eslint src --ext .ts,.tsx",
+    "fix": "npx prettier --write ."
   },
   "dependencies": {
     "react": "^16.14.0",
     "remax": "^2.9.1"
   },
   "devDependencies": {
-    "cross-env": "^7.0.2",
     "@types/react": "^16.14.2",
-    "typescript": "^4.1.2"
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "cross-env": "^7.0.2",
+    "eslint": "^8.0.1",
+    "eslint-config-alloy": "^4.4.0",
+    "eslint-plugin-react": "^7.26.1",
+    "husky": "^7.0.2",
+    "prettier": "^2.4.1",
+    "typescript": "^4.4.4"
   }
 }

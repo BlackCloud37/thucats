@@ -1,4 +1,4 @@
-import { AppConfig } from "remax/wechat";
+import { AppConfig } from 'remax/wechat';
 
 const config: AppConfig = {
   pages: ['pages/index/index'],

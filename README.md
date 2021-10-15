@@ -31,3 +31,12 @@ $ yarn build
 ```
 
 使用小程序开发者工具打开项目下的 `dist` 目录，上传代码即可。
+
+## 工程化
+
+- [ ] eslint
+  - [ ] 规则集优化
+- [x] prettier
+- [x] vscode settings
+- [ ] husky
+- [ ] lint in CI
