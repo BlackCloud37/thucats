@@ -40,3 +40,12 @@ $ yarn build
 - [x] vscode settings
 - [ ] husky
 - [ ] lint in CI
+
+## 开发环境
+
+* VS Code
+  * `ESLint`，`Prettier - Code formatter`，`Prettier ESLint`插件
+* 
+
+
+
