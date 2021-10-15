@@ -1,5 +1,6 @@
 # Folders
 /node_modules
+/dist
 
 # Files
-.DS_Store
+**/.DS_Store
