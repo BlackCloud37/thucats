@@ -11,7 +11,7 @@ export default () => {
           className={styles.logo}
         />
         <View className={styles.text}>
-          编辑 <Text className={styles.path}>src/pages/index/index.js</Text> 开始
+          编辑 <Text className={styles.path}>src/pages/index/index.js</Text> 以开始
         </View>
       </View>
     </View>
