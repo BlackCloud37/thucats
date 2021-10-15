@@ -38,14 +38,11 @@ $ yarn build
   - [ ] 规则集优化
 - [x] prettier
 - [x] vscode settings
-- [ ] husky
+- [x] husky
 - [ ] lint in CI
+- [ ] rematch
 
 ## 开发环境
 
 - VS Code
   - `ESLint`，`Prettier - Code formatter`，`Prettier ESLint`插件
-
-```
-npm install -g @commitlint/cli @commitlint/config-conventional
-```
