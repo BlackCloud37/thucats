@@ -34,12 +34,12 @@ $ yarn build
 
 ## 工程化
 
-- [ ] eslint
-  - [ ] 规则集优化
+- [x] eslint
+  - [x] 规则集优化
 - [x] prettier
 - [x] vscode settings
 - [x] husky
-- [ ] lint in CI
+- [x] lint in CI
 - [ ] rematch
 
 ## 开发环境

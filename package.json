@@ -11,7 +11,7 @@
     "dev": "remax build -t wechat -w",
     "build": "cross-env NODE_ENV=production remax build -t wechat",
     "lint": "eslint src --ext .ts,.tsx",
-    "fix": "npx prettier --write ./src ",
+    "fix": "prettier --write ./src ",
     "prepare": "husky install"
   },
   "lint-staged": {

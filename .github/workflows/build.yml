@@ -31,7 +31,10 @@ jobs:
       - name: Install Dependencies
         run: npm i
 
-      - name: Build weapp
+      - name: Lint Check
+        run: npm run lint
+
+      - name: Build Wechat App
         run: npm run build
 
       # 从 secrets.UPLOAD_PRIVATE_KEY 生成私钥文件
