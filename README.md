@@ -45,4 +45,7 @@ $ yarn build
 
 - VS Code
   - `ESLint`，`Prettier - Code formatter`，`Prettier ESLint`插件
--
+
+```
+npm install -g @commitlint/cli @commitlint/config-conventional
+```
