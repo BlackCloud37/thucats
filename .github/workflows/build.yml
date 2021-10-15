@@ -43,4 +43,10 @@ jobs:
         UPLOAD_PRIVATE_KEY: ${{ secrets.UPLOAD_PRIVATE_KEY }}
     # 上传代码
     - name: Upload to WeChat
-      run: npx mp-ci upload ./dist --pkp=./private.key
+      run: npx mp-ci preview ./ --pkp=./private.key
+    
+    - name: Upload Artifacts 🚀
+      uses: actions/upload-artifact@v2    
+      with:
+          name: preview
+          path: preview.png
