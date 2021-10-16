@@ -1,5 +1,5 @@
 import { createModel } from '@rematch/core';
-import { requestCloudApi } from './apis';
+import { HelloworldResponse, requestCloudApi } from './apis';
 import type { RootModel } from './models';
 
 export interface UserState {
@@ -24,9 +24,8 @@ export const users = createModel<RootModel>()({
     async fetchOpenidAsync() {
       console.log('Fecth openid start.');
       requestCloudApi('helloworld')
-        .then((result) => {
-          const res = result as { openid: string };
-          dispatch.users.openid({ openid: res.openid });
+        .then((result: HelloworldResponse) => {
+          dispatch.users.openid({ openid: result.openid });
         })
         .catch(console.error);
     }

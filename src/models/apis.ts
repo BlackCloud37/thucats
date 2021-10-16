@@ -1,10 +1,12 @@
 import { cloud } from 'remax/wechat';
 
-interface CommonCloudApiResponse {
-  result: {
-    err_msg?: String;
-    // [key: String]: any;
-  };
+export interface CommonCloudApiResponse {
+  result: any;
+}
+
+export interface HelloworldResponse {
+  openid?: string;
+  err_msg?: string;
 }
 
 export async function requestCloudApi(command: String, payload: any = {}) {
