@@ -1,8 +1,18 @@
+import { Dispatch, RootState } from '@/models/store';
+import { UserState } from '@/models/users';
 import * as React from 'react';
-import { View, Text, Image } from 'remax/wechat';
+import { useDispatch, useSelector } from 'react-redux';
+import { View, Image } from 'remax/wechat';
 import styles from './index.css';
 
-export default () => {
+const Index = () => {
+  const userState: UserState = useSelector((state: RootState) => state.users);
+  const dispatch = useDispatch<Dispatch>();
+  const { openid } = userState;
+  React.useEffect(() => {
+    dispatch.users.fetchOpenidAsync().then();
+  }, []);
+
   return (
     <View className={styles.app}>
       <View className={styles.header}>
@@ -10,10 +20,10 @@ export default () => {
           src="https://gw.alipayobjects.com/mdn/rms_b5fcc5/afts/img/A*OGyZSI087zkAAAAAAAAAAABkARQnAQ"
           className={styles.logo}
         />
-        <View className={styles.text}>
-          编辑 <Text className={styles.path}>src/pages/index/index.js</Text> 以开始
-        </View>
+        <View className={styles.text}>OpenID: {openid}</View>
       </View>
     </View>
   );
 };
+
+export default Index;

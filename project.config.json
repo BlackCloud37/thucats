@@ -1,5 +1,6 @@
 {
   "miniprogramRoot": "dist/",
+  "cloudfunctionRoot": "src/cloudfunctions",
   "setting": {
     "urlCheck": false,
     "es6": false,
@@ -17,7 +18,7 @@
     "checkInvalidKey": true,
     "checkSiteMap": true,
     "uploadWithSourceMap": true,
-    "compileHotReLoad": false,
+    "compileHotReLoad": true,
     "lazyloadPlaceholderEnable": false,
     "useMultiFrameRuntime": true,
     "useApiHook": true,
@@ -42,5 +43,6 @@
   "simulatorPluginLibVersion": {},
   "appid": "wx03ddd595380090e9",
   "projectname": "thucats",
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate",
   "condition": {}
 }

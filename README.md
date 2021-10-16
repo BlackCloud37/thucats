@@ -40,7 +40,8 @@ $ yarn build
 - [x] vscode settings
 - [x] husky
 - [x] lint in CI
-- [ ] rematch
+- [x] rematch
+- [ ] typescript 云函数
 
 ## 开发环境
 
