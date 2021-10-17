@@ -1,5 +1,4 @@
 import { Dispatch, RootState } from '@/models/store';
-import { UserState } from '@/models/users';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Image } from 'remax/wechat';
