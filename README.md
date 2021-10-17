@@ -42,6 +42,8 @@ $ yarn build
 - [x] lint in CI
 - [x] rematch
 - [ ] typescript 云函数
+- [ ] UI库
+- [ ] 数据库定义
 
 ## 开发环境
 

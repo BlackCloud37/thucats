@@ -6,11 +6,13 @@ import { View, Image } from 'remax/wechat';
 import styles from './index.css';
 
 const Index = () => {
-  const userState: UserState = useSelector((state: RootState) => state.users);
+  const { openid, loading } = useSelector((state: RootState) => ({
+    openid: state.users.openid,
+    loading: state.loading.effects.users.fetchOpenidAsync // true when `fetchOpenidAsync` is running
+  }));
   const dispatch = useDispatch<Dispatch>();
-  const { openid } = userState;
   React.useEffect(() => {
-    dispatch.users.fetchOpenidAsync().then();
+    dispatch.users.fetchOpenidAsync();
   }, []);
 
   return (
@@ -20,7 +22,11 @@ const Index = () => {
           src="https://gw.alipayobjects.com/mdn/rms_b5fcc5/afts/img/A*OGyZSI087zkAAAAAAAAAAABkARQnAQ"
           className={styles.logo}
         />
-        <View className={styles.text}>OpenID: {openid}</View>
+        {loading ? (
+          <View className={styles.text}>Loading</View>
+        ) : (
+          <View className={styles.text}>OpenID: {openid}</View>
+        )}
       </View>
     </View>
   );
