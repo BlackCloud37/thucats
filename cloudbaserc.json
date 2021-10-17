@@ -1,0 +1,41 @@
+{
+  "envId": "thucats-3grq39dr7a44e550",
+  "functionRoot": "./src/cloudfunctions",
+  "framework": {
+    "name": "thucats",
+    "plugins": {
+      "function": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functionRootPath": "./src/cloudfunctions",
+          "functions": [
+            {
+              "name": "helloworld",
+              "installDependency": true
+            }
+          ]
+        }
+      },
+      "mp": {
+        "use": "@cloudbase/framework-plugin-mp",
+        "inputs": {
+          "appid": "wx03ddd595380090e9",
+          "privateKeyPath": "./private.key",
+          "localPath": "./",
+          "ignores": ["node_modules/**/*"],
+          "deployMode": "preview",
+          "previewOptions": {
+            "desc": "一键预览",
+            "setting": {
+              "es6": false
+            },
+            "qrcodeOutputPath": "./qrcode.jpg",
+            "pagePath": "pages/index/index",
+            "searchQuery": "",
+            "scene": 1011
+          }
+        }
+      }
+    }
+  }
+}

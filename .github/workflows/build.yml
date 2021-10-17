@@ -43,12 +43,19 @@ jobs:
         run: echo "$UPLOAD_PRIVATE_KEY" > private.key
         env:
           UPLOAD_PRIVATE_KEY: ${{ secrets.UPLOAD_PRIVATE_KEY }}
+      
       # 上传代码
-      - name: Upload to WeChat
-        run: npx mp-ci preview ./ --pkp=./private.key
+      - name: Login to tcb
+        run: npx tcb login --apiKeyId $TCB_API_KEY_ID --apiKey $TCB_API_KEY
+        env:
+          TCB_API_KEY_ID: ${{ secrets.TCB_API_KEY_ID }} 
+          TCB_API_KEY: ${{ secrets.TCB_API_KEY }}
+      
+      - name: Deploy
+        run: npm deploy
 
       - name: Upload Artifacts 🚀
         uses: actions/upload-artifact@v2
         with:
-          name: preview
-          path: preview.png
+          name: qrcode
+          path: qrcode.png

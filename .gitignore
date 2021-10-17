@@ -4,3 +4,6 @@
 
 # Files
 **/.DS_Store
+private.key
+qrcode.jpg
+.env
