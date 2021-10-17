@@ -52,7 +52,7 @@ jobs:
           TCB_API_KEY: ${{ secrets.TCB_API_KEY }}
       
       - name: Deploy
-        run: npm deploy
+        run: npm run deploy
 
       - name: Upload Artifacts 🚀
         uses: actions/upload-artifact@v2
