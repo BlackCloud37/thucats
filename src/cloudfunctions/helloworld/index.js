@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const cloud = require('wx-server-sdk');
 cloud.init({
   env: cloud.DYNAMIC_CURRENT_ENV

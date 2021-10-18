@@ -1,7 +1,7 @@
 {
-  "name": "helloworld",
+  "name": "init-db",
   "version": "1.0.0",
-  "description": "",
+  "description": "微信小程序云函数示例",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,7 +9,6 @@
   "author": "yechenz37@163.com",
   "license": "ISC",
   "dependencies": {
-    "wx-server-sdk": "~2.3.2",
-    "lodash": "^4.17.21"
+    "wx-server-sdk": "^2.1.1"
   }
 }
