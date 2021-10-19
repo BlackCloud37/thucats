@@ -25,6 +25,8 @@
     "@rematch/core": "^2.1.0",
     "@rematch/loading": "^2.1.1",
     "classnames": "^2.3.1",
+    "lin-ui": "^0.9.4",
+    "lodash": "^4.17.21",
     "react": "^16.14.0",
     "react-redux": "^7.2.5",
     "redux": "^4.1.1",

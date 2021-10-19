@@ -12,6 +12,7 @@
 
 .text {
   margin-top: 64px;
+  color: white;
 }
 
 .header {
@@ -19,6 +20,10 @@
   background-color: #282c34;
   font-size: 40px;
   color: white;
+}
+
+.button {
+  color: orange !important;
 }
 
 @keyframes logo-spin {
