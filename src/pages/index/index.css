@@ -3,11 +3,19 @@
   padding: 0 24px;
 }
 
-.logo {
-  animation: logo-spin infinite 20s linear;
-  height: 240px;
-  width: 240px;
-  pointer-events: none;
+.app .nav-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  color: darkblue;
+}
+
+.app .nav-card-container view {
+  margin: 10px 0;
+  background-color: antiquewhite;
+  width: 45%;
+  height: 400px;
+  border-radius: 20px;
 }
 
 .text {
@@ -24,13 +32,4 @@
 
 .button {
   color: orange !important;
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }

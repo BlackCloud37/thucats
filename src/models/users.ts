@@ -26,7 +26,7 @@ export const users = createModel<RootModel>()({
   effects: (dispatch) => ({
     async fetchOpenidAsync() {
       console.log('Fecth openid start.');
-      await asyncDelay(3000);
+      await asyncDelay(1000);
       requestCloudApi('helloworld')
         .then((result: HelloworldResponse) => {
           dispatch.users.openid({ openid: result.openid });

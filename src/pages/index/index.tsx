@@ -1,9 +1,10 @@
 import { Dispatch, RootState } from '@/models/store';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, Image } from 'remax/wechat';
+import { View } from 'remax/wechat';
 import LButton from 'lin-ui/dist/button';
 import styles from './index.css';
+import { navigateTo } from '@/utils';
 
 const Index = () => {
   const { openid, loading } = useSelector((state: RootState) => ({
@@ -15,11 +16,11 @@ const Index = () => {
 
   return (
     <View className={styles.app}>
-      <View className={styles.header}>
-        <Image
-          src="https://gw.alipayobjects.com/mdn/rms_b5fcc5/afts/img/A*OGyZSI087zkAAAAAAAAAAABkARQnAQ"
-          className={styles.logo}
-        />
+      <View className={styles['nav-card-container']}>
+        <View onClick={() => navigateTo('/pages/unknown/index')}>图鉴</View>
+        <View onClick={() => navigateTo('/pages/unknown/index')}>x</View>
+        <View onClick={() => navigateTo('/pages/unknown/index')}>x</View>
+        <View onClick={() => navigateTo('/pages/unknown/index')}>x</View>
       </View>
       <LButton
         l-class={styles.button}
