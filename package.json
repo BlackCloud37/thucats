@@ -9,9 +9,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "remax build -t wechat -w",
-    "build": "cross-env NODE_ENV=production remax build -t wechat",
+    "build": "cross-env NODE_ENV=production remax build -t wechat && rollup -c",
     "lint": "eslint src --ext .ts,.tsx",
-    "fix": "prettier --write ./src ",
+    "fix": "prettier --write ./src",
     "prepare": "husky install",
     "deploy": "cloudbase framework deploy"
   },
@@ -47,6 +47,11 @@
     "husky": "^7.0.0",
     "lint-staged": "^11.2.3",
     "prettier": "^2.4.1",
+    "rollup": "^2.58.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-typescript": "^1.0.1",
+    "tslib": "^2.3.1",
     "typescript": "^4.4.4"
   }
 }

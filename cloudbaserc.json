@@ -1,16 +1,16 @@
 {
   "envId": "thucats-3grq39dr7a44e550",
-  "functionRoot": "./src/cloudfunctions",
+  "functionRoot": "./dist/cloudfunctions",
   "framework": {
     "name": "thucats",
     "plugins": {
       "function": {
         "use": "@cloudbase/framework-plugin-function",
         "inputs": {
-          "functionRootPath": "./src/cloudfunctions",
+          "functionRootPath": "./dist/cloudfunctions",
           "functions": [
             {
-              "name": "helloworld",
+              "name": "cloud",
               "installDependency": true
             }
           ]

@@ -1,5 +1,6 @@
+import { UserOpenidResponse as UserOpenidResult } from '@/cloudfunctions/cloud/typings';
 import { createModel } from '@rematch/core';
-import { HelloworldResponse, requestCloudApi } from './apis';
+import { requestCloudApi } from './apis';
 import type { RootModel } from './models';
 
 // eslint-disable-next-line no-promise-executor-return
@@ -27,8 +28,8 @@ export const users = createModel<RootModel>()({
     async fetchOpenidAsync() {
       console.log('Fecth openid start.');
       await asyncDelay(1000);
-      requestCloudApi('helloworld')
-        .then((result: HelloworldResponse) => {
+      requestCloudApi('user', 'openid')
+        .then((result: UserOpenidResult) => {
           dispatch.users.openid({ openid: result.openid });
         })
         .catch(console.error);
