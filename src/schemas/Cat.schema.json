@@ -1,50 +1,79 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "properties": {
-    "_id": {
-      "type": "string"
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+        "_id": {
+            "type": "string"
+        },
+        "character": {
+            "type": "string"
+        },
+        "colorCategory": {
+            "enum": [
+                "三花",
+                "奶牛",
+                "橘猫与橘白",
+                "狸花",
+                "玳瑁",
+                "纯白",
+                "纯黑"
+            ],
+            "type": "string"
+        },
+        "colorDescription": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "nameOrigin": {
+            "type": "string"
+        },
+        "neuteringDate": {
+            "type": "string"
+        },
+        "neuteringStatus": {
+            "enum": [
+                "已绝育",
+                "未知",
+                "未绝育"
+            ],
+            "type": "string"
+        },
+        "nickname": {
+            "type": "string"
+        },
+        "notes": {
+            "type": "string"
+        },
+        "sex": {
+            "enum": [
+                "公",
+                "未知",
+                "母"
+            ],
+            "type": "string"
+        },
+        "status": {
+            "enum": [
+                "喵星",
+                "在野",
+                "失踪",
+                "已送养"
+            ],
+            "type": "string"
+        }
     },
-    "character": {
-      "type": "string"
-    },
-    "colorCategory": {
-      "enum": ["三花", "奶牛", "橘猫与橘白", "狸花", "玳瑁", "纯白", "纯黑"],
-      "type": "string"
-    },
-    "colorDescription": {
-      "type": "string"
-    },
-    "location": {
-      "type": "string"
-    },
-    "name": {
-      "type": "string"
-    },
-    "nameOrigin": {
-      "type": "string"
-    },
-    "neuteringDate": {
-      "type": "string"
-    },
-    "neuteringStatus": {
-      "enum": ["已绝育", "未知", "未绝育"],
-      "type": "string"
-    },
-    "nickname": {
-      "type": "string"
-    },
-    "notes": {
-      "type": "string"
-    },
-    "sex": {
-      "enum": ["公", "未知", "母"],
-      "type": "string"
-    },
-    "status": {
-      "enum": ["喵星", "在野", "失踪", "已送养"],
-      "type": "string"
-    }
-  },
-  "required": ["_id", "colorCategory", "name", "neuteringStatus", "sex", "status"],
-  "type": "object"
+    "required": [
+        "_id",
+        "colorCategory",
+        "name",
+        "neuteringStatus",
+        "sex",
+        "status"
+    ],
+    "type": "object"
 }
+

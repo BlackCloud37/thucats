@@ -21,7 +21,7 @@
       "npm run lint",
       "git add ."
     ],
-    "**/db/*.ts": [
+    "**/typings/db/*.ts": [
       "node ./scripts/gen-schemas.js",
       "git add ."
     ]
