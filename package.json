@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "remax build -t wechat -w",
-    "build": "node ./scripts/gen-schemas.js && rollup -c && cross-env NODE_ENV=production remax build -t wechat",
+    "build": "node ./scripts/gen-schemas.js && cross-env NODE_ENV=production remax build -t wechat && rollup -c",
     "lint": "eslint src --ext .ts,.tsx",
     "fix": "prettier --write ./src",
     "prepare": "husky install",
