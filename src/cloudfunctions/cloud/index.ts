@@ -1,22 +1,15 @@
-export interface CloudFnGlobal {
-  cloud: any;
-  db: any;
-  _: any;
-  $: any;
-}
-
-declare let global: CloudFnGlobal;
-
 // ref: https://developers.weixin.qq.com/community/develop/article/doc/00086cf4f64ab01caf5ab708756813
-const cloud = require('wx-server-sdk');
+// @ts-ignore
+global.cloud = require('wx-server-sdk');
 cloud.init({
   env: cloud.DYNAMIC_CURRENT_ENV
 });
-
-global.cloud = cloud;
+// @ts-ignore
 global.db = cloud.database();
-global._ = global.db.command;
-global.$ = global._.aggregate;
+// @ts-ignore
+global._ = db.command;
+// @ts-ignore
+global.$ = _.aggregate;
 
 import CatController from './controllers/cat-controller';
 import UserController from './controllers/user-controller';

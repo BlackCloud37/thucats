@@ -3,9 +3,6 @@ import { createModel } from '@rematch/core';
 import { requestCloudApi } from './apis';
 import type { RootModel } from './models';
 
-// eslint-disable-next-line no-promise-executor-return
-const asyncDelay = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 export interface UserState {
   openid: string;
 }
@@ -27,9 +24,8 @@ export const users = createModel<RootModel>()({
   effects: (dispatch) => ({
     async fetchOpenidAsync() {
       console.log('Fecth openid start.');
-      await asyncDelay(1000);
       requestCloudApi(EController.User, EUserActions.GetOpenid)
-        .then((result: UserOpenidResult) => {
+        .then(async (result: UserOpenidResult) => {
           dispatch.users.openid({ openid: result.openid });
         })
         .catch(console.error);
