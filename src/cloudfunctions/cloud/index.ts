@@ -18,17 +18,41 @@ global.db = cloud.database();
 global._ = global.db.command;
 global.$ = global._.aggregate;
 
+import CatController from './controllers/cat-controller';
 import UserController from './controllers/user-controller';
-import { CloudFunctionEvent } from './typings';
+import { CloudFunctionEvent, EController, Response } from './typings';
 
-const dispatch = {
-  user: new UserController()
+// Modify: map controller to controller class
+const dispatcher = {
+  [EController.User]: new UserController(),
+  [EController.Cat]: new CatController()
 };
 
-exports.main = async (event: CloudFunctionEvent, context: any) => {
+exports.main = async <C extends EController>(
+  event: CloudFunctionEvent<C>,
+  context: any
+): Promise<Response<any>> => {
   console.log(event);
   console.log(context);
   const { controller, action, data } = event;
-  let result = await dispatch[controller][action](data);
-  return result;
+  try {
+    // @ts-ignore
+    let result = await dispatcher[controller][action](data);
+    return result;
+  } catch (e) {
+    console.error(e);
+    if (e instanceof TypeError) {
+      return {
+        code: -1,
+        errCode: 404,
+        errMsg: `Controller(${controller}) or Action(${action}) not found`
+      };
+    } else {
+      return {
+        code: -1,
+        errCode: 500,
+        errMsg: 'Internal error'
+      };
+    }
+  }
 };

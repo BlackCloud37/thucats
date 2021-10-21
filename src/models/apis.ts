@@ -1,7 +1,11 @@
-import { Action, BaseResponse, Controller } from '@/cloudfunctions/cloud/typings';
+import { ActionFor, EController, Response } from '@/cloudfunctions/cloud/typings';
 import { cloud } from 'remax/wechat';
 
-export async function requestCloudApi(controller: Controller, action: Action, payload: any = {}) {
+export async function requestCloudApi<C extends EController>(
+  controller: C,
+  action: ActionFor<C>,
+  payload: any = {}
+) {
   try {
     console.log(`Calling: ${controller}.${action} with ${JSON.stringify(payload)}`);
     const response = await cloud.callFunction({
@@ -12,7 +16,7 @@ export async function requestCloudApi(controller: Controller, action: Action, pa
       throw Error(response.msg);
     }
 
-    const result: BaseResponse<any> = response.result; // unwrap wx cloud resp
+    const result: Response<any> = response.result; // unwrap wx cloud resp
     const { code } = result;
     if (code === 0) {
       // success

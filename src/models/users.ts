@@ -1,4 +1,4 @@
-import { UserOpenidResponse as UserOpenidResult } from '@/cloudfunctions/cloud/typings';
+import { EController, EUserActions, UserOpenidResult } from '@/cloudfunctions/cloud/typings';
 import { createModel } from '@rematch/core';
 import { requestCloudApi } from './apis';
 import type { RootModel } from './models';
@@ -28,7 +28,7 @@ export const users = createModel<RootModel>()({
     async fetchOpenidAsync() {
       console.log('Fecth openid start.');
       await asyncDelay(1000);
-      requestCloudApi('user', 'openid')
+      requestCloudApi(EController.User, EUserActions.GetOpenid)
         .then((result: UserOpenidResult) => {
           dispatch.users.openid({ openid: result.openid });
         })
