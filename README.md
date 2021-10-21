@@ -45,6 +45,7 @@ $ yarn build
 - [x] UI库
   - [x] lin-ui
 - [ ] 数据库定义
+  - [ ] 添加schema验证
 
 ## 开发环境
 
