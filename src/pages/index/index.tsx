@@ -2,7 +2,7 @@ import { Dispatch, RootState } from '@/models/store';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View } from 'remax/wechat';
-import LButton from '@/typings/lin-ui/dist/button';
+import LButton from 'lin-ui/dist/button';
 import styles from './index.css';
 import { navigateTo } from '@/utils';
 
