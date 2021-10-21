@@ -41,8 +41,9 @@ $ yarn build
 - [x] husky
 - [x] lint in CI
 - [x] rematch
-- [ ] typescript 云函数
-- [ ] UI库
+- [x] typescript 云函数
+- [x] UI库
+  - [x] lin-ui
 - [ ] 数据库定义
 
 ## 开发环境
