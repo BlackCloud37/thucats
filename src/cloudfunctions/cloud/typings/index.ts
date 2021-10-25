@@ -1,4 +1,4 @@
 export * from './base';
 export * from './controllers';
-export * from './cat';
-export * from './user';
+export * from './interfaces/cat';
+export * from './interfaces/user';

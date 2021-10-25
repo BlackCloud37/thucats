@@ -8,6 +8,7 @@ export default class UserController
   public async [EUserActions.GetOpenid](): Promise<Response<UserOpenidResult>> {
     const wxContext = cloud.getWXContext();
     const openid = wxContext.OPENID;
+    // const resp: UserOpenidResult = {};
     return this.success({
       openid
     });

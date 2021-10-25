@@ -4,7 +4,7 @@ export default class BaseController {
   /**
    * 调用成功
    */
-  public success<T>(data: any): OkResponse<T> {
+  public success<T>(data: T): OkResponse<T> {
     return { code: 0, data };
   }
 
