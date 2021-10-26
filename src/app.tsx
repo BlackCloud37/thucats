@@ -7,6 +7,7 @@ import { useAppEvent } from '@remax/framework-shared';
 
 const App: React.FC = (props) => {
   useAppEvent('onLaunch', () => {
+    console.log('App: onLaunch');
     cloud.init({});
   });
   return <Provider store={store}>{props.children}</Provider>;

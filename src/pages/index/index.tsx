@@ -17,10 +17,10 @@ const Index = () => {
   return (
     <View className={styles.app}>
       <View className={styles['nav-card-container']}>
-        <View onClick={() => navigateTo('/pages/unknown/index')}>图鉴</View>
-        <View onClick={() => navigateTo('/pages/unknown/index')}>x</View>
-        <View onClick={() => navigateTo('/pages/unknown/index')}>x</View>
-        <View onClick={() => navigateTo('/pages/unknown/index')}>x</View>
+        <View onClick={() => navigateTo('cat-list')}>图鉴</View>
+        <View onClick={() => navigateTo('404')}>x</View>
+        <View onClick={() => navigateTo('404')}>x</View>
+        <View onClick={() => navigateTo('404')}>x</View>
       </View>
       <LButton
         l-class={styles.button}
