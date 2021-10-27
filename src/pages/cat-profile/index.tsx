@@ -1,7 +1,7 @@
 import { Cat } from '@/models/cats';
 import { RootState } from '@/models/store';
 import { usePageEvent } from '@remax/framework-shared';
-import { Text, View } from '@remax/wechat';
+import { Image, Text, View } from '@remax/wechat';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -11,7 +11,7 @@ export interface CatProfilePayload {
 
 const CatProfilePage = () => {
   const [cat, setCat] = React.useState<Cat>();
-  // TODO: 没有这只猫的场景
+  // TODO: 兜底没有这只猫的场景
   const { allCats } = useSelector((state: RootState) => ({
     allCats: state.cats.allCats
   }));
@@ -35,6 +35,9 @@ const CatProfilePage = () => {
         <Text>毛色：</Text>
         <Text>{cat.colorCategory}</Text>
       </View>
+      {cat._photos?.map((src) => (
+        <Image mode="widthFix" src={src} key={src} />
+      ))}
     </View>
   ) : (
     <View>Loading</View>

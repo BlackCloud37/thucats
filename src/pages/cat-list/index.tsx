@@ -1,17 +1,23 @@
 import { Cat } from '@/models/cats';
 import { Dispatch, RootState } from '@/models/store';
 import { navigateTo } from '@/utils';
-import { Text, View } from '@remax/wechat';
+import { Image, Text, View } from '@remax/wechat';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CatItem = ({ cat }: { cat: Cat }) => {
-  const { name, sex, colorCategory } = cat;
+  const { name, sex, colorCategory, _avatar } = cat;
   return (
     <View
-      style={{ backgroundColor: 'gray', margin: '10px 0' }}
+      style={{ backgroundColor: 'gray', margin: '10px 0', flexDirection: 'row' }}
       onClick={() => navigateTo('cat-profile', { catKey: cat._id })}
     >
+      <Image
+        style={{ width: 200, height: 200, borderRadius: 100 }}
+        mode="widthFix"
+        lazyLoad={true}
+        src={_avatar ?? '/default-cat.jpg'}
+      />
       <Text>{name} | </Text>
       <Text>{sex} | </Text>
       <Text>{colorCategory}</Text>
