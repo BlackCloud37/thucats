@@ -1,5 +1,6 @@
 import { Cat } from '@/models/cats';
 import { RootState } from '@/models/store';
+import { navigateTo } from '@/utils';
 import { usePageEvent } from '@remax/framework-shared';
 import { Image, Text, View } from '@remax/wechat';
 import * as React from 'react';
@@ -35,6 +36,26 @@ const CatProfilePage = () => {
         <Text>毛色：</Text>
         <Text>{cat.colorCategory}</Text>
       </View>
+      {cat.relatedCats && <View>相关猫咪</View>}
+      {cat.relatedCats
+        ?.map((related_id) => allCats.get(related_id))
+        .map(
+          (related_cat) =>
+            related_cat && (
+              <View
+                onClick={() => {
+                  navigateTo('cat-profile', { catKey: related_cat._id });
+                }}
+              >
+                <Image
+                  style={{ width: 200, height: 200 }}
+                  mode="widthFix"
+                  src={related_cat._avatar ?? '/default-cat.jpg'}
+                />
+                {related_cat.name}
+              </View>
+            )
+        )}
       {cat._photos?.map((src) => (
         <Image mode="widthFix" src={src} key={src} />
       ))}
