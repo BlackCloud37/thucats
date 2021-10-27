@@ -26,20 +26,23 @@ const CatItem = ({ cat }: { cat: Cat }) => {
 };
 
 const CatListPage = () => {
-  const { allCats, loading } = useSelector((state: RootState) => ({
+  const { allCats, loading, formatted } = useSelector((state: RootState) => ({
+    formatted: JSON.stringify(state, null, '\t'),
     allCats: state.cats.allCats,
     loading: state.loading.effects.cats.fetchAllCatsAsync
   }));
+  console.log(formatted);
   const { fetchAllCatsAsync } = useDispatch<Dispatch>().cats;
 
   React.useEffect(() => {
-    if (!allCats || allCats.size === 0) {
+    if (!allCats || Object.keys(allCats).length === 0) {
       // TODO: 数据过期策略
+      console.log('No cats');
       fetchAllCatsAsync().catch(console.error);
     }
   }, []);
 
-  const catList = Array.from(allCats.values()).map((cat: Cat) => (
+  const catList = Array.from(Object.values(allCats)).map((cat: Cat) => (
     <CatItem key={cat._id} cat={cat} />
   ));
   return <View>{loading ? <View>Loading</View> : catList}</View>;

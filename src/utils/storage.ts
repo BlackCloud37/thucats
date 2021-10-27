@@ -9,7 +9,7 @@ const createStorage = () => {
       });
     },
     setItem: (key: string, item: any) => {
-      console.log('setItem');
+      console.log('setItem', JSON.stringify(item, null, '\t'));
       return new Promise((resolve, _reject) => {
         resolve(setStorage({ key, data: item }));
       });

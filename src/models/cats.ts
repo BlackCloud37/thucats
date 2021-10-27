@@ -36,18 +36,23 @@ export interface Cat {
 }
 
 export interface CatState {
-  allCats: Map<string, Cat>;
+  allCats: {
+    [key: string]: Cat;
+  };
 }
 
 const initialState: CatState = {
-  allCats: new Map()
+  allCats: {}
 };
 
 export const cats = createModel<RootModel>()({
   state: initialState,
   reducers: {
     allCats(state, payload: Cat[]) {
-      const id2cats = new Map(payload.map((cat: Cat) => [cat._id, cat]));
+      const id2cats: { [key: string]: Cat } = {};
+      payload.forEach((cat) => {
+        id2cats[cat._id] = cat;
+      });
       return {
         ...state,
         allCats: id2cats

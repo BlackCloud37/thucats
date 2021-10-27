@@ -18,8 +18,8 @@ const CatProfilePage = () => {
   }));
   usePageEvent('onLoad', ({ payload }) => {
     const { catKey } = JSON.parse(payload) as CatProfilePayload;
-    console.log(allCats.get(catKey));
-    setCat(allCats.get(catKey));
+    console.log(allCats[catKey]);
+    setCat(allCats[catKey]);
   });
 
   return cat ? (
@@ -38,7 +38,7 @@ const CatProfilePage = () => {
       </View>
       {cat.relatedCats && <View>相关猫咪</View>}
       {cat.relatedCats
-        ?.map((related_id) => allCats.get(related_id))
+        ?.map((related_id) => allCats[related_id])
         .map(
           (related_cat) =>
             related_cat && (
