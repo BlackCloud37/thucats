@@ -33,7 +33,10 @@ const CatListPage = () => {
   const { fetchAllCatsAsync } = useDispatch<Dispatch>().cats;
 
   React.useEffect(() => {
-    fetchAllCatsAsync().catch(console.error);
+    if (!allCats || allCats.size === 0) {
+      // TODO: 数据过期策略
+      fetchAllCatsAsync().catch(console.error);
+    }
   }, []);
 
   const catList = Array.from(allCats.values()).map((cat: Cat) => (
