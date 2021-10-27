@@ -20,10 +20,6 @@
       "npm run fix",
       "npm run lint",
       "git add ."
-    ],
-    "**/typings/db/*.ts": [
-      "node ./scripts/gen-schemas.js",
-      "git add ."
     ]
   },
   "dependencies": {
