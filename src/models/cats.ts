@@ -1,14 +1,15 @@
 import { createModel } from '@rematch/core';
-import { fetchAllFromCollection } from './apis';
+import { fetchAllFromCollection, fetchUpdatedTime } from './apis';
 // import { requestCloudApi } from './apis';
 import type { RootModel } from './models';
+import { default as _l } from 'lodash';
 
 const COLLECTION_NAME = 'cats';
-// _前缀的字段默认隐藏
 
 type FileID = string;
 
 export interface Cat {
+  // _前缀的字段默认隐藏
   // 系统字段
   _id: string; // 唯一ID
   _createTime: number;
@@ -49,7 +50,7 @@ export const cats = createModel<RootModel>()({
   state: initialState,
   reducers: {
     allCats(state, payload: Cat[]) {
-      const id2cats: { [key: string]: Cat } = {};
+      const id2cats: { [key: string]: Cat } = state.allCats;
       payload.forEach((cat) => {
         id2cats[cat._id] = cat;
       });
@@ -60,11 +61,31 @@ export const cats = createModel<RootModel>()({
     }
   },
   effects: (dispatch) => ({
-    async fetchAllCatsAsync() {
-      console.log('Fecth all cats start.');
-      const res = await fetchAllFromCollection(COLLECTION_NAME);
-      console.log(res);
-      dispatch.cats.allCats(res.data);
+    async fetchAllCatsAsync(_, state) {
+      // TODO: BUG: 无法同步被删除的猫咪
+      console.log('fetchAllCatsAsync');
+      const { allCats } = state.cats;
+      const updatedTime = _l.maxBy(_l.values(allCats), (cat) => cat._updateTime)?._updateTime ?? 0;
+
+      console.log(`local updated time of cat is ${updatedTime}`);
+      let needFetch = false;
+      if (updatedTime <= 0 || _l.isEmpty(allCats)) {
+        // 无数据，直接拉
+        console.log('theres no data, need fetch');
+        needFetch = true;
+      } else {
+        // 比较数据库最后一条的updated
+        const serverUpdatedTime = await fetchUpdatedTime(COLLECTION_NAME);
+        if (updatedTime < serverUpdatedTime) {
+          needFetch = true;
+        }
+      }
+      if (needFetch) {
+        console.log('Fecth all cats start-----------------------------');
+        const { data } = await fetchAllFromCollection(COLLECTION_NAME, updatedTime);
+        console.log(`${_l.size(data)} new cats fetched`);
+        dispatch.cats.allCats(data);
+      }
     }
   })
 });

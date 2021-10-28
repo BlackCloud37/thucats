@@ -36,43 +36,33 @@ export async function requestCloudApi<C extends EController>(
   }
 }
 
-// const cloud = require('wx-server-sdk')
-// cloud.init()
-// const db = cloud.database()
-// const MAX_LIMIT = 100
-// exports.main = async (event, context) => {
-//   // 先取出集合记录总数
-//   const countResult = await db.collection('todos').count()
-//   const total = countResult.total
-//   // 计算需分几次取
-//   const batchTimes = Math.ceil(total / 100)
-//   // 承载所有读操作的 promise 的数组
-//   const tasks = []
-//   for (let i = 0; i < batchTimes; i++) {
-//     const promise = db.collection('todos').skip(i * MAX_LIMIT).limit(MAX_LIMIT).get()
-//     tasks.push(promise)
-//   }
-//   // 等待所有
-//   return (await Promise.all(tasks)).reduce((acc, cur) => {
-//     return {
-//       data: acc.data.concat(cur.data),
-//       errMsg: acc.errMsg,
-//     }
-//   })
-// }
-export async function fetchAllFromCollection(collection: 'users' | 'cats') {
+export type Collections = 'users' | 'cats';
+// 从集合中获取所有数据
+export async function fetchAllFromCollection(collection: Collections, localUpdateTime = 0) {
   const db = cloud.database();
+  const _ = db.command;
   const MAX_LIMIT = 20;
-  const countResult = await db.collection(collection).count();
+
+  const countResult = await db
+    .collection(collection)
+    .where({
+      _updateTime: _.gt(localUpdateTime)
+    })
+    .count();
   const total = countResult.total;
+  console.log(`fetch all from collection: totoal ${total}`);
   const batchTimes = Math.ceil(total / MAX_LIMIT);
   const tasks = [];
   for (let i = 0; i < batchTimes; i++) {
+    let limit = i === batchTimes - 1 ? total % MAX_LIMIT : MAX_LIMIT;
     tasks.push(
       db
         .collection(collection)
+        .where({
+          _updateTime: _.gt(localUpdateTime)
+        })
         .skip(i * MAX_LIMIT)
-        .limit(MAX_LIMIT)
+        .limit(limit)
         .get()
     );
   }
@@ -82,4 +72,17 @@ export async function fetchAllFromCollection(collection: 'users' | 'cats') {
       errMsg: acc.errMsg
     };
   });
+}
+
+// 获取集合最大的UpdatedTime
+export async function fetchUpdatedTime(collection: Collections) {
+  const db = cloud.database();
+  try {
+    const { data } = await db.collection(collection).limit(1).orderBy('_updateTime', 'desc').get();
+    console.log(`updated time of collection ${collection} is ${data?.[0]._updateTime ?? 0}`);
+    return data?.[0]?._updateTime ?? 0;
+  } catch (e) {
+    console.error(e);
+    return 0;
+  }
 }
