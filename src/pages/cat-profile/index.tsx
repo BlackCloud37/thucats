@@ -1,3 +1,4 @@
+import Loadable from '@/components/loadable';
 import { Cat } from '@/models/cats';
 import { RootState } from '@/models/store';
 import { navigateTo } from '@/utils';
@@ -22,22 +23,22 @@ const CatProfilePage = () => {
     setCat(allCats[catKey]);
   });
 
-  return cat ? (
-    <View>
+  return (
+    <Loadable loading={!cat}>
       <View>
         <Text>名字：</Text>
-        <Text>{cat.name}</Text>
+        <Text>{cat?.name}</Text>
       </View>
       <View>
         <Text>性别：</Text>
-        <Text>{cat.sex}</Text>
+        <Text>{cat?.sex}</Text>
       </View>
       <View>
         <Text>毛色：</Text>
-        <Text>{cat.colorCategory}</Text>
+        <Text>{cat?.colorCategory}</Text>
       </View>
-      {cat.relatedCats && <View>相关猫咪</View>}
-      {cat.relatedCats
+      {cat?.relatedCats && <View>相关猫咪</View>}
+      {cat?.relatedCats
         ?.map((related_id) => allCats[related_id])
         .map(
           (related_cat) =>
@@ -56,12 +57,10 @@ const CatProfilePage = () => {
               </View>
             )
         )}
-      {cat._photos?.map((src) => (
+      {cat?._photos?.map((src) => (
         <Image mode="widthFix" src={src} key={src} />
       ))}
-    </View>
-  ) : (
-    <View>Loading</View>
+    </Loadable>
   );
 };
 
