@@ -23,27 +23,29 @@ const CatProfilePage = () => {
     setCat(allCats[catKey]);
   });
 
+  const { name, sex, colorCategory, relatedCats, _photos } = cat ?? {};
   return (
     <Loadable loading={!cat}>
       <View>
         <Text>名字：</Text>
-        <Text>{cat?.name}</Text>
+        <Text>{name}</Text>
       </View>
       <View>
         <Text>性别：</Text>
-        <Text>{cat?.sex}</Text>
+        <Text>{sex}</Text>
       </View>
       <View>
         <Text>毛色：</Text>
-        <Text>{cat?.colorCategory}</Text>
+        <Text>{colorCategory}</Text>
       </View>
-      {cat?.relatedCats && <View>相关猫咪</View>}
-      {cat?.relatedCats
+      {relatedCats && <View>相关猫咪</View>}
+      {relatedCats
         ?.map((related_id) => allCats[related_id])
         .map(
           (related_cat) =>
             related_cat && (
               <View
+                key={related_cat._id}
                 onClick={() => {
                   navigateTo('cat-profile', { catKey: related_cat._id });
                 }}
@@ -57,7 +59,7 @@ const CatProfilePage = () => {
               </View>
             )
         )}
-      {cat?._photos?.map((src) => (
+      {_photos?.map((src) => (
         <Image mode="widthFix" src={src} key={src} />
       ))}
     </Loadable>

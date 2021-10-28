@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View } from 'remax/wechat';
 import LButton from 'lin-ui/dist/button';
+import LTabBar from 'lin-ui/dist/tab-bar';
 import styles from './index.css';
 import { navigateTo } from '@/utils';
 
@@ -34,6 +35,16 @@ const Index = () => {
         {openid ? 'Banned' : loading ? 'Loading' : 'Click me'}
       </LButton>
       {openid && <View className={styles.text}>OpenID: {openid}</View>}
+      <LTabBar
+        list={[
+          {
+            pagePath: '/pages/index/index',
+            text: '首页',
+            iconPath: '/icon.png',
+            selectedIconPath: '/icon.png'
+          }
+        ]}
+      />
     </View>
   );
 };
