@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { default as _l } from 'lodash';
 import Loadable from '@/components/loadable';
 import LInput from 'lin-ui/dist/input';
+import TabBar from '@/components/tabbar';
 
 const filters: { key: 'colorCategory'; val: string }[] = [
   {
@@ -121,6 +122,7 @@ const CatListPage = () => {
         ))}
       </View>
       {catList}
+      <TabBar />
     </Loadable>
   );
 

@@ -1,7 +1,7 @@
 import { CatProfilePayload } from '@/pages/cat-profile';
 import { navigateTo as wxNavigateTo } from '@remax/wechat';
 
-export type Pages = 'index' | 'cat-list' | 'cat-profile' | '404';
+export type Pages = 'index' | 'cat-list' | 'cat-profile' | 'about' | '404';
 /* 
    跳转到目标页面，并附带payload作为参数
    payload在目标页面中onLoad的option中取出
