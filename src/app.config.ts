@@ -5,7 +5,8 @@ const config: AppConfig = {
     'pages/index/index',
     'pages/404/index',
     'pages/cat-list/index',
-    'pages/cat-profile/index'
+    'pages/cat-profile/index',
+    'pages/about/index'
   ],
   window: {
     navigationBarTitleText: 'THU CATS',
