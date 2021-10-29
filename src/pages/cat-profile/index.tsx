@@ -53,7 +53,7 @@ const CatProfilePage = () => {
                 <Image
                   style={{ width: 200, height: 200 }}
                   mode="widthFix"
-                  src={related_cat._avatar ?? '/default-cat.jpg'}
+                  src={related_cat._avatar ?? '/images/default-cat.jpg'}
                 />
                 {related_cat.name}
               </View>

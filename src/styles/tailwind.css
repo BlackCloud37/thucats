@@ -15001,3 +15001,16 @@ video {
   -webkit-animation: bounce 1s infinite;
   animation: bounce 1s infinite;
 }
+
+/* @font-face {
+  font-family: 'aaa';
+  src: url('cloud://thucats-3grq39dr7a44e550.7468-thucats-3grq39dr7a44e550-1307824186/resources/RoundedCN/ResourceHanRoundedCN-Normal.ttf')
+    format('truetype');
+}
+
+.font-rounded-cn-normal {
+  font-family: 'aaa' !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} */
