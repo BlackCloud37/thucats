@@ -3,8 +3,8 @@ import * as React from 'react';
 
 const NotFoundPage = () => {
   return (
-    <View>
-      <Text>Page not found</Text>
+    <View className="text-2xl text-gray-900 text-center p-16">
+      <Text>页面开发中</Text>
     </View>
   );
 };

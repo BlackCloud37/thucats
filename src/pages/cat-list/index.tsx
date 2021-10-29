@@ -57,7 +57,7 @@ const CatItem = ({ cat }: { cat: Cat }) => {
         style={{ width: '200px', height: '200px', borderRadius: '20px' }}
         mode="widthFix"
         lazyLoad={true}
-        src={_avatar ?? '/default-cat.jpg'}
+        src={_avatar ?? '/images/default-cat.jpg'}
       />
       <Text>{name} | </Text>
       <Text>{sex} | </Text>
