@@ -1,15 +1,49 @@
 import Loadable from '@/components/loadable';
 import { Cat } from '@/models/cats';
 import { RootState } from '@/models/store';
-import { navigateTo } from '@/utils';
+import LAvatar from 'lin-ui/dist/avatar';
 import { usePageEvent } from '@remax/framework-shared';
 import { Image, Text, View } from '@remax/wechat';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { navigateTo } from '@/utils';
 
 export interface CatProfilePayload {
   catKey: string;
 }
+
+const Photo = ({ src }: { src: string | undefined }) => {
+  return src ? <Image src={src} mode="widthFix" className="w-full rounded-xl" /> : null;
+};
+
+const InfoItem = ({
+  field,
+  val,
+  full = false
+}: {
+  field: string;
+  val: string | undefined;
+  full?: boolean;
+}) => {
+  return val ? (
+    <View className={`flex flex-col ${full ? 'w-full' : 'w-1on2'} font-light mt-4`}>
+      <Text className="block text-xs text-gray-500">{field}</Text>
+      <Text className="block text-sm">{val}</Text>
+    </View>
+  ) : null;
+};
+
+const RelatedCatItem = ({ cat }: { cat: Cat }) => {
+  return (
+    <View
+      className="flex flex-col items-center m-2 ml-0"
+      onClick={() => navigateTo('cat-profile', { catKey: cat._id })}
+    >
+      <LAvatar size={90} src={cat._avatar ?? '/images/default-cat.jpg'} shape="circle" />
+      <Text className="block text-xs font-light">{cat.name}</Text>
+    </View>
+  );
+};
 
 const CatProfilePage = () => {
   const [cat, setCat] = React.useState<Cat>();
@@ -23,45 +57,63 @@ const CatProfilePage = () => {
     setCat(allCats[catKey]);
   });
 
-  const { name, sex, colorCategory, relatedCats, _photos } = cat ?? {};
+  const {
+    name,
+    sex,
+    colorCategory,
+    relatedCats: relatedCatIds,
+    relatedCatsDescription,
+    _photos,
+    _avatar,
+    status,
+    neuteringStatus,
+    neuteringDate,
+    character,
+    colorDescription,
+    nameOrigin,
+    location,
+    notes
+  } = cat ?? {};
+
+  const relatedCats = relatedCatIds?.map((id) => allCats[id]);
   return (
     <Loadable loading={!cat}>
-      <View>
-        <Text>名字：</Text>
-        <Text>{name}</Text>
+      <View className="m-5 p-5 bg-white rounded-lg shadow-xl">
+        <Photo src={_photos?.[0] ?? _avatar} />
+        <Text className="block text-gray-700 text-lg mb-2 font-bold w-full mt-2">{name}</Text>
+        <View className="mt-2 flex flex-wrap">
+          <InfoItem field="毛色" val={colorCategory} />
+          <InfoItem field="性别" val={sex} />
+          <InfoItem field="状况" val={status} />
+          <InfoItem field="绝育情况" val={neuteringStatus} />
+          <InfoItem field="绝育时间" val={neuteringDate} />
+
+          <InfoItem field="性格" val={character} full={true} />
+          <InfoItem field="外貌描述" val={colorDescription} full={true} />
+          <InfoItem field="名字来源" val={nameOrigin} full={true} />
+          <InfoItem field="出没地点" val={location} full={true} />
+          <InfoItem field="备注" val={notes} full={true} />
+          {(relatedCats ?? relatedCatsDescription) && (
+            <View className="flex flex-col w-full font-light mt-4">
+              <Text className="block text-xs text-gray-500">关系</Text>
+              {relatedCatsDescription && (
+                <Text className="block text-sm">{relatedCatsDescription}</Text>
+              )}
+              {relatedCats && (
+                <View className="flex">
+                  {relatedCats.map((cat) => (
+                    <RelatedCatItem key={cat._id} cat={cat} />
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
+        </View>
+
+        {_photos?.slice(1)?.map((src) => (
+          <Photo key={src} src={src} />
+        ))}
       </View>
-      <View>
-        <Text>性别：</Text>
-        <Text>{sex}</Text>
-      </View>
-      <View>
-        <Text>毛色：</Text>
-        <Text>{colorCategory}</Text>
-      </View>
-      {relatedCats && <View>相关猫咪</View>}
-      {relatedCats
-        ?.map((related_id) => allCats[related_id])
-        .map(
-          (related_cat) =>
-            related_cat && (
-              <View
-                key={related_cat._id}
-                onClick={() => {
-                  navigateTo('cat-profile', { catKey: related_cat._id });
-                }}
-              >
-                <Image
-                  style={{ width: 200, height: 200 }}
-                  mode="widthFix"
-                  src={related_cat._avatar ?? '/images/default-cat.jpg'}
-                />
-                {related_cat.name}
-              </View>
-            )
-        )}
-      {_photos?.map((src) => (
-        <Image mode="widthFix" src={src} key={src} />
-      ))}
     </Loadable>
   );
 };
