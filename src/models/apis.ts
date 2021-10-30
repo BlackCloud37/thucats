@@ -86,3 +86,14 @@ export async function fetchUpdatedTime(collection: Collections) {
     return 0;
   }
 }
+
+export async function fetchCount(collection: Collections) {
+  const db = cloud.database();
+  try {
+    const countResult = await db.collection(collection).count();
+    return countResult.total ?? 0;
+  } catch (e) {
+    console.error(e);
+    return 0;
+  }
+}
