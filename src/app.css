@@ -5,6 +5,6 @@ page {
 /* 强制覆盖tab bar的style */
 .lu-tab-bar {
   border-top: 1px solid white !important;
-  background: rgba(255, 255, 255, 0.4) !important;
-  backdrop-filter: blur(30px) !important;
+  background: rgba(230, 230, 230, 0.6) !important;
+  backdrop-filter: blur(50px) !important;
 }
