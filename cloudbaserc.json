@@ -23,7 +23,7 @@
           "privateKeyPath": "./private.key",
           "localPath": "./",
           "ignores": ["node_modules/**/*"],
-          "deployMode": "preview",
+          "deployMode": "upload",
           "previewOptions": {
             "desc": "一键预览",
             "setting": {
