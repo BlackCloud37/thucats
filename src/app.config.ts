@@ -2,8 +2,8 @@ import { AppConfig } from 'remax/wechat';
 
 const config: AppConfig = {
   pages: [
-    'pages/cat-list/index',
     'pages/index/index',
+    'pages/cat-list/index',
     'pages/404/index',
     'pages/cat-profile/index',
     'pages/about/index'
@@ -39,7 +39,8 @@ const config: AppConfig = {
         selectedIconPath: '/images/tab-bar-icons/tx-yuanxing-selected.png'
       }
     ]
-  }
+  },
+  navigateToMiniProgramAppIdList: ['wxebadf544ddae62cb']
 };
 
 export default config;
