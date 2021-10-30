@@ -80,24 +80,23 @@ const CatListPage = () => {
 
   return (
     <>
-      <Loadable loading={loading}>
-        <View className="p-5">
-          <LInput
-            hide-label={true}
-            placeholder="搜索"
-            clear={true}
-            bindlininput={_l.throttle(({ detail: { value } }) => {
-              value
-                ? setSelectedCats(_l.filter(_l.values(allCats), (cat) => cat.name.includes(value)))
-                : setSelectedCats(_l.values(allCats));
-            }, 500)}
-            bindlinclear={() => {
-              setSelectedCats(_l.values(allCats));
-            }}
-            l-class="text-center mb-5 rounded-lg bg-gray-200 opacity-90 font-semibold text-lg shadow-lg"
-            l-row-class="hidden"
-          />
-          {/* <View className="flex flex-row mb-5">
+      <View className="p-5">
+        <LInput
+          hide-label={true}
+          placeholder="搜索"
+          clear={true}
+          bindlininput={_l.throttle(({ detail: { value } }) => {
+            value
+              ? setSelectedCats(_l.filter(_l.values(allCats), (cat) => cat.name.includes(value)))
+              : setSelectedCats(_l.values(allCats));
+          }, 500)}
+          bindlinclear={() => {
+            setSelectedCats(_l.values(allCats));
+          }}
+          l-class="text-center mb-5 rounded-lg bg-gray-200 opacity-90 font-semibold text-lg shadow-lg"
+          l-row-class="hidden"
+        />
+        {/* <View className="flex flex-row mb-5">
             <View
               className="w-10 h-10 rounded-xl bg-gray-600"
               onClick={() => setSelectedCats(_l.values(allCats))}
@@ -121,9 +120,10 @@ const CatListPage = () => {
               </View>
             ))}
           </View> */}
+        <Loadable loading={loading} loader="running-cat">
           {catList}
-        </View>
-      </Loadable>
+        </Loadable>
+      </View>
       <TabBar />
     </>
   );
