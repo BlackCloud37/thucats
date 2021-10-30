@@ -1,10 +1,11 @@
-import { Text, View } from '@remax/wechat';
+import { Text, View, Image } from '@remax/wechat';
 import * as React from 'react';
 
 const NotFoundPage = () => {
   return (
-    <View className="text-2xl text-gray-900 text-center p-16">
-      <Text>页面开发中</Text>
+    <View className="m-5 p-5 bg-white rounded-lg shadow-xl flex flex-col items-start font-light text-sm">
+      <Image src="/images/running-cat.gif" mode="widthFix" className="w-20" />
+      <Text className="block text-gray-500">页面开发中</Text>
     </View>
   );
 };
