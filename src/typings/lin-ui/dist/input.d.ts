@@ -10,5 +10,6 @@ declare const LInput: ComponentType<{
   clear?: boolean; // 是否显示清除按钮
   maxlength?: number; // 最大输入长度，设置为 -1 的时候不限制最大长度
   bindlininput?: (event: { detail: { value: string }}) => any; // 输入时回调
+  bindlinclear?: () => any;
 }>;
 export default LInput;
