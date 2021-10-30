@@ -1,6 +1,6 @@
 import { CatProfilePayload } from '@/pages/cat-profile';
-import { navigateTo as wxNavigateTo } from '@remax/wechat';
-
+import { navigateTo as wxNavigateTo, switchTab } from '@remax/wechat';
+import config from '@/app.config';
 export type Pages = 'index' | 'cat-list' | 'cat-profile' | 'about' | '404';
 /* 
    跳转到目标页面，并附带payload作为参数
@@ -29,10 +29,18 @@ export function navigateTo<P extends Pages>(
   if (payload !== null) {
     urlWithParams = `${url}?payload=${JSON.stringify(payload)}`;
   }
+  const isTab = (config.tabBar?.list ?? [])
+    .map((x) => x.pagePath)
+    .some((path) => url.includes(path));
 
-  wxNavigateTo({
-    url: urlWithParams
-  }).catch((err) => {
+  (isTab
+    ? switchTab({
+        url: urlWithParams
+      })
+    : wxNavigateTo({
+        url: urlWithParams
+      })
+  ).catch((err) => {
     console.error(err);
     wxNavigateTo({
       url: '/pages/404/index'
