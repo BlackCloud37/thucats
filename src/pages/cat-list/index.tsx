@@ -80,7 +80,7 @@ const CatListPage = () => {
 
   return (
     <>
-      <View className="p-5">
+      <View className="p-5 pb-20">
         <LInput
           hide-label={true}
           placeholder="搜索"

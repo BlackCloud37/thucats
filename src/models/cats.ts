@@ -1,5 +1,5 @@
 import { createModel } from '@rematch/core';
-import { fetchAllFromCollection, fetchUpdatedTime } from './apis';
+import { fetchAllFromCollection, fetchCount, fetchUpdatedTime } from './apis';
 // import { requestCloudApi } from './apis';
 import type { RootModel } from './models';
 import { default as _l } from 'lodash';
@@ -50,7 +50,7 @@ export const cats = createModel<RootModel>()({
   state: initialState,
   reducers: {
     allCats(state, payload: Cat[]) {
-      const id2cats: { [key: string]: Cat } = state.allCats;
+      const id2cats: { [key: string]: Cat } = {};
       payload.forEach((cat) => {
         id2cats[cat._id] = cat;
       });
@@ -76,13 +76,19 @@ export const cats = createModel<RootModel>()({
       } else {
         // 比较数据库最后一条的updated
         const serverUpdatedTime = await fetchUpdatedTime(COLLECTION_NAME);
-        if (updatedTime < serverUpdatedTime) {
+        if (updatedTime !== serverUpdatedTime) {
           needFetch = true;
+        } else {
+          const count = await fetchCount(COLLECTION_NAME);
+          console.log(`server count is ${count} local count is ${_l.size(allCats)}`);
+          if (count !== _l.size(allCats)) {
+            needFetch = true;
+          }
         }
       }
       if (needFetch) {
         console.log('Fecth all cats start-----------------------------');
-        const { data } = await fetchAllFromCollection(COLLECTION_NAME, updatedTime);
+        const { data } = await fetchAllFromCollection(COLLECTION_NAME);
         console.log(`${_l.size(data)} new cats fetched`);
         dispatch.cats.allCats(data);
       }
