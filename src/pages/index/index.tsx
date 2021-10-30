@@ -28,7 +28,7 @@ const Index = () => {
         <View className="w-1on2 mr-5">
           <View
             style={{ backgroundImage: 'linear-gradient(135deg, #FF8000 0%, #FFCF00 100%)' }}
-            className="bg-blue-100 h-32 w-full mb-5 rounded-lg relative"
+            className="bg-blue-100 h-32 w-full mb-5 rounded-lg relative shadow-lg"
             onClick={() => navigateTo('cat-list')}
           >
             <View className="pr-4 pt-4">
@@ -39,7 +39,7 @@ const Index = () => {
           </View>
           <View
             style={{ backgroundImage: 'linear-gradient(135deg, #1BCF7D 0%, #9CFF75 100%)' }}
-            className="bg-blue-100 h-40 w-full rounded-lg relative"
+            className="bg-blue-100 h-40 w-full rounded-lg relative shadow-lg"
             onClick={() => navigateTo('404')}
           >
             <View className="pl-4 pt-4">
@@ -55,7 +55,7 @@ const Index = () => {
         <View className="w-1on2">
           <View
             style={{ backgroundImage: 'linear-gradient(135deg, #4F01FD 0%, #B401FD 100%)' }}
-            className="bg-blue-100 h-40 w-full mb-5 rounded-lg relative"
+            className="bg-blue-100 h-40 w-full mb-5 rounded-lg relative shadow-lg"
             onClick={() => navigateTo('404')}
           >
             <View className="pl-4 pt-4">
@@ -66,7 +66,7 @@ const Index = () => {
           </View>
           <View
             style={{ backgroundImage: 'linear-gradient(135deg, #00BDFF 0%, #00FFD1 100%)' }}
-            className="bg-blue-100 h-36 w-full rounded-lg relative"
+            className="bg-blue-100 h-36 w-full rounded-lg relative shadow-lg"
             onClick={() => navigateTo('404')}
           >
             <View className="pl-4 pt-4">
