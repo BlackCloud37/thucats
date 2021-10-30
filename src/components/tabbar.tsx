@@ -8,6 +8,6 @@ const TabBar = () => {
   let list = (config.tabBar?.list ?? []).map((x) => {
     return { ...x, pagePath: '/' + x.pagePath };
   });
-  return <LTabBar list={list} text-selected-color="#5d4aff" />;
+  return <LTabBar l-class="bg-black" list={list} text-selected-color="#5d4aff" />;
 };
 export default TabBar;
