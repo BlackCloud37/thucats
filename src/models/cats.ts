@@ -34,6 +34,7 @@ export interface Cat {
   notes?: string; // 其他备注, 可选
   relatedCats?: string[]; // 相关猫咪，存的是猫咪ID
   relatedCatsDescription?: string; // 相关猫咪描述
+  notice?: string; // 公告
 }
 
 export interface CatState {

@@ -10,36 +10,16 @@ import LInput from 'lin-ui/dist/input';
 import TabBar from '@/components/tabbar';
 import LAvatar from 'lin-ui/dist/avatar';
 
-// const filters: { key: 'colorCategory'; val: string }[] = [
-//   {
-//     key: 'colorCategory',
-//     val: '纯黑'
-//   },
-//   {
-//     key: 'colorCategory',
-//     val: '纯白'
-//   },
-//   {
-//     key: 'colorCategory',
-//     val: '狸花'
-//   },
-//   {
-//     key: 'colorCategory',
-//     val: '奶牛'
-//   },
-//   {
-//     key: 'colorCategory',
-//     val: '橘猫与橘白'
-//   },
-//   {
-//     key: 'colorCategory',
-//     val: '三花'
-//   },
-//   {
-//     key: 'colorCategory',
-//     val: '玳瑁'
-//   }
-// ];
+const FilterItem = ({ fieldName, filterCallback }: { fieldName: string; filterCallback: any }) => {
+  return (
+    <View className="flex flex-col items-center" onClick={filterCallback}>
+      <View className="w-12 h-12 rounded-lg bg-blue-200  shadow-lg" />
+      <View className="text-center text-sm font-light">
+        <Text>{fieldName}</Text>
+      </View>
+    </View>
+  );
+};
 
 const CatItem = ({ cat }: { cat: Cat }) => {
   const { name, sex, colorCategory, _avatar } = cat;
@@ -54,6 +34,7 @@ const CatItem = ({ cat }: { cat: Cat }) => {
         <View>
           <Text className="block text-gray-400">{sex}</Text>
           <Text className="block text-gray-400">{colorCategory}</Text>
+          {/* {notice && <Text className="block bg-pink-400">{notice}</Text>} */}
         </View>
       </View>
     </View>
@@ -67,17 +48,31 @@ const CatListPage = () => {
     loading: state.loading.effects.cats.fetchAllCatsAsync
   }));
   const { fetchAllCatsAsync } = useDispatch<Dispatch>().cats;
+  const allCatsList = _l.values(allCats);
 
   React.useEffect(() => {
     fetchAllCatsAsync()
       .then(() => {
-        setSelectedCats(_l.values(allCats));
+        setSelectedCats(allCatsList);
       })
       .catch(console.error);
   }, []);
 
-  const catList = selectedCats.map((cat: Cat) => <CatItem key={cat._id} cat={cat} />);
+  const catList =
+    _l.size(selectedCats) > 0 ? (
+      selectedCats.map((cat: Cat) => <CatItem key={cat._id} cat={cat} />)
+    ) : (
+      <Text className="block w-full text-sm font-light text-gray-500 text-center">
+        这里似乎没有猫咪
+      </Text>
+    );
 
+  const filter = _l.curry(
+    (k: string, v: string) => () =>
+      setSelectedCats(_l.filter(allCatsList, (c) => c[k as keyof Cat] === v))
+  );
+  const filterByColorCategory = filter('colorCategory');
+  // const filterByStatus = filter('status');
   return (
     <>
       <View className="p-5 pb-20">
@@ -87,39 +82,25 @@ const CatListPage = () => {
           clear={true}
           bindlininput={_l.throttle(({ detail: { value } }) => {
             value
-              ? setSelectedCats(_l.filter(_l.values(allCats), (cat) => cat.name.includes(value)))
-              : setSelectedCats(_l.values(allCats));
+              ? setSelectedCats(_l.filter(allCatsList, (cat) => cat.name.includes(value)))
+              : setSelectedCats(allCatsList);
           }, 500)}
           bindlinclear={() => {
-            setSelectedCats(_l.values(allCats));
+            setSelectedCats(allCatsList);
           }}
           l-class="text-center mb-5 rounded-lg bg-gray-200 opacity-90 font-semibold text-lg shadow-lg"
           l-row-class="hidden"
         />
-        {/* <View className="flex flex-row mb-5">
-            <View
-              className="w-10 h-10 rounded-xl bg-gray-600"
-              onClick={() => setSelectedCats(_l.values(allCats))}
-            >
-              全部
-            </View>
-            {filters.map(({ key, val }) => (
-              <View
-                key={val}
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  backgroundColor: 'white',
-                  margin: '10px'
-                }}
-                onClick={() => {
-                  setSelectedCats(_l.filter(_l.values(allCats), (cat) => cat[key] === val));
-                }}
-              >
-                {val}
-              </View>
-            ))}
-          </View> */}
+        <View className="flex flex-nowrap gap-4 overflow-scroll mb-5">
+          <FilterItem fieldName="所有" filterCallback={() => setSelectedCats(allCatsList)} />
+          <FilterItem fieldName="纯黑" filterCallback={filterByColorCategory('纯黑')} />
+          <FilterItem fieldName="纯白" filterCallback={filterByColorCategory('纯白')} />
+          <FilterItem fieldName="狸花" filterCallback={filterByColorCategory('狸花')} />
+          <FilterItem fieldName="奶牛" filterCallback={filterByColorCategory('奶牛')} />
+          <FilterItem fieldName="橘猫" filterCallback={filterByColorCategory('橘猫与橘白')} />
+          <FilterItem fieldName="三花" filterCallback={filterByColorCategory('三花')} />
+          <FilterItem fieldName="玳瑁" filterCallback={filterByColorCategory('玳瑁')} />
+        </View>
         <Loadable loading={loading} loader="running-cat">
           {catList}
         </Loadable>
