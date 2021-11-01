@@ -3,21 +3,16 @@ import { Cat } from '@/models/cats';
 import { RootState } from '@/models/store';
 import LAvatar from 'lin-ui/dist/avatar';
 import { usePageEvent } from '@remax/framework-shared';
-import { Image, Text, View } from '@remax/wechat';
+import { Text, View } from '@remax/wechat';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { navigateTo } from '@/utils';
 import classNames from 'classnames';
+import Photo from '@/components/photo';
 
 export interface CatProfilePayload {
   catKey: string;
 }
-
-const Photo = ({ src }: { src: string | undefined }) => {
-  return src ? (
-    <Image src={src} mode="widthFix" className="w-full rounded-xl mt-2 shadow-xl" />
-  ) : null;
-};
 
 const InfoItem = ({
   field,

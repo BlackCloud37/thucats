@@ -54,9 +54,9 @@ const Index = () => {
         </View>
         <View className="w-1on2">
           <View
-            // style={{ backgroundImage: 'linear-gradient(135deg, #4F01FD 0%, #B401FD 100%)' }}
-            className="bg-gray-300 h-40 w-full mb-5 rounded-lg relative shadow-lg"
-            onClick={() => navigateTo('404')}
+            style={{ backgroundImage: 'linear-gradient(135deg, #4F01FD 0%, #B401FD 100%)' }}
+            className="h-40 w-full mb-5 rounded-lg relative shadow-lg"
+            onClick={() => navigateTo('science-popularizing')}
           >
             <View className="pl-4 pt-4">
               <Text className="block text-left">科普</Text>
