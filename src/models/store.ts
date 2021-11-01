@@ -8,8 +8,8 @@ type FullModel = ExtraModelsFromLoading<RootModel>;
 
 const persistPlugin = createRematchPersist({
   whitelist: ['users', 'cats'],
-  throttle: 5000,
-  version: 1,
+  throttle: 1000,
+  version: 2,
   key: 'root',
   storage
 });
