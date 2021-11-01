@@ -1,7 +1,15 @@
 import { CatProfilePayload } from '@/pages/cat-profile';
 import { navigateTo as wxNavigateTo, switchTab } from '@remax/wechat';
 import config from '@/app.config';
-export type Pages = 'index' | 'cat-list' | 'cat-profile' | 'about' | '404';
+import { WebViewPayload } from '@/pages/webview';
+export type Pages =
+  | 'index'
+  | 'cat-list'
+  | 'cat-profile'
+  | 'about'
+  | '404'
+  | 'science-popularizing'
+  | 'webview';
 /* 
    跳转到目标页面，并附带payload作为参数
    payload在目标页面中onLoad的option中取出
@@ -19,7 +27,11 @@ export type Pages = 'index' | 'cat-list' | 'cat-profile' | 'about' | '404';
 
 export function navigateTo<P extends Pages>(
   page: P,
-  payload?: P extends 'cat-profile' ? CatProfilePayload : never
+  payload?: P extends 'cat-profile'
+    ? CatProfilePayload
+    : P extends 'webview'
+    ? WebViewPayload
+    : never
 ) {
   const url = `/pages/${page}/index`;
   console.log(`navigate to ${url}`);

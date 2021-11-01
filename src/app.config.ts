@@ -6,6 +6,8 @@ const config: AppConfig = {
     'pages/cat-list/index',
     'pages/404/index',
     'pages/cat-profile/index',
+    'pages/science-popularizing/index',
+    'pages/webview/index',
     'pages/about/index'
   ],
   window: {
