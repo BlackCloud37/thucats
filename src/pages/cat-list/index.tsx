@@ -5,6 +5,7 @@ import { Text, View } from '@remax/wechat';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { default as _l } from 'lodash';
+import classNames from 'classnames';
 import Loadable from '@/components/loadable';
 import LInput from 'lin-ui/dist/input';
 import TabBar from '@/components/tabbar';
@@ -22,7 +23,10 @@ const FilterItem = ({ fieldName, filterCallback }: { fieldName: string; filterCa
 };
 
 const CatItem = ({ cat }: { cat: Cat }) => {
-  const { name, sex, colorCategory, _avatar } = cat;
+  const { name, _avatar, noticeLevel, noticeAbstract, sex, neuteringStatus, colorDescription } =
+    cat;
+  const sexText =
+    sex === '未知' ? '未知性别' : sex === '公' && neuteringStatus === '已绝育' ? '公公' : sex;
   return (
     <View
       className="flex h-20 bg-white shadow-lg rounded-lg mb-5 p-5"
@@ -30,11 +34,23 @@ const CatItem = ({ cat }: { cat: Cat }) => {
     >
       <LAvatar size={160} src={_avatar ?? '/images/default-cat.jpg'} shape="square" />
       <View className="pl-5 flex flex-col justify-between">
-        <Text className="block text-black">{name}</Text>
-        <View>
-          <Text className="block text-gray-400">{sex}</Text>
-          <Text className="block text-gray-400">{colorCategory}</Text>
-          {/* {notice && <Text className="block bg-pink-400">{notice}</Text>} */}
+        <View className="flex flex-col justify-around">
+          <Text className="text-black">{name}</Text>
+          <View className="text-sm text-gray-500">{sexText}</View>
+          {colorDescription && <View className="text-sm text-gray-500">{colorDescription}</View>}
+        </View>
+        <View className="flex flex-col justify-around text-sm text-gray-500">
+          {noticeLevel && noticeAbstract && (
+            <View
+              className={classNames('rounded-lg shadow-xl p-1', {
+                'bg-red-200': noticeLevel === '高',
+                'bg-yellow-200': noticeLevel === '中',
+                'bg-blue-200': noticeLevel === '低'
+              })}
+            >
+              {noticeAbstract}
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -56,11 +72,20 @@ const CatListPage = () => {
         setSelectedCats(allCatsList);
       })
       .catch(console.error);
-  }, []);
+  }, []); // TODO: 缓存不刷新
 
+  const noticeOrder = {
+    高: 3,
+    中: 2,
+    低: 1,
+    内部: 0
+  };
   const catList =
     _l.size(selectedCats) > 0 ? (
-      selectedCats.map((cat: Cat) => <CatItem key={cat._id} cat={cat} />)
+      _l
+        .sortBy(selectedCats, (c) => (c.noticeLevel ? noticeOrder[c.noticeLevel] : -1), 'name')
+        .reverse()
+        .map((cat: Cat) => <CatItem key={cat._id} cat={cat} />)
     ) : (
       <Text className="block w-full text-sm font-light text-gray-500 text-center">
         这里似乎没有猫咪
@@ -72,10 +97,9 @@ const CatListPage = () => {
       setSelectedCats(_l.filter(allCatsList, (c) => c[k as keyof Cat] === v))
   );
   const filterByColorCategory = filter('colorCategory');
-  // const filterByStatus = filter('status');
   return (
     <>
-      <View className="p-5 pb-20">
+      <View className="p-5 pb-20 font-light">
         <LInput
           hide-label={true}
           placeholder="搜索"
