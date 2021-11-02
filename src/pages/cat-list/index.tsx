@@ -67,12 +67,11 @@ const CatListPage = () => {
   const allCatsList = _l.values(allCats);
 
   React.useEffect(() => {
-    fetchAllCatsAsync()
-      .then(() => {
-        setSelectedCats(allCatsList);
-      })
-      .catch(console.error);
-  }, []); // TODO: 缓存不刷新
+    fetchAllCatsAsync().catch(console.error);
+  }, []);
+  React.useEffect(() => {
+    setSelectedCats(allCatsList);
+  }, [allCats]);
 
   const noticeOrder = {
     高: 3,
