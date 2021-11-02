@@ -3,6 +3,7 @@ import { View } from '@remax/wechat';
 import classNames from 'classnames';
 import Photo from '@/components/photo';
 import { navigateTo } from '@/utils';
+import { usePageEvent } from '@remax/macro';
 const Tabs = (props: { children: React.ReactElement[] }) => {
   const { children } = props;
   const tabs = React.Children.map(children, (el) => el.props.tab);
@@ -41,6 +42,10 @@ const TabPanel = (props: { children: any; tab: string }) => {
 };
 
 const SciencePopularizingPage = () => {
+  usePageEvent('onShareAppMessage', () => ({
+    title: '科普栏目',
+    path: '/pages/science-popularizing/index'
+  }));
   return (
     <View className="p-5">
       <Tabs>
