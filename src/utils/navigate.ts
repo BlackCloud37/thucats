@@ -9,7 +9,8 @@ export type Pages =
   | 'about'
   | '404'
   | 'science-popularizing'
-  | 'webview';
+  | 'webview'
+  | 'rescue';
 /* 
    跳转到目标页面，并附带payload作为参数
    payload在目标页面中onLoad的option中取出
