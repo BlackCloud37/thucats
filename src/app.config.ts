@@ -8,7 +8,8 @@ const config: AppConfig = {
     'pages/cat-profile/index',
     'pages/science-popularizing/index',
     'pages/webview/index',
-    'pages/about/index'
+    'pages/about/index',
+    'pages/rescue/index'
   ],
   window: {
     navigationBarTitleText: 'THU CATS',
