@@ -10,7 +10,7 @@ import Loadable from '@/components/loadable';
 import LInput from 'lin-ui/dist/input';
 import TabBar from '@/components/tabbar';
 import LAvatar from 'lin-ui/dist/avatar';
-
+import { usePageEvent } from '@remax/macro';
 const FilterItem = ({ fieldName, filterCallback }: { fieldName: string; filterCallback: any }) => {
   return (
     <View className="flex flex-col items-center" onClick={filterCallback}>
@@ -58,6 +58,11 @@ const CatItem = ({ cat }: { cat: Cat }) => {
 };
 
 const CatListPage = () => {
+  usePageEvent('onShareAppMessage', () => ({
+    title: '猫咪图鉴',
+    path: '/pages/cat-list/index'
+  }));
+
   const [selectedCats, setSelectedCats] = React.useState<Cat[]>([]);
   const { allCats, loading } = useSelector((state: RootState) => ({
     allCats: state.cats.allCats,

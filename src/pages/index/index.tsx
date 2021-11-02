@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { View, Text, Image } from 'remax/wechat';
+import { usePageEvent } from '@remax/macro';
 import { navigateTo } from '@/utils';
 import TabBar from '@/components/tabbar';
 
@@ -10,6 +11,10 @@ const Index = () => {
   // }));
   // const dispatch = useDispatch<Dispatch>();
   // const { fetchOpenidAsync } = dispatch.users;
+  usePageEvent('onShareAppMessage', () => ({
+    title: '清华小动物保护协会小程序',
+    path: '/pages/index/index'
+  }));
 
   return (
     <View className="p-5 pb-36">
