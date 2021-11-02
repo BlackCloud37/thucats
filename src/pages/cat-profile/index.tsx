@@ -80,18 +80,20 @@ const CatProfilePage = () => {
     <Loadable loading={!cat}>
       <View className="m-5 p-5 bg-white rounded-lg shadow-xl">
         <Photo src={_photos?.[0] ?? _avatar} />
-        <View
-          className={classNames(
-            'mt-2 w-full shadow-xl rounded-lg text-sm text-gray-500 p-2 font-light box-border',
-            {
-              'bg-red-200': noticeLevel === '高',
-              'bg-yellow-200': noticeLevel === '中',
-              'bg-blue-200': noticeLevel === '低'
-            }
-          )}
-        >
-          {noticeDescription}
-        </View>
+        {noticeDescription && (
+          <View
+            className={classNames(
+              'mt-2 w-full shadow-xl rounded-lg text-sm text-gray-500 p-2 font-light box-border',
+              {
+                'bg-red-200': noticeLevel === '高',
+                'bg-yellow-200': noticeLevel === '中',
+                'bg-blue-200': noticeLevel === '低'
+              }
+            )}
+          >
+            {noticeDescription}
+          </View>
+        )}
         <Text className="block text-gray-700 text-lg mb-2 font-bold w-full mt-2">{name}</Text>
         <View className="mt-2 flex flex-wrap">
           <InfoItem field="毛色" val={colorCategory} />
