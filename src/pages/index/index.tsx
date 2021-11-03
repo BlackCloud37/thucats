@@ -17,7 +17,7 @@ const Index = () => {
   }));
 
   return (
-    <View className="p-5 pb-36">
+    <View className="p-5">
       {/* 头部 */}
       <View className="flex flex-col items-start ml-8 mt-8 mb-12">
         <Image src="/images/logo.png" mode="widthFix" className="w-20 mb-6" />

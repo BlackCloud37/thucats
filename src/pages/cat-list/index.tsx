@@ -1,60 +1,22 @@
 import { Cat } from '@/models/cats';
 import { Dispatch, RootState } from '@/models/store';
-import { navigateTo } from '@/utils';
 import { Text, View } from '@remax/wechat';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { default as _l } from 'lodash';
-import classNames from 'classnames';
 import Loadable from '@/components/loadable';
 import LInput from 'lin-ui/dist/input';
 import TabBar from '@/components/tabbar';
-import LAvatar from 'lin-ui/dist/avatar';
 import { usePageEvent } from '@remax/macro';
+
+import CatItem from './components/cat-item';
+
 const FilterItem = ({ fieldName, filterCallback }: { fieldName: string; filterCallback: any }) => {
   return (
     <View className="flex flex-col items-center" onClick={filterCallback}>
       <View className="w-12 h-12 rounded-lg bg-blue-200" />
       <View className="text-center text-sm font-light">
         <Text>{fieldName}</Text>
-      </View>
-    </View>
-  );
-};
-
-const CatItem = ({ cat }: { cat: Cat }) => {
-  const { name, _avatar, noticeLevel, noticeAbstract } = cat;
-  return (
-    <View
-      className="flex h-20 bg-white shadow-lg rounded-lg mb-5 p-5"
-      onClick={() => navigateTo('cat-profile', { catKey: cat._id })}
-    >
-      <LAvatar size={160} src={_avatar ?? '/images/default-cat.jpg'} shape="square" />
-      <View className="pl-5 flex flex-col justify-between">
-        <Text className="text-black">{name}</Text>
-        <View className="flex flex-col justify-around text-xs text-gray-500">
-          {noticeLevel && noticeAbstract && (
-            <View
-              className={classNames('rounded-lg p-1 shadow-inner', {
-                'bg-red-200': noticeLevel === '高',
-                'bg-yellow-200': noticeLevel === '中',
-                'bg-blue-200': noticeLevel === '低'
-              })}
-            >
-              {noticeAbstract}
-            </View>
-          )}
-          {/* <View className="rounded-lg p-1 relative">
-              <View
-                className={classNames('absolute left-0 top-0 w-1 h-full rounded-l-lg', {
-                  'bg-red-200': noticeLevel === '高',
-                  'bg-yellow-200': noticeLevel === '中',
-                  'bg-blue-200': noticeLevel === '低'
-                })}
-              />
-              {noticeAbstract}
-            </View> */}
-        </View>
       </View>
     </View>
   );
@@ -106,7 +68,7 @@ const CatListPage = () => {
   const filterByColorCategory = filter('colorCategory');
   return (
     <>
-      <View className="p-5 pb-20 font-light">
+      <View className="p-5 font-light">
         <LInput
           hide-label={true}
           placeholder="搜索"
@@ -119,7 +81,7 @@ const CatListPage = () => {
           bindlinclear={() => {
             setSelectedCats(allCatsList);
           }}
-          l-class="text-center mb-5 rounded-lg bg-gray-200 opacity-90 font-semibold text-lg shadow-inner"
+          l-class="  text-center mb-5 rounded-lg bg-gray-400 bg-opacity-20 font-semibold text-lg shadow-inner"
           l-row-class="hidden"
         />
         <View className="flex flex-nowrap gap-4 overflow-scroll mb-5">
@@ -139,8 +101,6 @@ const CatListPage = () => {
       <TabBar />
     </>
   );
-
-  // {loading ? <View>Loading</View> : <View></View>};
 };
 
 export default CatListPage;
