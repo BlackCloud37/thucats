@@ -3,16 +3,11 @@ import { View, Text, Image } from 'remax/wechat';
 import { usePageEvent } from '@remax/macro';
 import { navigateTo } from '@/utils';
 import TabBar from '@/components/tabbar';
+import { customTexts } from '@/app.config';
 
 const Index = () => {
-  // const { openid, loading } = useSelector((state: RootState) => ({
-  // openid: state.users.openid,
-  // loading: state.loading.effects.users.fetchOpenidAsync // true when `fetchOpenidAsync` is running
-  // }));
-  // const dispatch = useDispatch<Dispatch>();
-  // const { fetchOpenidAsync } = dispatch.users;
   usePageEvent('onShareAppMessage', () => ({
-    title: '清华小动物保护协会小程序',
+    title: '猫咪图鉴',
     path: '/pages/index/index'
   }));
 
@@ -20,13 +15,11 @@ const Index = () => {
     <View className="p-5">
       {/* 头部 */}
       <View className="flex flex-col items-start ml-8 mt-8 mb-12">
-        <Image src="/images/logo.png" mode="widthFix" className="w-20 mb-6" />
+        <Image src="/personal/logo.png" mode="widthFix" className="w-20 mb-6" />
         <Text className="text-lg block text-black font-semibold mb-1dot5">
-          清华大学学生小动物保护协会
+          {customTexts.associationName}
         </Text>
-        <Text className="text-xs block text-left text-gray-400">
-          愿你我成为内心柔软，行动有力的人
-        </Text>
+        <Text className="text-xs block text-left text-gray-400">{customTexts.slogan}</Text>
       </View>
       {/* 双列目录 */}
       <View className="flex flex-row w-full justify-evenly text-2xl text-white font-medium font tracking-widest">
