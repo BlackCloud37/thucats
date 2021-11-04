@@ -6,7 +6,7 @@
 
 ### 账号准备
 
-* 注册微信小程序账号，并记录AppID和AppSecretKey，可以把AppID理解为小程序环境的账号，把AppSecretKey理解为密码，请把它们记录下来，并**请勿泄露后者**，包括但不限于把后者存在公开的Git仓库里然后发布到网上
+* 注册微信小程序账号，并记录AppID和Deploy Key，可以把AppID理解为小程序环境的账号，把AppSecretKey理解为密码，请把它们记录下来，并**请勿泄露后者**，包括但不限于把后者存在公开的Git仓库里然后发布到网上
 * 注册腾讯云Cloudbase账号，创建一个云开发环境，并记录其环境ID(envID)
   * 设置计费模式为按量计费，之后的云资源会产生计费，请知悉。具体计费规则参考官方文档
   * 在访问管理/API密钥管理中，新建一对密钥，这会产生SecretId和SecretKey两个值，同样记录它们，并记住**切勿泄露后者**，拥有这对值的用户将拥有所有所有资源的访问权限
@@ -20,20 +20,9 @@
 
 #### 小程序端
 
-* Fork release分支并Clone代码
-* 配置github secrets
-  * TCB_API_KEY
-    * Cloudbase的SecretKey
-  * TCB_API_KEY_ID
-    * Cloudbase的SecretId
-  * UPLOAD_PRIVATE_KEY
-    * 小程序的AppSecretKey
-* 在public/personal里修改两个icon
-* 在app.config.ts/texts里修改文案
-* 修改cloudbaserc.json的envId为自己的envId
-* 修改project.config.json和cloudbaserc.json里的appid为自己的appid
-* 在根目录`git add . && git commit -m "feat: change project config"`
-* 执行push
+* [小程序部署密钥转换小工具](https://framework-1258016615.tcloudbaseapp.com/mp-key-tool/)
+
+<a href="https://console.cloud.tencent.com/tcb/env/index?&action=CreateAndDeployCloudBaseProject&appUrl=https://github.com/BlackCloud37/thucats&branch=release" target="_blank" rel="noopener noreferrer"><img src="https://main.qcloudimg.com/raw/67f5a389f1ac6f3b4d04c7256438e44f.svg"></a>
 
 ## 工程化
 
