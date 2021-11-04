@@ -18,7 +18,7 @@ export default {
             './src/cloudfunctions/cloud/config.json',
             './src/cloudfunctions/cloud/package.json'
           ],
-          dest: 'dist/cloudfunctions/cloud'
+          dest: 'cloudfunctions/cloud'
         }
       ]
     })
@@ -26,7 +26,7 @@ export default {
   output: [
     {
       format: 'cjs',
-      file: 'dist/cloudfunctions/cloud/index.js'
+      file: 'cloudfunctions/cloud/index.js'
     }
   ]
 };

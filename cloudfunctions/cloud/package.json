@@ -1,0 +1,15 @@
+{
+  "name": "cloud",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yechenz37@163.com",
+  "license": "ISC",
+  "dependencies": {
+    "wx-server-sdk": "~2.3.2",
+    "lodash": "^4.17.21"
+  }
+}

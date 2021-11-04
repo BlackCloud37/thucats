@@ -4,6 +4,6 @@ import { ECatAcions, CatSomeResult, IController, EController, Response } from '.
 
 export default class CatController extends BaseController implements IController<EController.Cat> {
   public async [ECatAcions.SomeMethod](): Promise<Response<CatSomeResult>> {
-    return this.fail(404, 'Boom');
+    return this.fail(404, 'Boomed');
   }
 }
