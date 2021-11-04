@@ -39,11 +39,6 @@
     },
     "requirement": {
       "environment": {
-        "ENV_ID": {
-          "description": "请填写Cloudbase 的EnvID",
-          "required": true,
-          "default": ""
-        },
         "WX_APPID": {
           "description": "请填写微信小程序APPID",
           "required": true,
