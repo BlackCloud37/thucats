@@ -7,7 +7,7 @@ on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [master, develop, 'feat/**']
-    paths-ignore: ['docs/**']
+    paths-ignore: ['docs/**', "**/*.md"]
   pull_request:
     branches: [master]
 
@@ -40,10 +40,10 @@ jobs:
 
       # 从 secrets.UPLOAD_PRIVATE_KEY 生成私钥文件
       # see Project/Settings/Secrets
-      - name: Generate private key for upload
-        run: echo "$UPLOAD_PRIVATE_KEY" > private.key
-        env:
-          UPLOAD_PRIVATE_KEY: ${{ secrets.UPLOAD_PRIVATE_KEY }}
+      # - name: Generate private key for upload
+      #   run: echo "$UPLOAD_PRIVATE_KEY" > private.key
+      #   env:
+      #     UPLOAD_PRIVATE_KEY: ${{ secrets.UPLOAD_PRIVATE_KEY }}
       
       # 上传代码
       - name: Login to tcb
@@ -54,6 +54,12 @@ jobs:
       
       - name: Deploy
         run: npm run deploy
+        env:
+          TCB_API_KEY_ID: ${{ secrets.TCB_API_KEY_ID }} 
+          TCB_API_KEY: ${{ secrets.TCB_API_KEY }}
+          WX_APPID: ${{ secrets.WX_APPID }}
+          UPLOAD_PRIVATE_KEY: ${{ secrets.UPLOAD_PRIVATE_KEY }}
+          ENV_ID: ${{ secrets.ENV_ID }}
 
       - name: Upload Artifacts 🚀
         uses: actions/upload-artifact@v2
