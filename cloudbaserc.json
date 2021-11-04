@@ -1,5 +1,5 @@
 {
-  "envId": "thucats-3grq39dr7a44e550",
+  "envId": "{{ env.ENV_ID }}",
   "functionRoot": "./dist/cloudfunctions",
   "framework": {
     "name": "thucats",
@@ -19,8 +19,8 @@
       "mp": {
         "use": "@cloudbase/framework-plugin-mp",
         "inputs": {
-          "appid": "wx03ddd595380090e9",
-          "privateKeyPath": "./private.key",
+          "appid": "{{ env.WX_APPID }}",
+          "privateKey": "{{ env.UPLOAD_PRIVATE_KEY }}",
           "localPath": "./",
           "ignores": ["node_modules/**/*"],
           "deployMode": "upload",
@@ -34,6 +34,51 @@
             "searchQuery": "",
             "scene": 1011
           }
+        }
+      }
+    },
+    "requirement": {
+      "environment": {
+        "ENV_ID": {
+          "description": "请填写Cloudbase 的EnvID",
+          "required": true,
+          "default": ""
+        },
+        "WX_APPID": {
+          "description": "请填写微信小程序APPID",
+          "required": true,
+          "default": "",
+          "validation": {
+            "rule": {
+              "type": "RegExp",
+              "pattern": "^wx.*",
+              "flag": "g"
+            },
+            "errorMessage": "必须是小程序的APPID"
+          }
+        },
+        "UPLOAD_PRIVATE_KEY": {
+          "description": "请填写微信小程序上传密钥BASE64",
+          "required": true,
+          "default": "",
+          "validation": {
+            "rule": {
+              "type": "RegExp",
+              "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+              "flag": "g"
+            },
+            "errorMessage": "必须是BASE64格式密钥"
+          }
+        },
+        "TCB_API_KEY_ID": {
+          "description": "请填写Cloudbase API Key ID",
+          "required": true,
+          "default": ""
+        },
+        "TCB_API_KEY": {
+          "description": "请填写Cloudbase API Secret Key",
+          "required": true,
+          "default": ""
         }
       }
     }
