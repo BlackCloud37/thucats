@@ -1,0 +1,207 @@
+{
+  "version": "2.0",
+  "envId": "{{env.ENV_ID}}",
+  "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
+  "framework": {
+    "name": "cloudbase-extension-cms",
+    "hooks": {
+      "preDeploy": {
+        "type": "execCommand",
+        "commands": ["bash ./scripts/setup.sh", "npm run build:server"]
+      },
+      "postDeploy": {
+        "type": "callFunction",
+        "functions": [
+          {
+            "functionName": "tcb-ext-cms-init"
+          }
+        ]
+      }
+    },
+    "plugins": {
+      "admin": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "outputPath": "./packages/admin/dist",
+          "installCommand": "echo 'Skip Install'",
+          "buildCommand": "echo 'Skip Build '",
+          "cloudPath": "{{env.deployPath}}"
+        }
+      },
+      "init": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functionRootPath": "./packages",
+          "functions": [
+            {
+              "name": "tcb-ext-cms-init",
+              "functionDistPath": "cms-init",
+              "timeout": 60,
+              "envVariables": {
+                "CMS_ADMIN_USER_NAME": "{{env.administratorName}}",
+                "CMS_ADMIN_PASS_WORD": "{{env.administratorPassword}}",
+                "CMS_OPERATOR_USER_NAME": "{{env.operatorName}}",
+                "CMS_OPERATOR_PASS_WORD": "{{env.operatorPassword}}",
+                "CMS_DEPLOY_PATH": "{{env.deployPath}}",
+                "ACCESS_DOMAIN": "{{env.accessDomain}}"
+              },
+              "installDependency": true,
+              "handler": "index.main"
+            }
+          ]
+        }
+      },
+      "service": {
+        "use": "@cloudbase/framework-plugin-container",
+        "inputs": {
+          "cpu": 0.25,
+          "mem": 0.5,
+          "serviceName": "tcb-ext-cms-service",
+          "servicePath": "/tcb-ext-cms-service-container",
+          "localPath": "./packages/service",
+          "uploadType": "package",
+          "containerPort": 5000,
+          "envVariables": {
+            "TCB_ENVID": "{{env.ENV_ID}}",
+            "NODE_ENV": "production"
+          }
+        }
+      },
+      "api": {
+        "use": "@cloudbase/framework-plugin-node",
+        "inputs": {
+          "name": "tcb-ext-cms-api",
+          "entry": "app.js",
+          "projectPath": "./packages/cms-api",
+          "functionOptions": {
+            "timeout": 15,
+            "envVariables": {
+              "NODE_ENV": "production"
+            }
+          }
+        }
+      },
+      "db": {
+        "use": "@cloudbase/framework-plugin-database",
+        "inputs": {
+          "collections": [
+            {
+              "collectionName": "tcb-ext-cms-projects",
+              "description": "CMS 系统项目数据（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "tcb-ext-cms-schemas",
+              "description": "CMS 系统内容模型数据（请不需要手动修改）",
+              "aclTag": "ADMINONLY",
+              "createIndexes": [
+                {
+                  "name": "查询索引",
+                  "unique": false,
+                  "keys": [
+                    {
+                      "name": "collectionName",
+                      "direction": "1"
+                    },
+                    {
+                      "name": "projectId",
+                      "direction": "1"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "collectionName": "tcb-ext-cms-users",
+              "description": "CMS 系统系统用户数据，存储 CMS 的用户信息，包括管理员账号信息，角色信息等（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "tcb-ext-cms-webhooks",
+              "description": "CMS 系统系统 webhook 集合，存储 CMS 系统的回调接口配置，CMS 系统数据的变更可以通过回调来进行同步 （请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "tcb-ext-cms-webhook-log",
+              "description": "CMS webhook 执行记录集合（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "tcb-ext-cms-settings",
+              "description": "CMS 系统系统配置集合，存储 CMS 系统的设置（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "tcb-ext-cms-user-roles",
+              "description": "CMS 系统系统用户角色配置集合，存储 CMS 系统的自定义用户角色信息（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "tcb-ext-cms-data-migrate",
+              "description": "CMS 系统数据导入导出的记录（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            }
+          ]
+        }
+      }
+    },
+    "requirement": {
+      "environment": {
+        "administratorName": {
+          "description": "管理员账号，字母和数字的组合，不能为纯数字，长度范围是 1 ~ 32",
+          "required": true,
+          "validation": {
+            "rule": {
+              "type": "RegExp",
+              "pattern": "^[a-zA-Z0-9]+[a-zA-Z0-9_-]?[a-zA-Z0-9]+$",
+              "flag": "g"
+            },
+            "errorMessage": "账号不符合规范"
+          }
+        },
+        "administratorPassword": {
+          "description": "管理员密码，长度必需大于 8 位，不能由纯数字或纯字母组成",
+          "required": true,
+          "validation": {
+            "rule": {
+              "type": "RegExp",
+              "pattern": "[^a-zA-Z]",
+              "flag": ""
+            },
+            "errorMessage": "密码不符合规范"
+          }
+        },
+        "operatorName": {
+          "description": "运营者账号（字母和数字的组合，不能为纯数字，长度范围是 1 ~ 32，不能和管理员账号相同）",
+          "validation": {
+            "rule": {
+              "type": "RegExp",
+              "pattern": "^[a-zA-Z0-9]+[a-zA-Z0-9_-]?[a-zA-Z0-9]+$",
+              "flag": "g"
+            },
+            "errorMessage": "账号不符合规范"
+          }
+        },
+        "operatorPassword": {
+          "description": "运营者密码，长度必需大于 8 位，不能由纯数字或纯字母组成",
+          "validation": {
+            "rule": {
+              "type": "RegExp",
+              "pattern": "[^a-zA-Z]",
+              "flag": ""
+            },
+            "errorMessage": "密码不符合规范"
+          }
+        },
+        "deployPath": {
+          "description": "部署路径",
+          "required": true,
+          "default": "/"
+        },
+        "accessDomain": {
+          "description": "HTTP 访问服务域名（选填）"
+        }
+      }
+    }
+  }
+}
