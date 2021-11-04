@@ -18,6 +18,7 @@ const About = () => {
         <Text className="block mb-5">
           在功能完善后，会将本项目开源，并提供尽量一键的部署方式，敬请期待
         </Text>
+        <Text className="block mb-5">本次发布：2021-11-4</Text>
         <Text className="block text-gray-500">联系我们</Text>
         <Text
           className="block mb-2"

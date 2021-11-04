@@ -9,6 +9,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "remax build -t wechat -w",
+    "build-cloudfunctions": "rollup -c",
+    "build-mp": "cross-env NODE_ENV=production remax build -t wechat",
     "build": "cross-env NODE_ENV=production remax build -t wechat && rollup -c",
     "lint": "eslint src --ext .ts,.tsx",
     "fix": "prettier --write ./src",

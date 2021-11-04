@@ -1,13 +1,13 @@
 {
   "envId": "{{ env.ENV_ID }}",
-  "functionRoot": "./dist/cloudfunctions",
+  "functionRoot": "./cloudfunctions",
   "framework": {
     "name": "thucats",
     "plugins": {
       "function": {
         "use": "@cloudbase/framework-plugin-function",
         "inputs": {
-          "functionRootPath": "./dist/cloudfunctions",
+          "functionRootPath": "./cloudfunctions",
           "functions": [
             {
               "name": "cloud",
@@ -33,17 +33,16 @@
             "pagePath": "pages/index/index",
             "searchQuery": "",
             "scene": 1011
+          },
+          "commands": {
+            "install": "npm install",
+            "build": "npm run build-mp"
           }
         }
       }
     },
     "requirement": {
       "environment": {
-        "ENV_ID": {
-          "description": "请填写Cloudbase 的EnvID",
-          "required": true,
-          "default": ""
-        },
         "WX_APPID": {
           "description": "请填写微信小程序APPID",
           "required": true,
