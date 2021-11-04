@@ -35,8 +35,8 @@ jobs:
       - name: Lint Check
         run: npm run lint
 
-      - name: Build Wechat App
-        run: npm run build
+      # - name: Build Wechat App
+      #   run: npm run build
 
       # 从 secrets.UPLOAD_PRIVATE_KEY 生成私钥文件
       # see Project/Settings/Secrets
@@ -53,7 +53,7 @@ jobs:
           TCB_API_KEY: ${{ secrets.TCB_API_KEY }}
       
       - name: Deploy
-        run: npm run deploy
+        run: npm run deploy --verbose
         env:
           TCB_API_KEY_ID: ${{ secrets.TCB_API_KEY_ID }} 
           TCB_API_KEY: ${{ secrets.TCB_API_KEY }}
