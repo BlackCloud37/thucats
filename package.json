@@ -9,6 +9,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "remax build -t wechat -w",
+    "build-schema": "node ./scripts/gen-schemas.js",
     "build-cloudfunctions": "rollup -c",
     "build-mp": "cross-env NODE_ENV=production remax build -t wechat",
     "build": "cross-env NODE_ENV=production remax build -t wechat && rollup -c",
@@ -25,6 +26,7 @@
     ]
   },
   "dependencies": {
+    "@cloudbase/node-sdk": "^2.7.1",
     "@rematch/core": "^2.1.0",
     "@rematch/loading": "^2.1.1",
     "@rematch/persist": "^2.1.0",

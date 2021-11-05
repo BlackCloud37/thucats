@@ -51,7 +51,16 @@ jobs:
         env:
           TCB_API_KEY_ID: ${{ secrets.TCB_API_KEY_ID }} 
           TCB_API_KEY: ${{ secrets.TCB_API_KEY }}
-      
+
+      - name: Export Schemas
+        run: npm run build-schema
+        env:
+          TCB_API_KEY_ID: ${{ secrets.TCB_API_KEY_ID }} 
+          TCB_API_KEY: ${{ secrets.TCB_API_KEY }}
+          WX_APPID: ${{ secrets.WX_APPID }}
+          UPLOAD_PRIVATE_KEY: ${{ secrets.UPLOAD_PRIVATE_KEY }}
+          ENV_ID: ${{ secrets.ENV_ID }} 
+
       - name: Deploy
         run: npm run deploy --verbose
         env:
@@ -60,9 +69,9 @@ jobs:
           WX_APPID: ${{ secrets.WX_APPID }}
           UPLOAD_PRIVATE_KEY: ${{ secrets.UPLOAD_PRIVATE_KEY }}
           ENV_ID: ${{ secrets.ENV_ID }}
-
+    
       - name: Upload Artifacts 🚀
         uses: actions/upload-artifact@v2
         with:
-          name: qrcode
-          path: qrcode.jpg
+          name: schema
+          path: output/schemas.json
