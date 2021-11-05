@@ -63,7 +63,7 @@
 
 1. 打开这个工具，在上传文件的地方上传之前下载的`private.appid.key`文件[小程序部署密钥转换小工具](https://framework-1258016615.tcloudbaseapp.com/mp-key-tool/)，并复制下面文本框里的输出，这个输出记为UPLOAD_PRIVATE_KEY
 
-2. 点击这个按钮<a href="https://console.cloud.tencent.com/tcb/env/index?&action=CreateAndDeployCloudBaseProject&appUrl=https://github.com/BlackCloud37/thucats&branch=v1.0.0" target="_blank" rel="noopener noreferrer"><img src="https://main.qcloudimg.com/raw/67f5a389f1ac6f3b4d04c7256438e44f.svg"></a>打开网页，在应用导入里选择你的云环境，点下一步
+2. 点击这个按钮<a href="https://console.cloud.tencent.com/tcb/env/index?&action=CreateAndDeployCloudBaseProject&appUrl=https://github.com/BlackCloud37/thucats&branch=release" target="_blank" rel="noopener noreferrer"><img src="https://main.qcloudimg.com/raw/67f5a389f1ac6f3b4d04c7256438e44f.svg"></a>打开网页，在应用导入里选择你的云环境，点下一步
 
 3. 在这个配置里依次填入小程序的AppID，UPLOAD_PRIVATE_KEY，Cloudbase的SecretId和SecretKey四个值，然后点完成
 
