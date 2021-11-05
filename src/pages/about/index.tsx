@@ -1,16 +1,19 @@
 import TabBar from '@/components/tabbar';
+import { RootState } from '@/models/store';
 import { Text, View, Navigator, Image, setClipboardData, showToast } from '@remax/wechat';
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 
 const About = () => {
+  const { associationLogo } = useSelector((state: RootState) => ({
+    ...state.settings,
+    loading: state.loading.effects.settings.fetchSettingsAsync
+  }));
+
   return (
     <>
       <View className="m-5 p-5 bg-white rounded-lg shadow-xl flex flex-col items-start font-light text-sm">
-        <Image
-          src="/personal/full-logo-transparent.png"
-          mode="widthFix"
-          className="w-2on3 mb-5 self-center"
-        />
+        <Image src={associationLogo} mode="widthFix" className="w-2on3 mb-5 self-center" />
         <Text className="block text-gray-500">新版小程序</Text>
         <Text className="block mb-5">
           目前新版小程序正在持续迭代中，会根据需求优先级持续上线功能，预计一周发布一版

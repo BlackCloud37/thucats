@@ -7,7 +7,7 @@ import storage from '@/utils/storage';
 type FullModel = ExtraModelsFromLoading<RootModel>;
 
 const persistPlugin = createRematchPersist({
-  whitelist: ['users', 'cats'],
+  whitelist: ['users', 'cats', 'settings'],
   version: 2,
   key: 'root',
   throttle: 5000,

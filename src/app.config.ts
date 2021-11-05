@@ -1,11 +1,5 @@
 import { AppConfig } from 'remax/wechat';
 
-export const customTexts = {
-  associationName: '清华大学学生小动物保护协会', // 主页Title
-  slogan: '愿你我成为内心柔软，行动有力的人', // 主页副Title
-  navigationBarTitleText: 'THU Cats' // 页面顶部标题
-};
-
 const config: AppConfig = {
   pages: [
     'pages/index/index',
@@ -18,7 +12,7 @@ const config: AppConfig = {
     'pages/rescue/index'
   ],
   window: {
-    navigationBarTitleText: customTexts.navigationBarTitleText,
+    navigationBarTitleText: '猫咪图鉴',
     navigationBarBackgroundColor: '#f9f9f9',
     navigationBarTextStyle: 'black'
   },
