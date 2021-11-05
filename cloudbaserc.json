@@ -39,6 +39,21 @@
             "build": "npm run build-mp"
           }
         }
+      },
+      "client": {
+        "use": "@cloudbase/framework-plugin-database",
+        "inputs": {
+          "collections": [
+            {
+              "collectionName": "cats",
+              "aclTag": "READONLY"
+            },
+            {
+              "collectionName": "settings",
+              "aclTag": "READONLY"
+            }
+          ]
+        }
       }
     },
     "requirement": {
@@ -68,16 +83,6 @@
             },
             "errorMessage": "必须是BASE64格式密钥"
           }
-        },
-        "TCB_API_KEY_ID": {
-          "description": "请填写Cloudbase API Key ID",
-          "required": true,
-          "default": ""
-        },
-        "TCB_API_KEY": {
-          "description": "请填写Cloudbase API Secret Key",
-          "required": true,
-          "default": ""
         }
       }
     }
