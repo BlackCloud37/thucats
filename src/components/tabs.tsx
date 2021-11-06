@@ -2,8 +2,9 @@ import * as React from 'react';
 import { View } from '@remax/wechat';
 import classNames from 'classnames';
 
-export const Tabs = (props: { children: React.ReactElement[] }) => {
-  const { children } = props;
+export const Tabs = (props: { children: any }) => {
+  const { children: _children } = props;
+  const children = _children as React.ReactElement[];
   const tabs = React.Children.map(children, (el) => el.props.tab);
   const [activeTab, setTab] = React.useState(tabs[0]);
   const tabCount = tabs.length;
