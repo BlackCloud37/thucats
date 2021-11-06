@@ -1,0 +1,28 @@
+{
+  "cSpell.words": [
+    "Droppable",
+    "EJSON",
+    "KUBERNETES",
+    "braft",
+    "bson",
+    "envid",
+    "metas",
+    "pino",
+    "plyr",
+    "qrcode",
+    "secretid",
+    "seqid",
+    "sider",
+    "tinymce",
+    "umijs",
+    "unparse",
+    "vditor"
+  ],
+  "search.exclude": {
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/*.lock": true
+  }
+}

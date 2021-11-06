@@ -65,6 +65,7 @@
     "typescript-json-schema": "^0.51.0"
   },
   "eslintIgnore": [
-    "src/components/wemark/*"
+    "src/components/wemark/*",
+    "extensions/**/*"
   ]
 }
