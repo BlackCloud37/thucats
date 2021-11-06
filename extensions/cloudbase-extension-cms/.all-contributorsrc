@@ -1,0 +1,53 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "chhpt",
+      "name": "chhpt",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/19288423?v=4",
+      "profile": "https://github.com/chhpt",
+      "contributions": [
+        "infra",
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "binggg",
+      "name": "Booker Zhao",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/7686861?v=4",
+      "profile": "https://github.com/binggg",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "fantasticsoul",
+      "name": "幻魂",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/7334950?v=4",
+      "profile": "https://github.com/fantasticsoul",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "geeeeeeeeeek",
+      "name": "June",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/9697715?v=4",
+      "profile": "https://github.com/geeeeeeeeeek",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "cloudbase-extension-cms",
+  "projectOwner": "TencentCloudBase",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
