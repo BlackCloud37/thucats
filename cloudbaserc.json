@@ -39,21 +39,6 @@
             "build": "npm run build-mp"
           }
         }
-      },
-      "client": {
-        "use": "@cloudbase/framework-plugin-database",
-        "inputs": {
-          "collections": [
-            {
-              "collectionName": "cats",
-              "aclTag": "READONLY"
-            },
-            {
-              "collectionName": "settings",
-              "aclTag": "READONLY"
-            }
-          ]
-        }
       }
     },
     "requirement": {
