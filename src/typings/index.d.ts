@@ -5,3 +5,5 @@ declare const cloud: any;
 declare const db: any;
 declare const _: any;
 declare const $: any;
+
+declare module '@/components/wemark/wemark';
