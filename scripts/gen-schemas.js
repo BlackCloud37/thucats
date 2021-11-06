@@ -25,7 +25,10 @@ db.collection('tcb-ext-cms-schemas')
   )
   .get()
   .then(({ data }) => {
-    const dir = path.resolve(__dirname, '../output');
+    const dir = path.resolve(
+      __dirname,
+      '../extensions/cloudbase-extension-cms/packages/cms-init/scripts'
+    );
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.resolve(dir, 'schemas.json'), JSON.stringify(data));
     exit(0);

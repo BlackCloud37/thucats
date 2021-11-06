@@ -70,8 +70,8 @@ jobs:
           UPLOAD_PRIVATE_KEY: ${{ secrets.UPLOAD_PRIVATE_KEY }}
           ENV_ID: ${{ secrets.ENV_ID }}
     
-      - name: Upload Artifacts 🚀
-        uses: actions/upload-artifact@v2
-        with:
-          name: schema
-          path: output/schemas.json
+      # - name: Upload Artifacts 🚀
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: schema
+      #     path: output/schemas.json
