@@ -54,9 +54,9 @@ const Index = () => {
                 <Image src="/images/cat-1.svg" className="w-28 h-28 absolute -left-2 -bottom-8" />
               </View>
               <View
-                style={{ backgroundImage: 'linear-gradient(135deg, #1BCF7D 0%, #9CFF75 100%)' }}
-                className="h-40 w-full rounded-lg relative shadow-lg"
-                onClick={() => navigateTo('rescue')}
+                // style={{ backgroundImage: 'linear-gradient(135deg, #1BCF7D 0%, #9CFF75 100%)' }}
+                className="bg-gray-200 h-40 w-full rounded-lg relative shadow-lg"
+                onClick={() => navigateTo('404')}
               >
                 <View className="pl-4 pt-4">
                   <Text className="block text-left">救助</Text>
@@ -81,8 +81,8 @@ const Index = () => {
                 <Image src="/images/cat-2.svg" className="w-28 h-28 absolute -right-6 -bottom-2" />
               </View>
               <View
-                style={{ backgroundImage: 'linear-gradient(135deg, #00BDFF 0%, #00FFD1 100%)' }}
-                className="h-36 w-full rounded-lg relative shadow-lg"
+                // style={{ backgroundImage: 'linear-gradient(135deg, #00BDFF 0%, #00FFD1 100%)' }}
+                className="bg-gray-200 h-36 w-full rounded-lg relative shadow-lg"
                 onClick={() => navigateTo('404')}
               >
                 <View className="pl-4 pt-4">
