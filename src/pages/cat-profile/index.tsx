@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { navigateTo } from '@/utils';
 import classNames from 'classnames';
 import Photo from '@/components/photo';
+import { TabPanel, Tabs } from '@/components/tabs';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -80,63 +81,73 @@ const CatProfilePage = () => {
 
   const relatedCats = relatedCatIds?.map((id) => allCats[id]);
   return (
-    <Loadable loading={!cat}>
-      <View className="m-5 p-5 bg-white rounded-lg shadow-xl">
-        <Photo src={_photos?.[0] ?? _avatar} />
-        {noticeDescription && (
-          <View
-            className={classNames(
-              'mt-2 w-full shadow-xl rounded-lg text-sm text-gray-500 p-2 font-light box-border',
-              {
-                'bg-red-200': noticeLevel === '高',
-                'bg-yellow-200': noticeLevel === '中',
-                'bg-blue-200': noticeLevel === '低'
-              }
-            )}
-          >
-            {noticeDescription}
-          </View>
-        )}
-        <Text className="block text-gray-700 text-xl mb-2 font-bold w-full mt-2">{name}</Text>
-        {nickname && <Text className="block text-gray-500 text-sm mb-2 w-full">{nickname}</Text>}
-        <View className="mt-2 flex flex-wrap">
-          {/* 半行 */}
-          <InfoItem field="毛色" val={colorCategory} />
-          <InfoItem field="性别" val={sex} />
-          <InfoItem field="状况" val={status} />
-          <InfoItem field="绝育情况" val={neuteringStatus} />
-          <InfoItem field="绝育时间" val={neuteringDate} />
-
-          {/* 整行 */}
-          <InfoItem field="健康状态" val={healthStatus} full={true} />
-          <InfoItem field="健康描述" val={healthDescription} full={true} />
-          <InfoItem field="性格" val={character} full={true} />
-          <InfoItem field="外貌描述" val={colorDescription} full={true} />
-          <InfoItem field="名字来源" val={nameOrigin} full={true} />
-          <InfoItem field="出没地点" val={location} full={true} />
-          <InfoItem field="备注" val={notes} full={true} />
-          {(relatedCats ?? relatedCatsDescription) && (
-            <View className="flex flex-col w-full font-light mt-4">
-              <Text className="block text-xs text-gray-500">关系</Text>
-              {relatedCatsDescription && (
-                <Text className="block text-sm">{relatedCatsDescription}</Text>
+    <View className="p-5">
+      <Loadable loading={!cat}>
+        <View className="p-5 bg-white rounded-lg shadow-xl mb-5">
+          <Photo src={_photos?.[0] ?? _avatar} />
+          {noticeDescription && (
+            <View
+              className={classNames(
+                'mt-2 w-full shadow-xl rounded-lg text-sm text-gray-500 p-2 font-light box-border',
+                {
+                  'bg-red-200': noticeLevel === '高',
+                  'bg-yellow-200': noticeLevel === '中',
+                  'bg-blue-200': noticeLevel === '低'
+                }
               )}
-              {relatedCats && (
-                <View className="flex">
-                  {relatedCats.map((cat) => (
-                    <RelatedCatItem key={cat._id} cat={cat} />
-                  ))}
-                </View>
-              )}
+            >
+              {noticeDescription}
             </View>
           )}
-        </View>
+          <Text className="block text-gray-700 text-xl mb-2 font-bold w-full mt-2">{name}</Text>
+          {nickname && <Text className="block text-gray-500 text-sm mb-2 w-full">{nickname}</Text>}
+          <View className="mt-2 flex flex-wrap">
+            {/* 半行 */}
+            <InfoItem field="毛色" val={colorCategory} />
+            <InfoItem field="性别" val={sex} />
+            <InfoItem field="状况" val={status} />
+            <InfoItem field="绝育情况" val={neuteringStatus} />
+            <InfoItem field="绝育时间" val={neuteringDate} />
 
-        {_photos?.slice(1)?.map((src) => (
-          <Photo key={src} src={src} />
-        ))}
-      </View>
-    </Loadable>
+            {/* 整行 */}
+            <InfoItem field="健康状态" val={healthStatus} full={true} />
+            <InfoItem field="健康描述" val={healthDescription} full={true} />
+            <InfoItem field="性格" val={character} full={true} />
+            <InfoItem field="外貌描述" val={colorDescription} full={true} />
+            <InfoItem field="名字来源" val={nameOrigin} full={true} />
+            <InfoItem field="出没地点" val={location} full={true} />
+            <InfoItem field="备注" val={notes} full={true} />
+            {(relatedCats ?? relatedCatsDescription) && (
+              <View className="flex flex-col w-full font-light mt-4">
+                <Text className="block text-xs text-gray-500">关系</Text>
+                {relatedCatsDescription && (
+                  <Text className="block text-sm">{relatedCatsDescription}</Text>
+                )}
+                {relatedCats && (
+                  <View className="flex">
+                    {relatedCats.map((cat) => (
+                      <RelatedCatItem key={cat._id} cat={cat} />
+                    ))}
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+        </View>
+        <Tabs>
+          <TabPanel tab="精选照片">
+            <View className="p-5 pt-0">
+              {_photos?.slice(1)?.map((src) => (
+                <Photo key={src} src={src} />
+              ))}
+            </View>
+          </TabPanel>
+          {/* <TabPanel tab="用户上传">
+            <View />
+          </TabPanel> */}
+        </Tabs>
+      </Loadable>
+    </View>
   );
 };
 
