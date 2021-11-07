@@ -16,7 +16,7 @@ const SciencePopularizingPage = () => {
     <View className="p-5">
       <Tabs>
         {articles.map(({ tab, content, author }) => (
-          <TabPanel key="title" tab={tab}>
+          <TabPanel key={tab} tab={tab}>
             <View className="text-sm text-gray-500 font-light p-4 leading-relaxed">
               <Wemark md={content} />
               <View className="mb-4 w-full text-right">{author}</View>

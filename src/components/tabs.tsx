@@ -3,6 +3,20 @@ import { View } from '@remax/wechat';
 import classNames from 'classnames';
 
 export const Tabs = (props: { children: any }) => {
+  if (React.Children.count(props.children) <= 1) {
+    const { children } = props;
+    const tab = children.props.tab;
+    return (
+      <View className="flex flex-col rounded-lg shadow-xl h-full bg-white">
+        <View className="flex flex-row flex-nowrap h-10 w-full flex-shrink-0">
+          <View className="font-light text-sm flex-grow flex items-center justify-evenly rounded-lg">
+            {tab}
+          </View>
+        </View>
+        <View className="rounded-lg">{children}</View>
+      </View>
+    );
+  }
   const { children: _children } = props;
   const children = _children as React.ReactElement[];
   const tabs = React.Children.map(children, (el) => el.props.tab);
