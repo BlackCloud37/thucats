@@ -10,6 +10,7 @@ export interface SettingState {
   slogan: string;
   associationIcon: string;
   associationLogo: string;
+  associationIntroduction: string;
 }
 
 const initialState: SettingState = {
@@ -17,7 +18,8 @@ const initialState: SettingState = {
   associationName: '',
   slogan: '',
   associationIcon: '',
-  associationLogo: ''
+  associationLogo: '',
+  associationIntroduction: ''
 };
 
 export const settings = createModel<RootModel>()({
