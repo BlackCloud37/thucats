@@ -72,7 +72,10 @@ const CatProfilePage = () => {
     location,
     notes,
     noticeLevel,
-    noticeDescription
+    noticeDescription,
+    nickname,
+    healthStatus,
+    healthDescription
   } = cat ?? {};
 
   const relatedCats = relatedCatIds?.map((id) => allCats[id]);
@@ -94,14 +97,19 @@ const CatProfilePage = () => {
             {noticeDescription}
           </View>
         )}
-        <Text className="block text-gray-700 text-lg mb-2 font-bold w-full mt-2">{name}</Text>
+        <Text className="block text-gray-700 text-xl mb-2 font-bold w-full mt-2">{name}</Text>
+        {nickname && <Text className="block text-gray-500 text-sm mb-2 w-full">{nickname}</Text>}
         <View className="mt-2 flex flex-wrap">
+          {/* 半行 */}
           <InfoItem field="毛色" val={colorCategory} />
           <InfoItem field="性别" val={sex} />
           <InfoItem field="状况" val={status} />
           <InfoItem field="绝育情况" val={neuteringStatus} />
           <InfoItem field="绝育时间" val={neuteringDate} />
 
+          {/* 整行 */}
+          <InfoItem field="健康状态" val={healthStatus} full={true} />
+          <InfoItem field="健康描述" val={healthDescription} full={true} />
           <InfoItem field="性格" val={character} full={true} />
           <InfoItem field="外貌描述" val={colorDescription} full={true} />
           <InfoItem field="名字来源" val={nameOrigin} full={true} />
