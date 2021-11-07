@@ -20,9 +20,9 @@ const Index = () => {
 
   const { fetchSettingsAsync } = useDispatch<Dispatch>().settings;
   React.useEffect(() => {
-    if (!associationName) {
-      fetchSettingsAsync().catch((e) => console.error(e));
-    }
+    // if (!associationName) {
+    fetchSettingsAsync().catch((e) => console.error(e));
+    // }
   }, []);
 
   return (
