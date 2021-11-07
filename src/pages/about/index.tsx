@@ -18,10 +18,21 @@ const About = () => {
         <Text className="block mb-5">
           目前新版小程序正在持续迭代中，会根据需求优先级持续上线功能，预计一周发布一版
         </Text>
-        <Text className="block mb-5">
-          在功能完善后，会将本项目开源，并提供尽量一键的部署方式，敬请期待
+        <Text
+          className="block mb-5"
+          onClick={() => {
+            setClipboardData({
+              data: 'https://github.com/BlackCloud37/thucats/wiki/部署流程',
+              success: () => {
+                showToast({
+                  title: '网址已复制'
+                });
+              }
+            });
+          }}
+        >
+          一键部署教程已经发布在<Text className="underline text-blue-500">Github</Text>，欢迎体验
         </Text>
-        <Text className="block mb-5">本次发布：2021-11-4</Text>
         <Text className="block text-gray-500">联系我们</Text>
         <Text
           className="block mb-2"
@@ -30,7 +41,7 @@ const About = () => {
               data: 'yechenz37@163.com',
               success: () =>
                 showToast({
-                  title: '邮箱已复制到粘贴板'
+                  title: '邮箱已复制'
                 })
             });
           }}
