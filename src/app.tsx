@@ -11,15 +11,9 @@ const persistor = getPersistor();
 
 const App: React.FC = (props) => {
   useAppEvent('onLaunch', () => {
-    console.log('App: onLaunch');
-    cloud.init({});
-    // loadFontFace({
-    //   family: 'YuanTi',
-    //   source:
-    //     'url(https://7468-thucats-3grq39dr7a44e550-1307824186.tcb.qcloud.la/resources/RoundedCN/ResourceHanRoundedCN-Regular.ttf?sign=b5268491cf24923b0888fbd098ddb8c4&t=1635525610)'
-    // })
-    //   .then(console.log)
-    //   .catch(console.error);
+    cloud.init({
+      env: process.env.REMAX_APP_ENVID
+    });
   });
   return (
     <Provider store={store}>
