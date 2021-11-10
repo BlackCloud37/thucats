@@ -81,9 +81,9 @@ const Index = () => {
                 <Image src="/images/cat-2.svg" className="w-28 h-28 absolute -right-6 -bottom-2" />
               </View>
               <View
-                // style={{ backgroundImage: 'linear-gradient(135deg, #00BDFF 0%, #00FFD1 100%)' }}
-                className="bg-gray-200 h-36 w-full rounded-lg relative shadow-lg"
-                onClick={() => navigateTo('404')}
+                style={{ backgroundImage: 'linear-gradient(135deg, #00BDFF 0%, #00FFD1 100%)' }}
+                className="h-36 w-full rounded-lg relative shadow-lg"
+                onClick={() => navigateTo('adopt')}
               >
                 <View className="pl-4 pt-4">
                   <Text className="block text-left">猫咪</Text>

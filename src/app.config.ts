@@ -9,7 +9,8 @@ const config: AppConfig = {
     'pages/science-popularizing/index',
     'pages/webview/index',
     'pages/about/index',
-    'pages/rescue/index'
+    'pages/rescue/index',
+    'pages/adopt/index'
   ],
   window: {
     navigationBarTitleText: '猫咪图鉴',

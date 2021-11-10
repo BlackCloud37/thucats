@@ -29,32 +29,22 @@ const CatListPage = () => {
   }));
 
   const [selectedCats, setSelectedCats] = React.useState<Cat[]>([]);
-  const { allCats, loading } = useSelector((state: RootState) => ({
-    allCats: state.cats.allCats,
+  const { allCatsList, loading } = useSelector((state: RootState) => ({
+    allCatsList: state.cats.allCatsList,
     loading: state.loading.effects.cats.fetchAllCatsAsync
   }));
   const { fetchAllCatsAsync } = useDispatch<Dispatch>().cats;
-  const allCatsList = _l.values(allCats);
 
   React.useEffect(() => {
     fetchAllCatsAsync().catch(console.error);
   }, []);
   React.useEffect(() => {
     setSelectedCats(allCatsList);
-  }, [allCats]);
+  }, [allCatsList]);
 
-  const noticeOrder = {
-    高: 3,
-    中: 2,
-    低: 1,
-    内部: 0
-  };
   const catList =
     _l.size(selectedCats) > 0 ? (
-      _l
-        .sortBy(selectedCats, (c) => (c.noticeLevel ? noticeOrder[c.noticeLevel] : -1), 'name')
-        .reverse()
-        .map((cat: Cat) => <CatItem key={cat._id} cat={cat} />)
+      selectedCats.map((cat: Cat) => <CatItem key={cat._id} cat={cat} />)
     ) : (
       <Text className="block w-full text-sm font-light text-gray-500 text-center">
         这里似乎没有猫咪
@@ -62,8 +52,7 @@ const CatListPage = () => {
     );
 
   const filter = _l.curry(
-    (k: string, v: string) => () =>
-      setSelectedCats(_l.filter(allCatsList, (c) => c[k as keyof Cat] === v))
+    (k: keyof Cat, v: string) => () => setSelectedCats(_l.filter(allCatsList, (c) => c[k] === v))
   );
   const filterByColorCategory = filter('colorCategory');
   return (
@@ -81,7 +70,7 @@ const CatListPage = () => {
           bindlinclear={() => {
             setSelectedCats(allCatsList);
           }}
-          l-class="  text-center mb-5 rounded-lg bg-gray-400 bg-opacity-20 font-semibold text-lg shadow-inner"
+          l-class="text-center mb-5 rounded-lg bg-gray-400 bg-opacity-20 font-semibold text-lg shadow-inner"
           l-row-class="hidden"
         />
         <View className="flex flex-nowrap gap-4 overflow-scroll mb-5">
