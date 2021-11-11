@@ -30,7 +30,7 @@ const Index = () => {
       <Loadable loading={loading} loader="running-cat">
         <View className="p-5">
           {/* 头部 */}
-          <View className="flex flex-col items-start ml-8 mt-8 mb-12">
+          <View className="flex flex-col items-start ml-3 mt-8 mb-12">
             {associationIcon && (
               <Image webp src={associationIcon} mode="widthFix" className="w-20 mb-6" />
             )}
