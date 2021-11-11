@@ -27,7 +27,9 @@ const InfoItem = ({
   return val ? (
     <View className={`flex flex-col ${full ? 'w-full' : 'w-1on2'} font-light mt-4`}>
       <Text className="block text-xs text-gray-500">{field}</Text>
-      <Text className="block text-sm">{val}</Text>
+      <Text selectable className="block text-sm">
+        {val}
+      </Text>
     </View>
   ) : null;
 };
@@ -76,7 +78,9 @@ const CatProfilePage = () => {
     noticeDescription,
     nickname,
     healthStatus,
-    healthDescription
+    healthDescription,
+    adoptDescription,
+    adoptContact
   } = cat ?? {};
 
   const relatedCats = relatedCatIds?.map((id) => allCats[id]);
@@ -116,6 +120,8 @@ const CatProfilePage = () => {
             <InfoItem field="外貌描述" val={colorDescription} full={true} />
             <InfoItem field="名字来源" val={nameOrigin} full={true} />
             <InfoItem field="出没地点" val={location} full={true} />
+            <InfoItem field="领养简介" val={adoptDescription} full={true} />
+            <InfoItem field="领养联系" val={adoptContact} full={true} />
             <InfoItem field="备注" val={notes} full={true} />
             {(relatedCats ?? relatedCatsDescription) && (
               <View className="flex flex-col w-full font-light mt-4">

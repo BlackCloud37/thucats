@@ -25,7 +25,7 @@ export interface Cat {
   colorCategory: '纯黑' | '纯白' | '狸花' | '奶牛' | '橘猫与橘白' | '三花' | '玳瑁'; // 毛色分类
   colorDescription?: string; // 毛色描述, 可选
   sex: '公' | '母' | '未知'; // 性别
-  status: '在野' | '已送养' | '喵星' | '未知'; // 状态
+  status: '在野' | '已送养' | '喵星' | '未知' | '待领养'; // 状态
   neuteringStatus: '未绝育' | '已绝育' | '未知'; // 绝育状态
   neuteringDate?: string; // 绝育大致时间, 可选
   nameOrigin?: string; // 名字来源, 可选
@@ -39,16 +39,20 @@ export interface Cat {
   noticeDescription?: string; // 公告
   healthStatus?: '健康' | '患病' | '未知'; // 健康状况
   healthDescription?: string; // 健康状况描述
+  adoptContact?: string; // 领养联系人
+  adoptDescription?: string; // 领养简介
 }
 
 export interface CatState {
   allCats: {
     [key: string]: Cat;
   };
+  allCatsList: Cat[];
 }
 
 const initialState: CatState = {
-  allCats: {}
+  allCats: {},
+  allCatsList: []
 };
 
 export const cats = createModel<RootModel>()({
@@ -59,9 +63,22 @@ export const cats = createModel<RootModel>()({
       payload.forEach((cat) => {
         id2cats[cat._id] = cat;
       });
+      const noticeOrder = {
+        高: 3,
+        中: 2,
+        低: 1,
+        内部: 0
+      };
       return {
         ...state,
-        allCats: id2cats
+        allCats: id2cats,
+        allCatsList: _l
+          .sortBy(
+            _l.values(id2cats),
+            (c) => (c.noticeLevel ? noticeOrder[c.noticeLevel] : -1),
+            'name'
+          )
+          .reverse()
       };
     }
   },
@@ -69,12 +86,12 @@ export const cats = createModel<RootModel>()({
     async fetchAllCatsAsync(_, state) {
       // TODO: BUG: 无法同步被删除的猫咪
       console.log('fetchAllCatsAsync');
-      const { allCats } = state.cats;
-      const updatedTime = _l.maxBy(_l.values(allCats), (cat) => cat._updateTime)?._updateTime ?? 0;
+      const { allCatsList } = state.cats;
+      const updatedTime = _l.maxBy(allCatsList, (cat) => cat._updateTime)?._updateTime ?? 0;
 
       console.log(`local updated time of cat is ${updatedTime}`);
       let needFetch = false;
-      if (updatedTime <= 0 || _l.isEmpty(allCats)) {
+      if (updatedTime <= 0 || _l.isEmpty(allCatsList)) {
         // 无数据，直接拉
         console.log('theres no data, need fetch');
         needFetch = true;
@@ -85,8 +102,8 @@ export const cats = createModel<RootModel>()({
           needFetch = true;
         } else {
           const count = await fetchCount(COLLECTION_NAME);
-          console.log(`server count is ${count} local count is ${_l.size(allCats)}`);
-          if (count !== _l.size(allCats)) {
+          console.log(`server count is ${count} local count is ${_l.size(allCatsList)}`);
+          if (count !== _l.size(allCatsList)) {
             needFetch = true;
           }
         }
