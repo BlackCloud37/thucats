@@ -9,31 +9,42 @@
   "license": "MIT",
   "scripts": {
     "dev": "remax build -t wechat -w",
-    "build": "cross-env NODE_ENV=production remax build -t wechat",
+    "build-schema": "node ./scripts/gen-schemas.js",
+    "build-cloudfunctions": "rollup -c",
+    "build-mp": "cross-env NODE_ENV=production remax build -t wechat",
+    "build": "cross-env NODE_ENV=production remax build -t wechat && rollup -c",
     "lint": "eslint src --ext .ts,.tsx",
-    "fix": "prettier --write ./src ",
+    "fix": "prettier --write ./src",
     "prepare": "husky install",
     "deploy": "cloudbase framework deploy"
   },
   "lint-staged": {
-    "**/*.{js,ts,tsx}": [
+    "!(extensions/**/*)*.{js,ts,tsx}": [
       "npm run fix",
-      "npm run lint"
+      "npm run lint",
+      "git add ."
     ]
   },
   "dependencies": {
+    "@cloudbase/node-sdk": "^2.7.1",
     "@rematch/core": "^2.1.0",
     "@rematch/loading": "^2.1.1",
+    "@rematch/persist": "^2.1.0",
     "classnames": "^2.3.1",
+    "lin-ui": "^0.9.4",
+    "lodash": "^4.17.21",
     "react": "^16.14.0",
     "react-redux": "^7.2.5",
     "redux": "^4.1.1",
+    "redux-persist": "^6.0.0",
     "remax": "^2.9.1"
   },
   "devDependencies": {
     "@cloudbase/cli": "^1.9.2",
     "@commitlint/cli": "^13.2.1",
     "@commitlint/config-conventional": "^13.2.0",
+    "@types/classnames": "^2.3.1",
+    "@types/lodash": "^4.14.176",
     "@types/react": "^16.14.2",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
@@ -45,6 +56,16 @@
     "husky": "^7.0.0",
     "lint-staged": "^11.2.3",
     "prettier": "^2.4.1",
-    "typescript": "^4.4.4"
-  }
+    "rollup": "^2.58.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-typescript": "^1.0.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.4",
+    "typescript-json-schema": "^0.51.0"
+  },
+  "eslintIgnore": [
+    "src/components/wemark/*",
+    "extensions/**/*"
+  ]
 }

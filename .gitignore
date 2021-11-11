@@ -7,3 +7,4 @@
 private.key
 qrcode.jpg
 .env
+output/

@@ -1,36 +1,10 @@
-# Remax Wechat With TypeScript
+# THU Cats
 
-使用 Remax 开发微信小程序。
+部署你的猫咪图鉴小程序
 
-## Getting Start
+## 如何使用
 
-安装依赖
-
-```bash
-npm install
-```
-
-调试项目
-
-```bash
-# 执行调试命令
-$ npm run dev
-or
-yarn dev
-```
-
-使用小程序开发者工具打开项目下的 `dist` 目录
-
-## 构建
-
-```bash
-# 执行构建命令
-$ npm run build
-or
-$ yarn build
-```
-
-使用小程序开发者工具打开项目下的 `dist` 目录，上传代码即可。
+参考[部署流程](https://github.com/BlackCloud37/thucats/wiki/部署流程)
 
 ## 工程化
 
@@ -41,9 +15,11 @@ $ yarn build
 - [x] husky
 - [x] lint in CI
 - [x] rematch
-- [ ] typescript 云函数
-- [ ] UI库
-- [ ] 数据库定义
+- [x] typescript 云函数
+- [x] UI库
+  - [x] lin-ui
+- [x] 数据库定义
+  - [x] 添加schema验证
 
 ## 开发环境
 

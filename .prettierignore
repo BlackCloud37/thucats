@@ -4,3 +4,5 @@ node_modules
 .husky
 .github
 dist
+extensions/**/*
+src/components/wemark

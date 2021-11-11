@@ -9,9 +9,10 @@
     "rootDir": "src",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "*": ["src/typings/*"]
     },
-    "lib": ["DOM", "ES2015"]
+    "lib": ["DOM", "ES2016"]
   },
-  "include": ["src/**/*", "typings/**/*"]
+  "include": ["src/**/*", "src/typings/**/*"]
 }

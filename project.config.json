@@ -1,6 +1,6 @@
 {
   "miniprogramRoot": "dist/",
-  "cloudfunctionRoot": "src/cloudfunctions",
+  "cloudfunctionRoot": "cloudfunctions/",
   "setting": {
     "urlCheck": false,
     "es6": false,
@@ -35,6 +35,7 @@
     "packNpmRelationList": [],
     "minifyWXSS": true,
     "disableUseStrict": false,
+    "minifyWXML": true,
     "showES6CompileOption": false,
     "useCompilerPlugins": false
   },
