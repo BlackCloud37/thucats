@@ -14,7 +14,7 @@ const About = () => {
   return (
     <>
       <View className="m-5 p-5 bg-white rounded-lg shadow-xl flex flex-col items-start font-light text-sm">
-        <Image src={associationLogo} mode="widthFix" className="w-2on3 mb-5 self-center" />
+        <Image webp src={associationLogo} mode="widthFix" className="w-2on3 mb-5 self-center" />
         <Wemark md={associationIntroduction} />
         <Text
           className="block mb-5 w-full text-center"

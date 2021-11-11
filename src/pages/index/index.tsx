@@ -32,7 +32,7 @@ const Index = () => {
           {/* 头部 */}
           <View className="flex flex-col items-start ml-8 mt-8 mb-12">
             {associationIcon && (
-              <Image src={associationIcon} mode="widthFix" className="w-20 mb-6" />
+              <Image webp src={associationIcon} mode="widthFix" className="w-20 mb-6" />
             )}
             <Text className="text-lg block text-black font-semibold mb-1dot5">
               {associationName}
