@@ -36,7 +36,7 @@
           },
           "commands": {
             "install": "npm install",
-            "build": "npm run build-mp"
+            "build": "REMAX_APP_ENVID={{ env.ENV_ID }} npm run build-mp"
           }
         }
       }
