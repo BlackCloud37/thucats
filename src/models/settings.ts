@@ -1,8 +1,7 @@
 import { createModel } from '@rematch/core';
 import type { RootModel } from './models';
-import { cloud } from 'remax/wechat';
-
-const COLLECTION_NAME = 'settings';
+import wxRequest from 'wechat-request';
+import { callApi } from './apis';
 
 export interface SettingState {
   navigationBarTitleText: string;
@@ -34,8 +33,13 @@ export const settings = createModel<RootModel>()({
   },
   effects: (dispatch) => ({
     async fetchSettingsAsync() {
-      const db = cloud.database();
-      const { data } = await db.collection(COLLECTION_NAME).limit(1).get();
+      const { data } = await callApi(
+        wxRequest.get(`/settings`, {
+          params: {
+            limit: 1
+          }
+        })
+      );
       console.log(data[0]);
       dispatch.settings.settings(data[0]);
     }

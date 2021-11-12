@@ -7,6 +7,15 @@ import '@/styles/tailwind.css';
 import { useAppEvent } from '@remax/framework-shared';
 import { getPersistor } from '@rematch/persist';
 import { PersistGate } from 'redux-persist/es/integration/react';
+import wxRequest from 'wechat-request';
+
+// TODO: config
+// @ts-ignore
+wxRequest.defaults.baseURL =
+  'https://thucats-3grq39dr7a44e550-1307824186.ap-shanghai.service.tcloudbase.com/api/v1.0';
+// @ts-ignore
+wxRequest.defaults.headers.post['Content-Type'] = 'application/json';
+
 const persistor = getPersistor();
 
 const App: React.FC = (props) => {
