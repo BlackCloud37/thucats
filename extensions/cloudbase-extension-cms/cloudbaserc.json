@@ -151,7 +151,19 @@
             },
             {
               "collectionName": "users",
-              "aclTag": "PRIVATE"
+              "aclTag": "PRIVATE",
+              "createIndexes": [
+                {
+                  "name": "查询索引",
+                  "unique": true,
+                  "keys": [
+                    {
+                      "name": "openid",
+                      "direction": "1"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
