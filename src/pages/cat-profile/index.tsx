@@ -10,6 +10,7 @@ import { navigateTo } from '@/utils';
 import classNames from 'classnames';
 import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
+import Clipable from '@/components/clipable';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -18,18 +19,26 @@ export interface CatProfilePayload {
 const InfoItem = ({
   field,
   val,
-  full = false
+  full = false,
+  clipable = false
 }: {
   field: string;
   val: string | undefined;
   full?: boolean;
+  clipable?: boolean;
 }) => {
+  const text = (
+    <Text
+      selectable
+      className={classNames('block text-sm', { 'underline text-blue-500': clipable })}
+    >
+      {val}
+    </Text>
+  );
   return val ? (
     <View className={`flex flex-col ${full ? 'w-full' : 'w-1on2'} font-light mt-4`}>
       <Text className="block text-xs text-gray-500">{field}</Text>
-      <Text selectable className="block text-sm">
-        {val}
-      </Text>
+      {clipable ? <Clipable clipContent={val}>{text}</Clipable> : text}
     </View>
   ) : null;
 };
@@ -80,7 +89,9 @@ const CatProfilePage = () => {
     healthStatus,
     healthDescription,
     adoptDescription,
-    adoptContact
+    adoptContact,
+    birthday,
+    age
   } = cat ?? {};
 
   const relatedCats = relatedCatIds?.map((id) => allCats[id]);
@@ -110,23 +121,25 @@ const CatProfilePage = () => {
             <InfoItem field="毛色" val={colorCategory} />
             <InfoItem field="性别" val={sex} />
             <InfoItem field="状况" val={status} />
+            <InfoItem field="年龄" val={age} />
+            <InfoItem field="生日" val={birthday} />
             <InfoItem field="绝育情况" val={neuteringStatus} />
             <InfoItem field="绝育时间" val={neuteringDate} />
 
             {/* 整行 */}
-            <InfoItem field="健康状态" val={healthStatus} full={true} />
-            <InfoItem field="健康描述" val={healthDescription} full={true} />
-            <InfoItem field="性格" val={character} full={true} />
-            <InfoItem field="外貌描述" val={colorDescription} full={true} />
-            <InfoItem field="名字来源" val={nameOrigin} full={true} />
-            <InfoItem field="出没地点" val={location} full={true} />
+            <InfoItem field="健康状态" val={healthStatus} full />
+            <InfoItem field="健康描述" val={healthDescription} full />
+            <InfoItem field="性格" val={character} full />
+            <InfoItem field="外貌描述" val={colorDescription} full />
+            <InfoItem field="名字来源" val={nameOrigin} full />
+            <InfoItem field="出没地点" val={location} full />
             {status === '待领养' && (
               <>
-                <InfoItem field="领养简介" val={adoptDescription} full={true} />
-                <InfoItem field="领养联系" val={adoptContact} full={true} />
+                <InfoItem field="领养简介" val={adoptDescription} full />
+                <InfoItem field="领养联系" val={adoptContact} full clipable />
               </>
             )}
-            <InfoItem field="备注" val={notes} full={true} />
+            <InfoItem field="备注" val={notes} full />
             {(relatedCats ?? relatedCatsDescription) && (
               <View className="flex flex-col w-full font-light mt-4">
                 <Text className="block text-xs text-gray-500">关系</Text>
