@@ -163,7 +163,22 @@ async function addProject(project, context) {
   const projectCollectionName = `${resourcePrefix}-projects`
 
   await manager.database.createCollectionIfNotExists(projectCollectionName)
-  await db.collection(projectCollectionName).add(project)
+  
+  const {
+    data: [record],
+  } = await db
+    .collection(projectCollectionName)
+    .where({
+      _id: project._id
+    })
+    .get()
+
+  if (record) {
+    // do nothing
+  } else {
+    // 记录不存在，添加
+    await db.collection(projectCollectionName).add(project)
+  }
 }
 
 
