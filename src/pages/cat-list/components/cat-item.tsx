@@ -30,7 +30,12 @@ export default ({ cat, adopt = false }: { cat: Cat; adopt?: boolean }) => {
       onClick={() => navigateTo('cat-profile', { catKey: cat._id })}
     >
       <View className="flex h-20">
-        <LAvatar size={160} src={_avatar ?? '/images/default-cat.jpg'} shape="square" />
+        <LAvatar
+          size={160}
+          src={_avatar ?? '/images/default-cat.jpg'}
+          shape="square"
+          mode="widthFix"
+        />
         <View className="pl-5 flex flex-col">
           <Text className="text-black text-lg">{name}</Text>
           <View className="flex flex-col items-start text-xs text-gray-500 gap-2">

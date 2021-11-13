@@ -33,6 +33,8 @@ export interface Cat extends JsonDbObject {
   healthDescription?: string; // 健康状况描述
   adoptContact?: string; // 领养联系人
   adoptDescription?: string; // 领养简介
+  age?: string;
+  birthday?: string;
 }
 
 export interface CatState {
