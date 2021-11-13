@@ -24,7 +24,7 @@ var EController;
 // Modify: add new EActions
 var EUserActions;
 (function (EUserActions) {
-    EUserActions["GetOpenid"] = "getOpenid";
+    EUserActions["Login"] = "login";
 })(EUserActions || (EUserActions = {}));
 var ECatAcions;
 (function (ECatAcions) {
@@ -38,14 +38,33 @@ class CatController extends BaseController {
     }
 }
 
+const COLLECTION_NAME = 'users';
 class UserController extends BaseController {
-    async [EUserActions.GetOpenid]() {
+    async [EUserActions.Login]() {
         const wxContext = cloud.getWXContext();
         const openid = wxContext.OPENID;
-        // const resp: UserOpenidResult = {};
-        return this.success({
+        const { data: [record] } = await db
+            .collection(COLLECTION_NAME)
+            .where({
             openid
-        });
+        })
+            .get();
+        if (record) {
+            return this.success(record);
+        }
+        else {
+            // 如果数据库里没有，则新建
+            await db.collection(COLLECTION_NAME).add({
+                data: {
+                    openid,
+                    role: 0
+                }
+            });
+            return this.success({
+                openid,
+                role: 0
+            });
+        }
     }
 }
 

@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm run build-cloudfunctions && npm run build-schema && npx lint-staged
+# npm run build-cloudfunctions && npm run build-schema && npx lint-staged

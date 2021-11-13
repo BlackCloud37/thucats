@@ -13,7 +13,7 @@ export type ActionFor<C extends EController> =
 
 // Modify: add new EActions
 export const enum EUserActions {
-  GetOpenid = 'getOpenid'
+  Login = 'login'
 }
 
 export const enum ECatAcions {
