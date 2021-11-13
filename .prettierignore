@@ -6,3 +6,4 @@ node_modules
 dist
 extensions/**/*
 src/components/wemark
+cloudfunctions/**/*
