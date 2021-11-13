@@ -120,8 +120,12 @@ const CatProfilePage = () => {
             <InfoItem field="外貌描述" val={colorDescription} full={true} />
             <InfoItem field="名字来源" val={nameOrigin} full={true} />
             <InfoItem field="出没地点" val={location} full={true} />
-            <InfoItem field="领养简介" val={adoptDescription} full={true} />
-            <InfoItem field="领养联系" val={adoptContact} full={true} />
+            {status === '待领养' && (
+              <>
+                <InfoItem field="领养简介" val={adoptDescription} full={true} />
+                <InfoItem field="领养联系" val={adoptContact} full={true} />
+              </>
+            )}
             <InfoItem field="备注" val={notes} full={true} />
             {(relatedCats ?? relatedCatsDescription) && (
               <View className="flex flex-col w-full font-light mt-4">
