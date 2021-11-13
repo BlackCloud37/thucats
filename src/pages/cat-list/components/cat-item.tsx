@@ -4,6 +4,7 @@ import { Text, View } from '@remax/wechat';
 import * as React from 'react';
 import classNames from 'classnames';
 import LAvatar from 'lin-ui/dist/avatar';
+import Clipable from '@/components/clipable';
 
 const Tag = ({ tag, className = 'bg-gray-200' }: { tag: string; className?: string }) => {
   return tag !== '未知' ? (
@@ -63,7 +64,9 @@ export default ({ cat, adopt = false }: { cat: Cat; adopt?: boolean }) => {
           {adoptContact && (
             <View>
               <Text className="font-normal">领养联系: </Text>
-              <Text className="text-blue-500 underline">{adoptContact}</Text>
+              <Clipable clipContent={adoptContact}>
+                <Text className="text-blue-500 underline">{adoptContact}</Text>
+              </Clipable>
             </View>
           )}
         </View>

@@ -148,6 +148,10 @@
             {
               "collectionName": "settings",
               "aclTag": "READONLY"
+            },
+            {
+              "collectionName": "users",
+              "aclTag": "PRIVATE"
             }
           ]
         }
