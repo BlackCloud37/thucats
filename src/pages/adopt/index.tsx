@@ -1,6 +1,7 @@
 import { Cat } from '@/models/cats';
 import { Dispatch, RootState } from '@/models/store';
 import { Text, View } from '@remax/wechat';
+import { usePageEvent } from '@remax/macro';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { default as _l } from 'lodash';
@@ -8,6 +9,11 @@ import Loadable from '@/components/loadable';
 import CatItem from '@/pages/cat-list/components/cat-item';
 
 const AdoptPage = () => {
+  usePageEvent('onShareAppMessage', () => ({
+    title: '猫咪领养',
+    path: '/pages/adopt/index'
+  }));
+
   const [selectedCats, setSelectedCats] = React.useState<Cat[]>([]);
   const { allCatsList, loading } = useSelector((state: RootState) => ({
     allCatsList: state.cats.allCatsList,
