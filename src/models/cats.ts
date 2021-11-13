@@ -1,20 +1,13 @@
 import { createModel } from '@rematch/core';
 import { callApi } from './apis';
 // import { requestCloudApi } from './apis';
-import type { RootModel } from './models';
+import type { JsonDbObject, RootModel } from './models';
 import { default as _l } from 'lodash';
 import wxRequest from 'wechat-request';
 
 type FileID = string;
 
-export interface Cat {
-  // _前缀的字段默认隐藏
-  // 系统字段
-  _id: string; // 唯一ID
-  _createTime: number;
-  _updateTime: number;
-
-  // 用户字段，隐藏或不直接展示
+export interface Cat extends JsonDbObject {
   _avatar?: FileID; // 头像
   _photos?: FileID[]; // 其他照片
 

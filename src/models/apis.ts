@@ -55,7 +55,7 @@ export async function requestCloudApi<C extends EController>(
     }
   } catch (e) {
     console.error(e);
-    Promise.reject(e);
+    return Promise.reject(e);
   }
 }
 

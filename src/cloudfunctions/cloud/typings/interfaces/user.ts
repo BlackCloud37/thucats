@@ -1,3 +1,3 @@
-export interface UserOpenidResult {
-  openid: string;
-}
+import { User } from '@/models/users';
+
+export type UserLoginResult = User;
