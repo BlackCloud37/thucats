@@ -10,8 +10,7 @@ import Loadable from '@/components/loadable';
 const Index = () => {
   const { associationName, associationIcon, slogan, loading } = useSelector((state: RootState) => ({
     ...state.settings,
-    loading:
-      state.loading.effects.settings.fetchSettingsAsync || state.loading.effects.users.loginAsync
+    loading: state.loading.effects.settings.fetchSettingsAsync
   }));
 
   usePageEvent('onShareAppMessage', () => ({
@@ -20,17 +19,17 @@ const Index = () => {
   }));
 
   const { fetchSettingsAsync } = useDispatch<Dispatch>().settings;
-  const { loginAsync, checkPermission } = useDispatch<Dispatch>().users;
+  // const { loginAsync, checkPermission } = useDispatch<Dispatch>().users;
 
   React.useEffect(() => {
     fetchSettingsAsync().catch(console.error);
-    loginAsync()
-      .then(() => {
-        console.log(checkPermission('admin'));
-        console.log(checkPermission('operator'));
-        console.log(checkPermission('normal'));
-      })
-      .catch(console.error);
+    // loginAsync()
+    //   .then(() => {
+    //     console.log(checkPermission('admin'));
+    //     console.log(checkPermission('operator'));
+    //     console.log(checkPermission('normal'));
+    //   })
+    //   .catch(console.error);
   }, []);
 
   return (
