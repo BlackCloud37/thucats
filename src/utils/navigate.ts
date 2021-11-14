@@ -11,7 +11,8 @@ export type Pages =
   | 'science-popularizing'
   | 'webview'
   | 'rescue'
-  | 'adopt';
+  | 'adopt'
+  | 'profile';
 /* 
    跳转到目标页面，并附带payload作为参数
    payload在目标页面中onLoad的option中取出
