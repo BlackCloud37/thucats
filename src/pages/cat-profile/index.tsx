@@ -71,7 +71,7 @@ const CatProfilePage = () => {
     name,
     sex,
     colorCategory,
-    relatedCats: relatedCatIds,
+    relatedCats,
     relatedCatsDescription,
     _photos,
     _avatar,
@@ -94,7 +94,6 @@ const CatProfilePage = () => {
     age
   } = cat ?? {};
 
-  const relatedCats = relatedCatIds?.map((id) => allCats[id]);
   return (
     <View className="p-5">
       <Loadable loading={!cat}>
@@ -148,9 +147,10 @@ const CatProfilePage = () => {
                 )}
                 {relatedCats && (
                   <View className="flex">
-                    {relatedCats.map((cat) => (
-                      <RelatedCatItem key={cat._id} cat={cat} />
-                    ))}
+                    {relatedCats.map((cat) => {
+                      console.log(cat);
+                      return cat && <RelatedCatItem key="" cat={cat} />;
+                    })}
                   </View>
                 )}
               </View>
