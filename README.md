@@ -24,4 +24,6 @@
 ## 开发环境
 
 - VS Code
-  - `ESLint`，`Prettier - Code formatter`，`Prettier ESLint`插件
+  - `ESLint`，`Prettier - Code formatter`，`Prettier ESLint`，`IntelliSense for CSS class names in HTML`插件
+
+- 在根目录`npm install`，然后`npm run dev`，在小程序开发者工具里运行
