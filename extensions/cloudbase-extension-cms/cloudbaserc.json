@@ -164,6 +164,30 @@
                   ]
                 }
               ]
+            },
+            {
+              "collectionName": "requests",
+              "aclTag": "READONLY",
+              "createIndexes": [
+                {
+                  "name": "查询索引",
+                  "unique": false,
+                  "keys": [
+                    {
+                      "name": "status",
+                      "direction": "1"
+                    },
+                    {
+                      "name": "applicant",
+                      "direction": "1"
+                    },
+                    {
+                      "name": "requestType",
+                      "direction": "1"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }

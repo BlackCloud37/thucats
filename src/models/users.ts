@@ -1,9 +1,17 @@
-import { EController, EUserActions, UserLoginResult } from '@/cloudfunctions/cloud/typings';
+import {
+  EController,
+  EUserActions,
+  UserLoginRequest,
+  UserLoginResult
+} from '@/cloudfunctions/cloud/typings';
 import { createModel } from '@rematch/core';
 import { requestCloudApi } from './apis';
 import type { JsonDbObject, RootModel } from './models';
 
 export interface User extends Partial<JsonDbObject> {
+  nickName: string;
+  avatarUrl: string;
+
   openid: string;
   role: 999 | 100 | 0;
 }
@@ -46,9 +54,17 @@ export const users = createModel<RootModel>()({
     },
 
     // 登录后才能用管理员功能及上传图片
-    async loginAsync() {
+    async loginAsync(payload: {
+      userInfo: {
+        nickName: string;
+        avatarUrl: string;
+      };
+    }) {
       console.log('Login start');
-      requestCloudApi(EController.User, EUserActions.Login)
+      console.log(payload);
+      const { userInfo } = payload;
+      const req: UserLoginRequest = userInfo;
+      requestCloudApi(EController.User, EUserActions.Login, req)
         .then(async (result: UserLoginResult) => {
           console.log(result);
           dispatch.users.user(result);

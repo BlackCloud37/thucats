@@ -10,7 +10,8 @@ const config: AppConfig = {
     'pages/webview/index',
     'pages/about/index',
     'pages/rescue/index',
-    'pages/adopt/index'
+    'pages/adopt/index',
+    'pages/profile/index'
   ],
   window: {
     navigationBarTitleText: '猫咪图鉴',

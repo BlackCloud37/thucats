@@ -5,12 +5,14 @@ class BaseController {
      * 调用成功
      */
     success(data) {
+        console.log('success with data', data);
         return { code: 0, data };
     }
     /**
      * 调用失败
      */
     fail(errCode = 0, errMsg = '') {
+        console.log('fail with errorcode ', errCode, ' and msg ', errMsg);
         return { errCode, errMsg, code: -1 };
     }
 }
@@ -40,7 +42,7 @@ class CatController extends BaseController {
 
 const COLLECTION_NAME = 'users';
 class UserController extends BaseController {
-    async [EUserActions.Login]() {
+    async [EUserActions.Login]({ avatarUrl, nickName }) {
         const wxContext = cloud.getWXContext();
         const openid = wxContext.OPENID;
         const { data: [record] } = await db
@@ -49,21 +51,34 @@ class UserController extends BaseController {
             openid
         })
             .get();
+        console.log('record', record);
         if (record) {
-            return this.success(record);
+            const newRecord = {
+                ...record,
+                avatarUrl: avatarUrl ? avatarUrl : record.avatarUrl,
+                nickName: nickName ? nickName : record.nickName
+            };
+            await db.collection(COLLECTION_NAME).doc(record._id).update({
+                data: newRecord
+            });
+            return this.success(newRecord);
         }
         else {
+            if (!nickName || !avatarUrl) {
+                return this.fail(500, '必须提供用户信息');
+            }
             // 如果数据库里没有，则新建
-            await db.collection(COLLECTION_NAME).add({
-                data: {
-                    openid,
-                    role: 0
-                }
-            });
-            return this.success({
+            const defaultRole = 0;
+            const newRecord = {
+                nickName,
+                avatarUrl,
                 openid,
-                role: 0
+                role: defaultRole
+            };
+            await db.collection(COLLECTION_NAME).add({
+                data: newRecord
             });
+            return this.success(newRecord);
         }
     }
 }
