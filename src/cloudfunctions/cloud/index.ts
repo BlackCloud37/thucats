@@ -12,8 +12,8 @@ global._ = db.command;
 global.$ = _.aggregate;
 
 import CatController from './controllers/cat-controller';
-import UserController from './controllers/user-controller';
-import ApplicationController from './controllers/request';
+import UserController from './controllers/user/controller';
+import ApplicationController from './controllers/request/request';
 import { CloudFunctionEvent, EController, Response } from './typings';
 
 // Modify: map controller to controller class

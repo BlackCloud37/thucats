@@ -14,7 +14,11 @@ import wxRequest from 'wechat-request';
 wxRequest.defaults.baseURL =
   'https://thucats-3grq39dr7a44e550-1307824186.ap-shanghai.service.tcloudbase.com/api/v1.0';
 // @ts-ignore
-wxRequest.defaults.headers.post['Content-Type'] = 'application/json';
+wxRequest.defaults.headers['Content-Type'] = 'application/json';
+// @ts-ignore
+wxRequest.defaults.headers[
+  'Authorization'
+] = `Bearer cJHphmsIB2iUgQRzFvtZNvlOhG_pxv3_EnZV6BGzCXiMEt15ll-K2oM3QvVpz3pVkrkrvFnp8VUuAjfMjpOyLHzC1AtFKV3oSBpESyeRr4AQbGFUAnE_XjN3CGRkHFRf`;
 
 const persistor = getPersistor();
 

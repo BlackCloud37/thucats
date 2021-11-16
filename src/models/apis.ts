@@ -11,16 +11,16 @@ export async function callApi(promise: Promise<any>): Promise<any> {
     status: number;
     statusText: string;
   } = await promise;
-  if (status === 200) {
-    console.log('callApi', data, status, statusText);
-    return Promise.resolve(data);
-  } else {
+  if (status === 500 || status === 403) {
     showToast({
       title: '请求错误',
       icon: 'error'
     });
     console.error('callApi', status, statusText);
     return Promise.reject(Error(statusText));
+  } else {
+    console.log('callApi', data, status, statusText);
+    return Promise.resolve(data);
   }
 }
 
