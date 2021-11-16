@@ -20,11 +20,20 @@ export interface User extends Partial<JsonDbObject> {
   roles: Role[];
 }
 
-export interface UserState {
-  user?: User;
+export interface Request extends Partial<JsonDbObject> {
+  applicant: User;
+  requestType: 'permission' | 'imageUpload';
+  status: 'pending' | 'approved' | 'denied';
 }
 
-const initialState: UserState = {};
+export interface UserState {
+  user?: User;
+  requests: Request[];
+}
+
+const initialState: UserState = {
+  requests: [] // TODO: init requests with empty arr
+};
 
 const roles2RoleSet = (roles: Role[]): Set<Role> => {
   const roleSet = new Set(roles);
@@ -41,6 +50,13 @@ export const users = createModel<RootModel>()({
       return {
         ...state,
         user
+      };
+    },
+    requests(state, requests: Request[]) {
+      // TODO: understand what happened here
+      return {
+        ...state,
+        requests
       };
     }
   },
@@ -91,6 +107,13 @@ export const users = createModel<RootModel>()({
           dispatch.users.user(result);
         })
         .catch(console.error);
+    },
+
+    async getRequests() {
+      // TODO: 1. fetch all `pending` requests from server
+      //       2. dispatch them to reducer `requests`
+      // const fakeRequests: Request[] = [];
+      // ...
     }
   })
 });

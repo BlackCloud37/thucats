@@ -2,6 +2,9 @@
 const fs = require('fs');
 const path = require('path');
 const tcb = require('@cloudbase/node-sdk');
+const dotenv = require('dotenv');
+dotenv.config(); // load .env
+
 const { exit } = require('process');
 
 const app = tcb.init({

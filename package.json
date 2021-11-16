@@ -31,6 +31,7 @@
     "@rematch/loading": "^2.1.1",
     "@rematch/persist": "^2.1.0",
     "classnames": "^2.3.1",
+    "dotenv": "^10.0.0",
     "lin-ui": "^0.9.4",
     "lodash": "^4.17.21",
     "react": "^16.14.0",
