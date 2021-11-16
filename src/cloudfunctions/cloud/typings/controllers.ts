@@ -23,9 +23,8 @@ export const enum ECatAcions {
 }
 
 export const enum EApplicationActions {
-  SomeMethod = 'somemethod'
   // // 发起申请
   // Create = 'create',
-  // // 同意、取消申请
-  // Update = 'update'
+  // 同意、取消申请
+  Update = 'update'
 }

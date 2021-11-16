@@ -9,9 +9,10 @@ const ProfilePage = () => {
     // loading: state.loading.effects.settings.fetchSettingsAsync
   }));
 
-  const { loginAsync, checkPermission } = useDispatch<Dispatch>().users;
+  const { loginAsync, checkPermission, getRequestsAsync } = useDispatch<Dispatch>().users;
   React.useEffect(() => {
     console.log(checkPermission({ requiredRole: 'operator' }));
+    getRequestsAsync();
   }, []);
 
   return (
@@ -30,7 +31,7 @@ const ProfilePage = () => {
             desc: '获取你的昵称、头像'
           }).then((result) => {
             console.log(result);
-            loginAsync({ userInfo: result.userInfo }).catch(console.error);
+            loginAsync(result.userInfo).catch(console.error);
           });
         }}
       >

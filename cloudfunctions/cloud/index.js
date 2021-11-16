@@ -35,11 +35,10 @@ var ECatAcions;
 })(ECatAcions || (ECatAcions = {}));
 var EApplicationActions;
 (function (EApplicationActions) {
-    EApplicationActions["SomeMethod"] = "somemethod";
     // // 发起申请
     // Create = 'create',
-    // // 同意、取消申请
-    // Update = 'update'
+    // 同意、取消申请
+    EApplicationActions["Update"] = "update";
 })(EApplicationActions || (EApplicationActions = {}));
 
 // declare let global: CloudFnGlobal;
@@ -49,17 +48,80 @@ class CatController extends BaseController {
     }
 }
 
-const COLLECTION_NAME = 'users';
+// import { Role, roles2RoleSet, User } from '@/models/users';
+const roles2RoleSet = (roles) => {
+    const roleSet = new Set(roles);
+    if (roleSet.has('admin')) {
+        roleSet.add('operator');
+    }
+    return roleSet;
+};
+async function update(collectionName, _id, newRecord) {
+    console.log('update', arguments);
+    delete newRecord._id;
+    await db.collection(collectionName).doc(_id).update({
+        data: newRecord
+    });
+    return { ...newRecord, _id };
+}
+async function add(collectionName, newRecord) {
+    console.log('add', arguments);
+    await db.collection(collectionName).add({
+        data: newRecord
+    });
+    return newRecord;
+}
+async function getById(collectionName, _id) {
+    console.log('getById', arguments);
+    const { data } = await db.collection(collectionName).doc(_id).get();
+    console.log('getById result', data);
+    return data;
+}
+function checkPermission(requiredRole, user) {
+    console.log('checkpermission', 'user', user);
+    if (!user) {
+        console.log('no such user');
+        return false;
+    }
+    const { roles } = user;
+    const roleSet = roles2RoleSet(roles);
+    if (roleSet.has(requiredRole)) {
+        return true;
+    }
+    return false;
+}
+
+const COLLECTION_NAME$1 = 'users';
+async function getCurrentUser() {
+    const wxContext = cloud.getWXContext();
+    const openid = wxContext.OPENID;
+    return getUserByOpenid(openid);
+}
+async function updateUser(_id, newRecord) {
+    return update(COLLECTION_NAME$1, _id, newRecord);
+}
+async function addUser(newRecord) {
+    return add(COLLECTION_NAME$1, newRecord);
+}
+async function getUserByOpenid(openid) {
+    const { data: [user] } = await db
+        .collection('users')
+        .where({
+        openid
+    })
+        .get();
+    console.log('get user by openid', user);
+    return user;
+}
+async function getUserById(_id) {
+    return getById(COLLECTION_NAME$1, _id);
+}
+
 class UserController extends BaseController {
     async [EUserActions.Login]({ avatarUrl, nickName }) {
         const wxContext = cloud.getWXContext();
         const openid = wxContext.OPENID;
-        const { data: [record] } = await db
-            .collection(COLLECTION_NAME)
-            .where({
-            openid
-        })
-            .get();
+        const record = await getCurrentUser();
         console.log('record', record);
         if (record) {
             const newRecord = {
@@ -67,11 +129,7 @@ class UserController extends BaseController {
                 avatarUrl: avatarUrl ? avatarUrl : record.avatarUrl,
                 nickName: nickName ? nickName : record.nickName
             };
-            delete newRecord._id;
-            await db.collection(COLLECTION_NAME).doc(record._id).update({
-                data: newRecord
-            });
-            return this.success(newRecord);
+            return this.success(await updateUser(record._id, newRecord));
         }
         else {
             if (!nickName || !avatarUrl) {
@@ -84,17 +142,57 @@ class UserController extends BaseController {
                 openid,
                 roles: []
             };
-            await db.collection(COLLECTION_NAME).add({
-                data: newRecord
-            });
-            return this.success(newRecord);
+            return this.success(await addUser(newRecord));
         }
     }
 }
 
+const COLLECTION_NAME = 'requests';
+async function updateRequest(_id, newRecord) {
+    return update(COLLECTION_NAME, _id, newRecord);
+}
+async function getRequestById(_id) {
+    return getById(COLLECTION_NAME, _id);
+}
+
 class ApplicationController extends BaseController {
-    async [EApplicationActions.SomeMethod]() {
-        return this.fail(404, 'Boomed');
+    async [EApplicationActions.Update]({ requestId, action }) {
+        const user = await getCurrentUser();
+        if (!user) {
+            return this.fail(500, 'No such user');
+        }
+        const record = await getRequestById(requestId);
+        if (record.status !== 'pending') {
+            return this.fail(500, 'Can only update pending request');
+        }
+        const requiredRole = record.requestType === 'imageUpload' ? 'operator' : 'admin';
+        if (!checkPermission(requiredRole, user)) {
+            return this.fail(403, `No permission required role ${requiredRole}`);
+        }
+        // WARNING: no transaction here
+        if (action === 'approve') {
+            switch (record.requestType) {
+                case 'permission': {
+                    const applicantId = record.applicant;
+                    const applicant = await getUserById(applicantId);
+                    console.log('applicant', applicant);
+                    const roleSet = new Set(applicant.roles);
+                    roleSet.add('operator');
+                    const newRecord = {
+                        ...applicant,
+                        roles: Array.from(roleSet)
+                    };
+                    await updateUser(applicantId, newRecord);
+                    break;
+                }
+            }
+        }
+        const newRecord = {
+            ...record,
+            status: action === 'approve' ? 'approved' : 'denied'
+        };
+        await updateRequest(requestId, newRecord);
+        return this.success({ _id: requestId });
     }
 }
 

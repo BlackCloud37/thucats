@@ -1,17 +1,8 @@
-import { Request } from '@/models/users';
-
-export interface CreateApplicationRequest {
-  request: Request;
-}
-
-export interface CreateApplicationResponse {
-  some: string;
-}
-
 export interface UpdateApplicationRequest {
-  some: string;
+  requestId: string;
+  action: 'approve' | 'deny';
 }
 
-export interface UpdateApplicationResponse {
-  some: string;
+export interface UpdateApplicationResult {
+  _id: string;
 }

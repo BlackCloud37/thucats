@@ -33,15 +33,17 @@ export const settings = createModel<RootModel>()({
   },
   effects: (dispatch) => ({
     async fetchSettingsAsync() {
-      const { data } = await callApi(
+      const {
+        data: [setting]
+      } = await callApi(
         wxRequest.get(`/settings`, {
           params: {
             limit: 1
           }
         })
       );
-      console.log(data[0]);
-      dispatch.settings.settings(data[0]);
+      console.log(setting);
+      dispatch.settings.settings(setting);
     }
   })
 });

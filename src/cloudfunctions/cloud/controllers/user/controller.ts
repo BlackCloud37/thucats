@@ -1,4 +1,4 @@
-import BaseController from './base-controller';
+import BaseController from '../base-controller';
 import {
   Response,
   EController,
@@ -6,9 +6,8 @@ import {
   EUserActions,
   UserLoginResult,
   UserLoginRequest
-} from '../typings';
-
-const COLLECTION_NAME = 'users';
+} from '../../typings';
+import { addUser, getCurrentUser, updateUser } from './db';
 
 export default class UserController
   extends BaseController
@@ -20,15 +19,7 @@ export default class UserController
   }: UserLoginRequest): Promise<Response<UserLoginResult>> {
     const wxContext = cloud.getWXContext();
     const openid = wxContext.OPENID;
-
-    const {
-      data: [record]
-    } = await db
-      .collection(COLLECTION_NAME)
-      .where({
-        openid
-      })
-      .get();
+    const record = await getCurrentUser();
 
     console.log('record', record);
     if (record) {
@@ -37,11 +28,8 @@ export default class UserController
         avatarUrl: avatarUrl ? avatarUrl : record.avatarUrl,
         nickName: nickName ? nickName : record.nickName
       };
-      delete newRecord._id;
-      await db.collection(COLLECTION_NAME).doc(record._id).update({
-        data: newRecord
-      });
-      return this.success(newRecord);
+
+      return this.success(await updateUser(record._id!, newRecord));
     } else {
       if (!nickName || !avatarUrl) {
         return this.fail(500, '必须提供用户信息');
@@ -53,10 +41,8 @@ export default class UserController
         openid,
         roles: []
       };
-      await db.collection(COLLECTION_NAME).add({
-        data: newRecord
-      });
-      return this.success(newRecord);
+
+      return this.success(await addUser(newRecord));
     }
   }
 }

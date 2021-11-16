@@ -1,5 +1,4 @@
 import Loadable from '@/components/loadable';
-import { Cat } from '@/models/cats';
 import { RootState } from '@/models/store';
 import LAvatar from 'lin-ui/dist/avatar';
 import { usePageEvent } from '@remax/framework-shared';
@@ -11,6 +10,7 @@ import classNames from 'classnames';
 import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
 import Clipable from '@/components/clipable';
+import { Cat } from '@/cloudfunctions/cloud/controllers/cat/db';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -149,7 +149,7 @@ const CatProfilePage = () => {
                   <View className="flex">
                     {relatedCats.map((cat) => {
                       console.log(cat);
-                      return cat && <RelatedCatItem key="" cat={cat} />;
+                      return cat && <RelatedCatItem key={cat._id} cat={cat} />;
                     })}
                   </View>
                 )}
