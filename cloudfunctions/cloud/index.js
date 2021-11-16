@@ -22,6 +22,7 @@ var EController;
     // Modify: add new controller
     EController["User"] = "user";
     EController["Cat"] = "cat";
+    EController["Application"] = "request"; // Request和请求有歧义，重命名一下
 })(EController || (EController = {}));
 // Modify: add new EActions
 var EUserActions;
@@ -32,6 +33,14 @@ var ECatAcions;
 (function (ECatAcions) {
     ECatAcions["SomeMethod"] = "somemethod";
 })(ECatAcions || (ECatAcions = {}));
+var EApplicationActions;
+(function (EApplicationActions) {
+    EApplicationActions["SomeMethod"] = "somemethod";
+    // // 发起申请
+    // Create = 'create',
+    // // 同意、取消申请
+    // Update = 'update'
+})(EApplicationActions || (EApplicationActions = {}));
 
 // declare let global: CloudFnGlobal;
 class CatController extends BaseController {
@@ -83,6 +92,12 @@ class UserController extends BaseController {
     }
 }
 
+class ApplicationController extends BaseController {
+    async [EApplicationActions.SomeMethod]() {
+        return this.fail(404, 'Boomed');
+    }
+}
+
 // ref: https://developers.weixin.qq.com/community/develop/article/doc/00086cf4f64ab01caf5ab708756813
 // @ts-ignore
 global.cloud = require('wx-server-sdk');
@@ -98,7 +113,8 @@ global.$ = _.aggregate;
 // Modify: map controller to controller class
 const dispatcher = {
     [EController.User]: new UserController(),
-    [EController.Cat]: new CatController()
+    [EController.Cat]: new CatController(),
+    [EController.Application]: new ApplicationController()
 };
 exports.main = async (event, context) => {
     console.log(event);
