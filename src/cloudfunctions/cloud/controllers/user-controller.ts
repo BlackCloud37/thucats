@@ -37,6 +37,7 @@ export default class UserController
         avatarUrl: avatarUrl ? avatarUrl : record.avatarUrl,
         nickName: nickName ? nickName : record.nickName
       };
+      delete newRecord._id;
       await db.collection(COLLECTION_NAME).doc(record._id).update({
         data: newRecord
       });
@@ -46,12 +47,11 @@ export default class UserController
         return this.fail(500, '必须提供用户信息');
       }
       // 如果数据库里没有，则新建
-      const defaultRole: 0 | 100 | 999 = 0;
       const newRecord = {
         nickName,
         avatarUrl,
         openid,
-        role: defaultRole
+        roles: []
       };
       await db.collection(COLLECTION_NAME).add({
         data: newRecord

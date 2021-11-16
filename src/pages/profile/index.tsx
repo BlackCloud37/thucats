@@ -1,24 +1,27 @@
 import * as React from 'react';
-import { View, Text, getUserProfile } from 'remax/wechat';
+import { View, getUserProfile } from 'remax/wechat';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch, RootState } from '@/models/store';
 
 const ProfilePage = () => {
-  const { avatarUrl, nickName, role, loading } = useSelector((state: RootState) => ({
-    ...state.users.user,
-    loading: state.loading.effects.settings.fetchSettingsAsync
+  const { avatarUrl, nickName, roles } = useSelector((state: RootState) => ({
+    ...state.users.user
+    // loading: state.loading.effects.settings.fetchSettingsAsync
   }));
 
   const { loginAsync, checkPermission } = useDispatch<Dispatch>().users;
+  React.useEffect(() => {
+    console.log(checkPermission({ requiredRole: 'operator' }));
+  }, [roles]);
 
   return (
     <View className="p-5">
       {nickName && (
-        <Text>
-          {nickName}
-          {avatarUrl}
-          {role}
-        </Text>
+        <View>
+          <View>{nickName}</View>
+          <View>{avatarUrl}</View>
+          <View>{roles}</View>
+        </View>
       )}
       <View
         className="bg-blue-200"

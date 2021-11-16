@@ -63,7 +63,7 @@ const Index = () => {
               <View
                 // style={{ backgroundImage: 'linear-gradient(135deg, #1BCF7D 0%, #9CFF75 100%)' }}
                 className="bg-gray-200 h-40 w-full rounded-lg relative shadow-lg"
-                onClick={() => navigateTo('404')}
+                onClick={() => navigateTo('profile')}
               >
                 <View className="pl-4 pt-4">
                   <Text className="block text-left">救助</Text>
