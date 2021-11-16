@@ -12,7 +12,7 @@ const ProfilePage = () => {
   const { loginAsync, checkPermission } = useDispatch<Dispatch>().users;
   React.useEffect(() => {
     console.log(checkPermission({ requiredRole: 'operator' }));
-  }, [roles]);
+  }, []);
 
   return (
     <View className="p-5">
