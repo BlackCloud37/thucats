@@ -1,4 +1,5 @@
 import {
+  EApplicationActions,
   EController,
   EUserActions,
   UserLoginRequest,
@@ -7,24 +8,16 @@ import {
 import { navigateTo } from '@/utils';
 import { createModel } from '@rematch/core';
 import { showToast } from 'remax/wechat';
-import { requestCloudApi } from './apis';
-import type { JsonDbObject, RootModel } from './models';
-
-export type Role = 'admin' | 'operator';
-
-export interface User extends Partial<JsonDbObject> {
-  nickName: string;
-  avatarUrl: string;
-
-  openid: string;
-  roles: Role[];
-}
-
-export interface Request extends Partial<JsonDbObject> {
-  applicant: User;
-  requestType: 'permission' | 'imageUpload';
-  status: 'pending' | 'approved' | 'denied';
-}
+import { callApi, requestCloudApi } from './apis';
+import type { RootModel } from './models';
+import wxRequest from 'wechat-request';
+import {
+  UpdateApplicationRequest,
+  UpdateApplicationResult
+} from '@/cloudfunctions/cloud/typings/interfaces';
+import { Role, User } from '@/cloudfunctions/cloud/controllers/user/db';
+import { Request } from '@/cloudfunctions/cloud/controllers/request/db';
+import { roles2RoleSet } from '@/cloudfunctions/cloud/utils';
 
 export interface UserState {
   user?: User;
@@ -32,15 +25,7 @@ export interface UserState {
 }
 
 const initialState: UserState = {
-  requests: [] // TODO: init requests with empty arr
-};
-
-const roles2RoleSet = (roles: Role[]): Set<Role> => {
-  const roleSet = new Set(roles);
-  if (roleSet.has('admin')) {
-    roleSet.add('operator');
-  }
-  return roleSet;
+  requests: []
 };
 
 export const users = createModel<RootModel>()({
@@ -53,7 +38,6 @@ export const users = createModel<RootModel>()({
       };
     },
     requests(state, requests: Request[]) {
-      // TODO: understand what happened here
       return {
         ...state,
         requests
@@ -91,17 +75,10 @@ export const users = createModel<RootModel>()({
     },
 
     // 登录后才能用管理员功能及上传图片
-    async loginAsync(payload: {
-      userInfo: {
-        nickName: string;
-        avatarUrl: string;
-      };
-    }) {
+    async loginAsync(payload: UserLoginRequest) {
       console.log('Login start');
       console.log(payload);
-      const { userInfo } = payload;
-      const req: UserLoginRequest = userInfo;
-      requestCloudApi(EController.User, EUserActions.Login, req)
+      requestCloudApi(EController.User, EUserActions.Login, payload)
         .then(async (result: UserLoginResult) => {
           console.log(result);
           dispatch.users.user(result);
@@ -109,11 +86,50 @@ export const users = createModel<RootModel>()({
         .catch(console.error);
     },
 
-    async getRequests() {
-      // TODO: 1. fetch all `pending` requests from server
-      //       2. dispatch them to reducer `requests`
-      // const fakeRequests: Request[] = [];
-      // ...
+    async getRequestsAsync() {
+      const { checkPermission } = dispatch.users;
+      console.log('Get Requests');
+      if (!checkPermission({ requiredRole: 'operator' })) {
+        console.error('No permission to get requests');
+        return;
+      }
+
+      const query = {
+        status: { $eq: 'pending' },
+        ...(checkPermission({ requiredRole: 'admin' })
+          ? {}
+          : { requestType: { $neq: 'permission' } })
+      };
+
+      const { data } = await callApi(
+        wxRequest.post('/requests/find', {
+          data: { query }
+        })
+      );
+      console.log(data);
+      dispatch.users.requests(data);
+    },
+
+    async createRequestAsync(payload: { request: Request }) {
+      const { request } = payload;
+      console.log('Create Requests');
+      const { data } = await callApi(
+        wxRequest.post('/requests', {
+          data: {
+            // body
+            data: [request]
+          }
+        })
+      );
+      console.log(data);
+    },
+
+    async updateRequestAsync(payload: UpdateApplicationRequest) {
+      requestCloudApi(EController.Application, EApplicationActions.Update, payload)
+        .then(async (result: UpdateApplicationResult) => {
+          console.log(result);
+        })
+        .catch(console.error);
     }
   })
 });

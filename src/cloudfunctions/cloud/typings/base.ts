@@ -22,3 +22,13 @@ export type Response<T> = OkResponse<T> | ErrResponse;
 export type IController<C extends EController> = {
   [key in ActionFor<C>]: any;
 };
+
+export interface JsonDbObject {
+  // _前缀的字段默认隐藏
+  // 系统字段
+  _id: string; // 唯一ID
+  _createTime: number;
+  _updateTime: number;
+}
+
+export type FileID = string;
