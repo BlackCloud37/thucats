@@ -4,16 +4,20 @@ import {
   UserLoginRequest,
   UserLoginResult
 } from '@/cloudfunctions/cloud/typings';
+import { navigateTo } from '@/utils';
 import { createModel } from '@rematch/core';
+import { showToast } from 'remax/wechat';
 import { requestCloudApi } from './apis';
 import type { JsonDbObject, RootModel } from './models';
+
+export type Role = 'admin' | 'operator';
 
 export interface User extends Partial<JsonDbObject> {
   nickName: string;
   avatarUrl: string;
 
   openid: string;
-  role: 999 | 100 | 0;
+  roles: Role[];
 }
 
 export interface UserState {
@@ -21,6 +25,14 @@ export interface UserState {
 }
 
 const initialState: UserState = {};
+
+const roles2RoleSet = (roles: Role[]): Set<Role> => {
+  const roleSet = new Set(roles);
+  if (roleSet.has('admin')) {
+    roleSet.add('operator');
+  }
+  return roleSet;
+};
 
 export const users = createModel<RootModel>()({
   state: initialState,
@@ -33,22 +45,31 @@ export const users = createModel<RootModel>()({
     }
   },
   effects: (dispatch) => ({
-    checkPermission(required: 'admin' | 'operator' | 'normal', state): boolean {
-      if (required === 'normal') {
-        return true;
-      }
+    // 传入需要的权限
+    // 如果toast === true，则如果用户没有权限，会弹窗提示
+    checkPermission(
+      { requiredRole, toast = false }: { requiredRole: Role; toast?: boolean },
+      state
+    ): boolean {
       const { user } = state.users;
       if (!user) {
-        return false;
+        showToast({
+          title: '未登录',
+          icon: 'error'
+        }).then(() => navigateTo('profile'));
+        return false; // not logged in
       }
-      const { role } = user;
-      const roleValue = {
-        admin: 999,
-        operator: 100,
-        normal: 0
-      }[required];
-      if (role >= roleValue) {
+
+      const { roles } = user;
+      const roleSet = roles2RoleSet(roles);
+      if (roleSet.has(requiredRole)) {
         return true;
+      }
+      if (toast) {
+        showToast({
+          title: '没有权限',
+          icon: 'error'
+        });
       }
       return false;
     },
