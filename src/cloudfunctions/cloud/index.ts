@@ -13,12 +13,14 @@ global.$ = _.aggregate;
 
 import CatController from './controllers/cat-controller';
 import UserController from './controllers/user-controller';
+import ApplicationController from './controllers/request';
 import { CloudFunctionEvent, EController, Response } from './typings';
 
 // Modify: map controller to controller class
 const dispatcher = {
   [EController.User]: new UserController(),
-  [EController.Cat]: new CatController()
+  [EController.Cat]: new CatController(),
+  [EController.Application]: new ApplicationController()
 };
 
 exports.main = async <C extends EController>(
