@@ -1,33 +1,24 @@
 // import { User } from '@/models/users';
-import { JsonDbObject } from '../../typings/base';
 import { add, getById, update } from '../../utils';
+import { DbUser } from '@/typings/db';
 
 const COLLECTION_NAME = 'users';
 
-export type Role = 'admin' | 'operator';
-export interface User extends Partial<JsonDbObject> {
-  nickName: string;
-  avatarUrl: string;
-
-  openid: string;
-  roles: Role[];
-}
-
-export async function getCurrentUser(): Promise<User> {
+export async function getCurrentUser(): Promise<DbUser> {
   const wxContext = cloud.getWXContext();
   const openid = wxContext.OPENID;
   return getUserByOpenid(openid);
 }
 
-export async function updateUser(_id: string, newRecord: User): Promise<User> {
+export async function updateUser(_id: string, newRecord: DbUser): Promise<DbUser> {
   return update(COLLECTION_NAME, _id, newRecord);
 }
 
-export async function addUser(newRecord: User): Promise<User> {
+export async function addUser(newRecord: DbUser): Promise<DbUser> {
   return add(COLLECTION_NAME, newRecord);
 }
 
-export async function getUserByOpenid(openid: string): Promise<User> {
+export async function getUserByOpenid(openid: string): Promise<DbUser> {
   const {
     data: [user]
   } = await db
@@ -40,6 +31,6 @@ export async function getUserByOpenid(openid: string): Promise<User> {
   return user;
 }
 
-export async function getUserById(_id: string): Promise<User> {
+export async function getUserById(_id: string): Promise<DbUser> {
   return getById(COLLECTION_NAME, _id);
 }

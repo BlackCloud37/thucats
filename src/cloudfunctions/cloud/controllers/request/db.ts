@@ -1,18 +1,12 @@
-import { JsonDbObject } from '../../typings';
 import { getById, update } from '../../utils';
+import { DbRequest } from '@/typings/db/request';
 
 const COLLECTION_NAME = 'requests';
 
-export interface Request extends Partial<JsonDbObject> {
-  applicant: string;
-  requestType: 'permission' | 'imageUpload';
-  status: 'pending' | 'approved' | 'denied';
-}
-
-export async function updateRequest(_id: string, newRecord: Request): Promise<Request> {
+export async function updateRequest(_id: string, newRecord: DbRequest): Promise<DbRequest> {
   return update(COLLECTION_NAME, _id, newRecord);
 }
 
-export async function getRequestById(_id: string): Promise<Request> {
+export async function getRequestById(_id: string): Promise<DbRequest> {
   return getById(COLLECTION_NAME, _id);
 }

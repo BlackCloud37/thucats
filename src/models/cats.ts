@@ -4,13 +4,13 @@ import { callApi } from './apis';
 import type { RootModel } from './models';
 import { default as _l } from 'lodash';
 import wxRequest from 'wechat-request';
-import { Cat } from '@/cloudfunctions/cloud/controllers/cat/db';
+import { ApiCat } from '@/typings/interfaces';
 
 export interface CatState {
   allCats: {
-    [key: string]: Cat;
+    [key: string]: ApiCat;
   };
-  allCatsList: Cat[];
+  allCatsList: ApiCat[];
 }
 
 const initialState: CatState = {
@@ -21,8 +21,8 @@ const initialState: CatState = {
 export const cats = createModel<RootModel>()({
   state: initialState,
   reducers: {
-    allCats(state, payload: Cat[]) {
-      const id2cats: { [key: string]: Cat } = {};
+    allCats(state, payload: ApiCat[]) {
+      const id2cats: { [key: string]: ApiCat } = {};
       payload.forEach((cat) => {
         id2cats[cat._id] = cat;
       });

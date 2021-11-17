@@ -11,8 +11,9 @@ const ProfilePage = () => {
 
   const { loginAsync, checkPermission, getRequestsAsync } = useDispatch<Dispatch>().users;
   React.useEffect(() => {
-    console.log(checkPermission({ requiredRole: 'operator' }));
-    getRequestsAsync();
+    if (checkPermission({ requiredRole: 'operator' })) {
+      getRequestsAsync();
+    }
   }, []);
 
   return (

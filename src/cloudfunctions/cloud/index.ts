@@ -11,10 +11,10 @@ global._ = db.command;
 // @ts-ignore
 global.$ = _.aggregate;
 
-import CatController from './controllers/cat-controller';
+import CatController from './controllers/cat/controller';
 import UserController from './controllers/user/controller';
-import ApplicationController from './controllers/request/request';
-import { CloudFunctionEvent, EController, Response } from './typings';
+import ApplicationController from './controllers/request/controller';
+import { CloudFunctionEvent, Response, EController } from '@/typings/interfaces';
 
 // Modify: map controller to controller class
 const dispatcher = {
