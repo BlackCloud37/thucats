@@ -35,21 +35,20 @@ var ECatAcions;
 })(ECatAcions || (ECatAcions = {}));
 var EApplicationActions;
 (function (EApplicationActions) {
-    // // 发起申请
-    // Create = 'create',
     // 同意、取消申请
     EApplicationActions["Update"] = "update";
 })(EApplicationActions || (EApplicationActions = {}));
 
-// declare let global: CloudFnGlobal;
 class CatController extends BaseController {
     async [ECatAcions.SomeMethod]() {
         return this.fail(404, 'Boomed');
     }
 }
 
-// import { Role, roles2RoleSet, User } from '@/models/users';
 const roles2RoleSet = (roles) => {
+    if (roles.length === 0) {
+        return new Set();
+    }
     const roleSet = new Set(roles);
     if (roleSet.has('admin')) {
         roleSet.add('operator');
@@ -77,13 +76,11 @@ async function getById(collectionName, _id) {
     console.log('getById result', data);
     return data;
 }
-function checkPermission(requiredRole, user) {
-    console.log('checkpermission', 'user', user);
-    if (!user) {
-        console.log('no such user');
+function checkPermission(requiredRole, roles) {
+    console.log('checkpermission', 'roles', roles);
+    if (!roles) {
         return false;
     }
-    const { roles } = user;
     const roleSet = roles2RoleSet(roles);
     if (roleSet.has(requiredRole)) {
         return true;
@@ -91,6 +88,7 @@ function checkPermission(requiredRole, user) {
     return false;
 }
 
+// import { User } from '@/models/users';
 const COLLECTION_NAME$1 = 'users';
 async function getCurrentUser() {
     const wxContext = cloud.getWXContext();
@@ -166,7 +164,7 @@ class ApplicationController extends BaseController {
             return this.fail(500, 'Can only update pending request');
         }
         const requiredRole = record.requestType === 'imageUpload' ? 'operator' : 'admin';
-        if (!checkPermission(requiredRole, user)) {
+        if (!checkPermission(requiredRole, user.roles)) {
             return this.fail(403, `No permission required role ${requiredRole}`);
         }
         // WARNING: no transaction here
@@ -176,13 +174,12 @@ class ApplicationController extends BaseController {
                     const applicantId = record.applicant;
                     const applicant = await getUserById(applicantId);
                     console.log('applicant', applicant);
-                    const roleSet = new Set(applicant.roles);
-                    roleSet.add('operator');
-                    const newRecord = {
+                    const roleSet = new Set([...applicant.roles, 'operator']); // 默认增加operator权限
+                    const newUser = {
                         ...applicant,
                         roles: Array.from(roleSet)
                     };
-                    await updateUser(applicantId, newRecord);
+                    await updateUser(applicantId, newUser);
                     break;
                 }
             }

@@ -3,25 +3,22 @@ import {
   EController,
   EUserActions,
   UserLoginRequest,
-  UserLoginResult
-} from '@/cloudfunctions/cloud/typings';
-import { navigateTo } from '@/utils';
+  UserLoginResult,
+  UpdateApplicationRequest,
+  UpdateApplicationResult,
+  ApiRequest
+} from '@/typings/interfaces';
 import { createModel } from '@rematch/core';
 import { showToast } from 'remax/wechat';
 import { callApi, requestCloudApi } from './apis';
 import type { RootModel } from './models';
 import wxRequest from 'wechat-request';
-import {
-  UpdateApplicationRequest,
-  UpdateApplicationResult
-} from '@/cloudfunctions/cloud/typings/interfaces';
-import { Role, User } from '@/cloudfunctions/cloud/controllers/user/db';
-import { Request } from '@/cloudfunctions/cloud/controllers/request/db';
-import { roles2RoleSet } from '@/cloudfunctions/cloud/utils';
+import { Role, DbUser, DbRequest } from '@/typings/db';
+import { checkPermission } from '@/cloudfunctions/cloud/utils';
 
 export interface UserState {
-  user?: User;
-  requests: Request[];
+  user?: DbUser;
+  requests: ApiRequest[];
 }
 
 const initialState: UserState = {
@@ -31,13 +28,13 @@ const initialState: UserState = {
 export const users = createModel<RootModel>()({
   state: initialState,
   reducers: {
-    user(state, user: User) {
+    user(state, user: DbUser) {
       return {
         ...state,
         user
       };
     },
-    requests(state, requests: Request[]) {
+    requests(state, requests: ApiRequest[]) {
       return {
         ...state,
         requests
@@ -53,24 +50,23 @@ export const users = createModel<RootModel>()({
     ): boolean {
       const { user } = state.users;
       if (!user) {
-        showToast({
-          title: '未登录',
-          icon: 'error'
-        }).then(() => navigateTo('profile'));
+        toast &&
+          showToast({
+            title: '未登录',
+            icon: 'error'
+          });
         return false; // not logged in
       }
 
-      const { roles } = user;
-      const roleSet = roles2RoleSet(roles);
-      if (roleSet.has(requiredRole)) {
+      if (checkPermission(requiredRole, user.roles)) {
         return true;
       }
-      if (toast) {
+
+      toast &&
         showToast({
           title: '没有权限',
           icon: 'error'
         });
-      }
       return false;
     },
 
@@ -110,7 +106,7 @@ export const users = createModel<RootModel>()({
       dispatch.users.requests(data);
     },
 
-    async createRequestAsync(payload: { request: Request }) {
+    async createRequestAsync(payload: { request: DbRequest }) {
       const { request } = payload;
       console.log('Create Requests');
       const { data } = await callApi(

@@ -1,6 +1,6 @@
-import { FileID, JsonDbObject } from '../../typings/base';
+import { JsonDbObject, FileID } from '.';
 
-export interface Cat extends JsonDbObject {
+export interface DbCat extends JsonDbObject {
   _avatar?: FileID; // 头像
   _photos?: FileID[]; // 其他照片
 
@@ -17,8 +17,8 @@ export interface Cat extends JsonDbObject {
   character?: string; // 性格, 可选
   location?: string; // 出没地点, 可选
   notes?: string; // 其他备注, 可选
-  relatedCats?: Cat[]; // 相关猫咪，存的是猫咪ID
-  relatedCatsDescription?: string; // 相关猫咪描述
+  relatedCats?: string[]; // 相关猫咪的ID
+  relaIDdCatsDescription?: string; // 相关猫咪描述
   noticeLevel?: '高' | '中' | '低' | '内部';
   noticeAbstract?: string;
   noticeDescription?: string; // 公告

@@ -1,12 +1,12 @@
 import BaseController from '../base-controller';
 import {
   Response,
-  EController,
   IController,
   EUserActions,
   UserLoginResult,
-  UserLoginRequest
-} from '../../typings';
+  UserLoginRequest,
+  EController
+} from '@/typings/interfaces';
 import { addUser, getCurrentUser, updateUser } from './db';
 
 export default class UserController

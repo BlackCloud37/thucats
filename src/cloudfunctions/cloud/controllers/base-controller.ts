@@ -1,4 +1,4 @@
-import { ErrResponse, OkResponse } from '../typings';
+import { ErrResponse, OkResponse } from '@/typings/interfaces';
 
 export default class BaseController {
   /**

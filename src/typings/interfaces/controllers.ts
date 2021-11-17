@@ -1,3 +1,26 @@
+export interface CloudFunctionEvent<C extends EController> {
+  controller: C;
+  action: ActionFor<C>;
+  data: any;
+}
+
+export interface OkResponse<T> {
+  code: 0;
+  data: T;
+}
+
+export interface ErrResponse {
+  code: -1;
+  errMsg: string;
+  errCode: number;
+}
+
+export type Response<T> = OkResponse<T> | ErrResponse;
+
+export type IController<C extends EController> = {
+  [key in ActionFor<C>]: any;
+};
+
 export const enum EController {
   // Modify: add new controller
   User = 'user',
@@ -23,8 +46,6 @@ export const enum ECatAcions {
 }
 
 export const enum EApplicationActions {
-  // // 发起申请
-  // Create = 'create',
   // 同意、取消申请
   Update = 'update'
 }
