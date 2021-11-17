@@ -16,25 +16,28 @@ export async function update<T extends JsonDbObject>(
   _id: string,
   newRecord: T
 ): Promise<T> {
+  const timestamp = Date.now();
   console.log('update', arguments);
+  console.log('updatetime', timestamp);
   const newRecordWithTime = {
     ...newRecord,
-    _updateTime: db.serverDate()
+    _updateTime: timestamp
   };
   // @ts-ignore
   delete newRecordWithTime._id;
   await db.collection(collectionName).doc(_id).update({
     data: newRecordWithTime
   });
-  return { ...newRecord, _id };
+  return { ...newRecordWithTime, _id };
 }
 
 export async function add<T>(collectionName: string, newRecord: Add<T>): Promise<string> {
   console.log('add', arguments);
+  const timestamp = Date.now();
   const newRecordWithTime = {
     ...newRecord,
-    _createTime: db.serverDate(),
-    _updateTime: db.serverDate()
+    _createTime: timestamp,
+    _updateTime: timestamp
   };
   const { _id } = await db.collection(collectionName).add({
     data: newRecordWithTime
