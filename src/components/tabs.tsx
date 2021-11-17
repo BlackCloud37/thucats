@@ -3,7 +3,10 @@ import { View } from '@remax/wechat';
 import classNames from 'classnames';
 
 export const Tabs = (props: { children: any }) => {
-  if (React.Children.count(props.children) <= 1) {
+  if (React.Children.count(props.children) === 0) {
+    return null;
+  }
+  if (React.Children.count(props.children) === 1) {
     const { children } = props;
     const tab = children.props.tab;
     return (
@@ -18,7 +21,7 @@ export const Tabs = (props: { children: any }) => {
     );
   }
   const { children: _children } = props;
-  const children = _children as React.ReactElement[];
+  const children = _children.filter((c: any) => !!c) as React.ReactElement[];
   const tabs = React.Children.map(children, (el) => el.props.tab);
   const [activeTab, setTab] = React.useState(tabs[0]);
   const tabCount = tabs.length;

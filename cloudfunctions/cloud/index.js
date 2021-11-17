@@ -56,24 +56,27 @@ const roles2RoleSet = (roles) => {
     return roleSet;
 };
 async function update(collectionName, _id, newRecord) {
+    const timestamp = Date.now();
     console.log('update', arguments);
+    console.log('updatetime', timestamp);
     const newRecordWithTime = {
         ...newRecord,
-        _updateTime: db.serverDate()
+        _updateTime: timestamp
     };
     // @ts-ignore
     delete newRecordWithTime._id;
     await db.collection(collectionName).doc(_id).update({
         data: newRecordWithTime
     });
-    return { ...newRecord, _id };
+    return { ...newRecordWithTime, _id };
 }
 async function add(collectionName, newRecord) {
     console.log('add', arguments);
+    const timestamp = Date.now();
     const newRecordWithTime = {
         ...newRecord,
-        _createTime: db.serverDate(),
-        _updateTime: db.serverDate()
+        _createTime: timestamp,
+        _updateTime: timestamp
     };
     const { _id } = await db.collection(collectionName).add({
         data: newRecordWithTime
