@@ -18,7 +18,7 @@ export interface DbCat extends JsonDbObject {
   location?: string; // 出没地点, 可选
   notes?: string; // 其他备注, 可选
   relatedCats?: string[]; // 相关猫咪的ID
-  relaIDdCatsDescription?: string; // 相关猫咪描述
+  relatedCatsDescription?: string[]; // 相关猫咪描述
   noticeLevel?: '高' | '中' | '低' | '内部';
   noticeAbstract?: string;
   noticeDescription?: string; // 公告

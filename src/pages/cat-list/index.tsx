@@ -1,4 +1,3 @@
-import { Cat } from '@/models/cats';
 import { Dispatch, RootState } from '@/models/store';
 import { Text, View } from '@remax/wechat';
 import * as React from 'react';
@@ -8,7 +7,7 @@ import Loadable from '@/components/loadable';
 import LInput from 'lin-ui/dist/input';
 import TabBar from '@/components/tabbar';
 import { usePageEvent } from '@remax/macro';
-
+import { ApiCat } from '@/typings/interfaces';
 import CatItem from './components/cat-item';
 
 const FilterItem = ({ fieldName, filterCallback }: { fieldName: string; filterCallback: any }) => {
@@ -28,7 +27,7 @@ const CatListPage = () => {
     path: '/pages/cat-list/index'
   }));
 
-  const [selectedCats, setSelectedCats] = React.useState<Cat[]>([]);
+  const [selectedCats, setSelectedCats] = React.useState<ApiCat[]>([]);
   const { allCatsList, loading } = useSelector((state: RootState) => ({
     allCatsList: state.cats.allCatsList,
     loading: state.loading.effects.cats.fetchAllCatsAsync
@@ -44,7 +43,7 @@ const CatListPage = () => {
 
   const catList =
     _l.size(selectedCats) > 0 ? (
-      selectedCats.map((cat: Cat) => <CatItem key={cat._id} cat={cat} />)
+      selectedCats.map((cat: ApiCat) => <CatItem key={cat._id} cat={cat} />)
     ) : (
       <Text className="block w-full text-sm font-light text-gray-500 text-center">
         这里似乎没有猫咪
@@ -52,7 +51,7 @@ const CatListPage = () => {
     );
 
   const filter = _l.curry(
-    (k: keyof Cat, v: string) => () => setSelectedCats(_l.filter(allCatsList, (c) => c[k] === v))
+    (k: keyof ApiCat, v: string) => () => setSelectedCats(_l.filter(allCatsList, (c) => c[k] === v))
   );
   const filterByColorCategory = filter('colorCategory');
   return (

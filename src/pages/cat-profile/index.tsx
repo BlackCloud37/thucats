@@ -1,6 +1,5 @@
 import Loadable from '@/components/loadable';
 import { RootState } from '@/models/store';
-import LAvatar from 'lin-ui/dist/avatar';
 import { usePageEvent } from '@remax/framework-shared';
 import { Text, View } from '@remax/wechat';
 import * as React from 'react';
@@ -10,7 +9,9 @@ import classNames from 'classnames';
 import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
 import Clipable from '@/components/clipable';
-import { Cat } from '@/cloudfunctions/cloud/controllers/cat/db';
+import { ApiCat } from '@/typings/interfaces';
+import { DbCat } from '@/typings/db';
+import Avatar from '@/components/avatar';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -43,20 +44,23 @@ const InfoItem = ({
   ) : null;
 };
 
-const RelatedCatItem = ({ cat }: { cat: Cat }) => {
+const RelatedCatItem = ({ cat, desc }: { cat: DbCat; desc?: string }) => {
   return (
     <View
-      className="flex flex-col items-center m-2 ml-0"
+      className="flex mt-2 w-full"
       onClick={() => navigateTo('cat-profile', { catKey: cat._id })}
     >
-      <LAvatar size={90} src={cat._avatar ?? '/images/default-cat.jpg'} shape="circle" />
-      <Text className="block text-xs font-light">{cat.name}</Text>
+      <Avatar src={cat._avatar} className="w-12 h-12 rounded-full" />
+      <View className="flex-col pl-2">
+        <Text className="block w-full text-xs font-normal">{cat.name}</Text>
+        <Text className="block w-full text-xs font-light">{desc}</Text>
+      </View>
     </View>
   );
 };
 
 const CatProfilePage = () => {
-  const [cat, setCat] = React.useState<Cat>();
+  const [cat, setCat] = React.useState<ApiCat>();
   // TODO: 兜底没有这只猫的场景
   const { allCats } = useSelector((state: RootState) => ({
     allCats: state.cats.allCats
@@ -141,18 +145,19 @@ const CatProfilePage = () => {
             <InfoItem field="备注" val={notes} full />
             {(relatedCats ?? relatedCatsDescription) && (
               <View className="flex flex-col w-full font-light mt-4">
-                <Text className="block text-xs text-gray-500">关系</Text>
-                {relatedCatsDescription && (
-                  <Text className="block text-sm">{relatedCatsDescription}</Text>
-                )}
-                {relatedCats && (
-                  <View className="flex">
-                    {relatedCats.map((cat) => {
-                      console.log(cat);
-                      return cat && <RelatedCatItem key={cat._id} cat={cat} />;
-                    })}
-                  </View>
-                )}
+                <Text className="block text-xs text-gray-500">关联猫咪</Text>
+                {relatedCats?.map((cat, index) => {
+                  console.log(cat);
+                  return (
+                    cat && (
+                      <RelatedCatItem
+                        key={cat._id}
+                        cat={cat}
+                        desc={relatedCatsDescription?.[index]}
+                      />
+                    )
+                  );
+                })}
               </View>
             )}
           </View>

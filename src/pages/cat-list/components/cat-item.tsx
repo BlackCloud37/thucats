@@ -1,18 +1,17 @@
-import { Cat } from '@/models/cats';
 import { navigateTo } from '@/utils';
 import { Text, View } from '@remax/wechat';
 import * as React from 'react';
 import classNames from 'classnames';
-import LAvatar from 'lin-ui/dist/avatar';
 import Clipable from '@/components/clipable';
-
+import { ApiCat } from '@/typings/interfaces';
+import Avatar from '@/components/avatar';
 const Tag = ({ tag, className = 'bg-gray-200' }: { tag: string; className?: string }) => {
   return tag !== '未知' ? (
     <View className={`rounded-md p-1 shadow-inner text-xs ${className}`}>{tag}</View>
   ) : null;
 };
 
-export default ({ cat, adopt = false }: { cat: Cat; adopt?: boolean }) => {
+export default ({ cat, adopt = false }: { cat: ApiCat; adopt?: boolean }) => {
   const {
     name,
     _avatar,
@@ -30,12 +29,7 @@ export default ({ cat, adopt = false }: { cat: Cat; adopt?: boolean }) => {
       onClick={() => navigateTo('cat-profile', { catKey: cat._id })}
     >
       <View className="flex h-20">
-        <LAvatar
-          size={160}
-          src={_avatar ?? '/images/default-cat.jpg'}
-          shape="square"
-          mode="widthFix"
-        />
+        <Avatar src={_avatar} className="h-20 w-20 rounded-lg" />
         <View className="pl-5 flex flex-col">
           <Text className="text-black text-lg">{name}</Text>
           <View className="flex flex-col items-start text-xs text-gray-500 gap-2">
