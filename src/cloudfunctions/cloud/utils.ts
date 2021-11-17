@@ -1,8 +1,9 @@
-// import { Role, roles2RoleSet, User } from '@/models/users';
-
-import { Role, User } from './controllers/user/db';
+import { Role } from '@/typings/db';
 
 export const roles2RoleSet = (roles: Role[]): Set<Role> => {
+  if (roles.length === 0) {
+    return new Set();
+  }
   const roleSet = new Set(roles);
   if (roleSet.has('admin')) {
     roleSet.add('operator');
@@ -38,14 +39,12 @@ export async function getById<T>(collectionName: string, _id: string): Promise<T
   return data;
 }
 
-export function checkPermission(requiredRole: Role, user: User): boolean {
-  console.log('checkpermission', 'user', user);
-  if (!user) {
-    console.log('no such user');
+export function checkPermission(requiredRole: Role, roles: Role[]): boolean {
+  console.log('checkpermission', 'roles', roles);
+  if (!roles) {
     return false;
   }
 
-  const { roles } = user;
   const roleSet = roles2RoleSet(roles);
   if (roleSet.has(requiredRole)) {
     return true;

@@ -1,4 +1,4 @@
-import { ActionFor, EController, Response } from '@/cloudfunctions/cloud/typings';
+import { ActionFor, EController, Response } from '@/typings/interfaces';
 import { cloud, showToast } from 'remax/wechat';
 
 export async function callApi(promise: Promise<any>): Promise<any> {

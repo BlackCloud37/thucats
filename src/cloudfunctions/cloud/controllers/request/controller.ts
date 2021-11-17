@@ -1,10 +1,16 @@
 import BaseController from '../base-controller';
-import { IController, EController, EApplicationActions, Response } from '../../typings';
-import { UpdateApplicationRequest, UpdateApplicationResult } from '../../typings/interfaces';
-// import { Request, Role, User } from '@/models/users';
+import {
+  IController,
+  Response,
+  UpdateApplicationRequest,
+  UpdateApplicationResult,
+  EApplicationActions,
+  EController
+} from '@/typings/interfaces';
 import { checkPermission } from '../../utils';
-import { getRequestById, updateRequest, Request } from './db';
-import { getCurrentUser, getUserById, Role, updateUser, User } from '../user/db';
+import { getRequestById, updateRequest } from './db';
+import { getCurrentUser, getUserById, updateUser } from '../user/db';
+import { DbUser, Role, DbRequest } from '@/typings/db';
 
 export default class ApplicationController
   extends BaseController
@@ -27,7 +33,7 @@ export default class ApplicationController
     }
 
     const requiredRole: Role = record.requestType === 'imageUpload' ? 'operator' : 'admin';
-    if (!checkPermission(requiredRole, user)) {
+    if (!checkPermission(requiredRole, user.roles)) {
       return this.fail(403, `No permission required role ${requiredRole}`);
     }
 
@@ -39,14 +45,13 @@ export default class ApplicationController
           const applicant = await getUserById(applicantId);
           console.log('applicant', applicant);
 
-          const roleSet = new Set(applicant.roles);
-          roleSet.add('operator');
+          const roleSet = new Set([...applicant.roles, 'operator' as Role]); // 默认增加operator权限
 
-          const newRecord: User = {
+          const newUser: DbUser = {
             ...applicant,
             roles: Array.from(roleSet)
           };
-          await updateUser(applicantId, newRecord);
+          await updateUser(applicantId, newUser);
           break;
         }
         case 'imageUpload': {
@@ -56,7 +61,7 @@ export default class ApplicationController
       }
     }
 
-    const newRecord: Request = {
+    const newRecord: DbRequest = {
       ...record,
       status: action === 'approve' ? 'approved' : 'denied'
     };
