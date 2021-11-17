@@ -2,15 +2,9 @@ import { createModel } from '@rematch/core';
 import type { RootModel } from './models';
 import wxRequest from 'wechat-request';
 import { callApi } from './apis';
+import { DbSetting } from '@/typings/db/setting';
 
-export interface SettingState {
-  navigationBarTitleText: string;
-  associationName: string;
-  slogan: string;
-  associationIcon: string;
-  associationLogo: string;
-  associationIntroduction: string;
-}
+export type SettingState = DbSetting;
 
 const initialState: SettingState = {
   navigationBarTitleText: '猫咪图鉴',
