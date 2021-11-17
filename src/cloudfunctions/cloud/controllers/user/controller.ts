@@ -41,8 +41,8 @@ export default class UserController
         openid,
         roles: []
       };
-
-      return this.success(await addUser(newRecord));
+      await addUser(newRecord);
+      return this.success(await getCurrentUser());
     }
   }
 }

@@ -1,6 +1,6 @@
 // import { User } from '@/models/users';
 import { add, getById, update } from '../../utils';
-import { DbUser } from '@/typings/db';
+import { Add, DbUser } from '@/typings/db';
 
 const COLLECTION_NAME = 'users';
 
@@ -14,7 +14,7 @@ export async function updateUser(_id: string, newRecord: DbUser): Promise<DbUser
   return update(COLLECTION_NAME, _id, newRecord);
 }
 
-export async function addUser(newRecord: DbUser): Promise<DbUser> {
+export async function addUser(newRecord: Add<DbUser>): Promise<string> {
   return add(COLLECTION_NAME, newRecord);
 }
 
