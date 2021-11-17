@@ -57,18 +57,28 @@ const roles2RoleSet = (roles) => {
 };
 async function update(collectionName, _id, newRecord) {
     console.log('update', arguments);
-    delete newRecord._id;
+    const newRecordWithTime = {
+        ...newRecord,
+        _updateTime: db.serverDate()
+    };
+    // @ts-ignore
+    delete newRecordWithTime._id;
     await db.collection(collectionName).doc(_id).update({
-        data: newRecord
+        data: newRecordWithTime
     });
     return { ...newRecord, _id };
 }
 async function add(collectionName, newRecord) {
     console.log('add', arguments);
-    await db.collection(collectionName).add({
-        data: newRecord
+    const newRecordWithTime = {
+        ...newRecord,
+        _createTime: db.serverDate(),
+        _updateTime: db.serverDate()
+    };
+    const { _id } = await db.collection(collectionName).add({
+        data: newRecordWithTime
     });
-    return newRecord;
+    return _id;
 }
 async function getById(collectionName, _id) {
     console.log('getById', arguments);
@@ -140,7 +150,8 @@ class UserController extends BaseController {
                 openid,
                 roles: []
             };
-            return this.success(await addUser(newRecord));
+            await addUser(newRecord);
+            return this.success(await getCurrentUser());
         }
     }
 }
