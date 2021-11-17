@@ -1,4 +1,4 @@
-import { Role } from '@/typings/db';
+import { Add, JsonDbObject, Role } from '@/typings/db';
 
 export const roles2RoleSet = (roles: Role[]): Set<Role> => {
   if (roles.length === 0) {
@@ -11,25 +11,35 @@ export const roles2RoleSet = (roles: Role[]): Set<Role> => {
   return roleSet;
 };
 
-export async function update<T extends { _id?: string }>(
+export async function update<T extends JsonDbObject>(
   collectionName: string,
   _id: string,
   newRecord: T
 ): Promise<T> {
   console.log('update', arguments);
-  delete newRecord._id;
+  const newRecordWithTime = {
+    ...newRecord,
+    _updateTime: db.serverDate()
+  };
+  // @ts-ignore
+  delete newRecordWithTime._id;
   await db.collection(collectionName).doc(_id).update({
-    data: newRecord
+    data: newRecordWithTime
   });
   return { ...newRecord, _id };
 }
 
-export async function add<T>(collectionName: string, newRecord: T): Promise<T> {
+export async function add<T>(collectionName: string, newRecord: Add<T>): Promise<string> {
   console.log('add', arguments);
-  await db.collection(collectionName).add({
-    data: newRecord
+  const newRecordWithTime = {
+    ...newRecord,
+    _createTime: db.serverDate(),
+    _updateTime: db.serverDate()
+  };
+  const { _id } = await db.collection(collectionName).add({
+    data: newRecordWithTime
   });
-  return newRecord;
+  return _id;
 }
 
 export async function getById<T>(collectionName: string, _id: string): Promise<T> {
