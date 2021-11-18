@@ -1,4 +1,5 @@
 import BaseController from '../base-controller';
+import { USER_COLLECTION_NAME } from '@/typings/db';
 import {
   Response,
   IController,
@@ -7,7 +8,8 @@ import {
   UserLoginRequest,
   EController
 } from '@/typings/interfaces';
-import { addUser, getCurrentUser, updateUser } from './db';
+import { getCurrentUser } from './db';
+import { add, update } from '../../utils';
 
 export default class UserController
   extends BaseController
@@ -29,7 +31,7 @@ export default class UserController
         nickName: nickName ? nickName : record.nickName
       };
 
-      return this.success(await updateUser(record._id!, newRecord));
+      return this.success(await update(USER_COLLECTION_NAME, newRecord));
     } else {
       if (!nickName || !avatarUrl) {
         return this.fail(500, '必须提供用户信息');
@@ -41,7 +43,7 @@ export default class UserController
         openid,
         roles: []
       };
-      await addUser(newRecord);
+      await add(USER_COLLECTION_NAME, newRecord);
       return this.success(await getCurrentUser());
     }
   }
