@@ -44,34 +44,42 @@ export default class ApplicationController
     }
 
     // WARNING: no transaction here
-    if (action === 'approve') {
-      switch (record.requestType) {
-        case 'permission': {
-          const applicantId = record.applicant;
-          const applicant: DbUser = await getById(USER_COLLECTION_NAME, applicantId);
-          console.log('applicant', applicant);
-
-          const roleSet = new Set([...applicant.roles, 'operator' as Role]); // 默认增加operator权限
-
-          const newUser: DbUser = {
-            ...applicant,
-            roles: Array.from(roleSet)
-          };
-          await update(USER_COLLECTION_NAME, newUser);
-          break;
+    try {
+      await db.runTransaction(async (transaction: any) => {
+        if (action === 'approve') {
+          switch (record.requestType) {
+            case 'permission': {
+              const applicant: DbUser = await getById(
+                USER_COLLECTION_NAME,
+                record.applicant, // id
+                transaction
+              );
+              console.log('applicant', applicant);
+              const newUser: DbUser = {
+                ...applicant,
+                roles: db.command.addToSet('operator' as Role)
+              };
+              await update(USER_COLLECTION_NAME, newUser, transaction);
+              break;
+            }
+            case 'imageUpload': {
+              // TODO:
+              break;
+            }
+          }
         }
-        case 'imageUpload': {
-          // TODO:
-          break;
-        }
-      }
+
+        const newRequest: DbRequest = {
+          ...record,
+          status: action === 'approve' ? 'approved' : 'denied'
+        };
+        await update(REQUEST_COLLECTION_NAME, newRequest, transaction);
+        console.log('transaction finished');
+      });
+    } catch (e: any) {
+      console.error('transaction failed', e);
+      this.fail(500, e.toString());
     }
-
-    const newRequest: DbRequest = {
-      ...record,
-      status: action === 'approve' ? 'approved' : 'denied'
-    };
-    await update(REQUEST_COLLECTION_NAME, newRequest);
 
     return this.success({ _id: requestId });
   }

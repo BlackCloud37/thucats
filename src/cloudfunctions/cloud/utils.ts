@@ -54,9 +54,14 @@ export async function add<T>(
   return _id;
 }
 
-export async function getById<T>(collectionName: Collections, _id: string): Promise<T> {
+export async function getById<T>(
+  collectionName: Collections,
+  _id: string,
+  database?: any
+): Promise<T> {
   console.log('getById', arguments);
-  const { data } = await db.collection(collectionName).doc(_id).get();
+  const _db = database ? database : db;
+  const { data } = await _db.collection(collectionName).doc(_id).get();
   console.log('getById result', data);
   return data;
 }
