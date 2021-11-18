@@ -107,9 +107,10 @@ async function add(collectionName, newRecord, database) {
     });
     return _id;
 }
-async function getById(collectionName, _id) {
+async function getById(collectionName, _id, database) {
     console.log('getById', arguments);
-    const { data } = await db.collection(collectionName).doc(_id).get();
+    const _db = database ? database : db;
+    const { data } = await _db.collection(collectionName).doc(_id).get();
     console.log('getById result', data);
     return data;
 }
@@ -171,27 +172,39 @@ class ApplicationController extends BaseController {
             return this.fail(403, `No permission required role ${requiredRole}`);
         }
         // WARNING: no transaction here
-        if (action === 'approve') {
-            switch (record.requestType) {
-                case 'permission': {
-                    const applicantId = record.applicant;
-                    const applicant = await getById(USER_COLLECTION_NAME, applicantId);
-                    console.log('applicant', applicant);
-                    const roleSet = new Set([...applicant.roles, 'operator']); // 默认增加operator权限
-                    const newUser = {
-                        ...applicant,
-                        roles: Array.from(roleSet)
-                    };
-                    await update(USER_COLLECTION_NAME, newUser);
-                    break;
+        try {
+            await db.runTransaction(async (transaction) => {
+                if (action === 'approve') {
+                    switch (record.requestType) {
+                        case 'permission': {
+                            const applicant = await getById(USER_COLLECTION_NAME, record.applicant, // id
+                            transaction);
+                            console.log('applicant', applicant);
+                            const newUser = {
+                                ...applicant,
+                                roles: db.command.addToSet('operator')
+                            };
+                            await update(USER_COLLECTION_NAME, newUser, transaction);
+                            break;
+                        }
+                        case 'imageUpload': {
+                            // TODO:
+                            break;
+                        }
+                    }
                 }
-            }
+                const newRequest = {
+                    ...record,
+                    status: action === 'approve' ? 'approved' : 'denied'
+                };
+                await update(REQUEST_COLLECTION_NAME, newRequest, transaction);
+                console.log('transaction finished');
+            });
         }
-        const newRequest = {
-            ...record,
-            status: action === 'approve' ? 'approved' : 'denied'
-        };
-        await update(REQUEST_COLLECTION_NAME, newRequest);
+        catch (e) {
+            console.error('transaction failed', e);
+            this.fail(500, e.toString());
+        }
         return this.success({ _id: requestId });
     }
 }
