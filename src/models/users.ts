@@ -5,7 +5,6 @@ import {
   UserLoginRequest,
   UserLoginResult,
   UpdateApplicationRequest,
-  UpdateApplicationResult,
   ApiRequest
 } from '@/typings/interfaces';
 import { createModel } from '@rematch/core';
@@ -13,7 +12,7 @@ import { showToast } from 'remax/wechat';
 import { callApi, requestCloudApi } from './apis';
 import type { RootModel } from './models';
 import wxRequest from 'wechat-request';
-import { Role, DbUser, DbRequest } from '@/typings/db';
+import { Role, DbUser, DbRequest, Add } from '@/typings/db';
 import { checkPermission } from '@/cloudfunctions/cloud/utils';
 import { default as _l } from 'lodash';
 
@@ -43,6 +42,14 @@ export const users = createModel<RootModel>()({
         ...state,
         permissionRequests: _l.filter(requests, (req) => req.requestType === 'permission'),
         imageRequests: _l.filter(requests, (req) => req.requestType === 'imageUpload')
+      };
+    },
+    removeReq(state, _id) {
+      const { permissionRequests } = state;
+      return {
+        ...state,
+        permissionRequests: _l.filter(permissionRequests, (req) => req._id !== _id),
+        imageRequests: _l.filter(permissionRequests, (req) => req._id !== _id)
       };
     }
   },
@@ -107,26 +114,30 @@ export const users = createModel<RootModel>()({
       dispatch.users.requests(data);
     },
 
-    async createRequestAsync(payload: { request: DbRequest }) {
-      const { request } = payload;
-      console.log('Create Requests');
+    async createRequestAsync(payload: { requestType: 'permission' | 'imageUpload' }, state) {
+      if (!state.users.user?._id) {
+        console.error('not logged in, cannot create request');
+        return;
+      }
+      const { requestType } = payload;
+      console.log('Create Requests', arguments);
+      const request: Add<DbRequest> = {
+        requestType,
+        status: 'pending',
+        applicant: state.users.user._id
+      };
       const { data } = await callApi(
         wxRequest.post('/requests', {
-          data: {
-            // body
-            data: [request]
-          }
+          data: request
         })
       );
       console.log(data);
     },
 
     async updateRequestAsync(payload: UpdateApplicationRequest) {
-      requestCloudApi(EController.Application, EApplicationActions.Update, payload)
-        .then(async (result: UpdateApplicationResult) => {
-          console.log(result);
-        })
-        .catch(console.error);
+      const { requestId } = payload;
+      await requestCloudApi(EController.Application, EApplicationActions.Update, payload);
+      dispatch.users.removeReq(requestId);
     }
   })
 });
