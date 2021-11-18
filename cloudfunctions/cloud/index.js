@@ -45,6 +45,25 @@ class CatController extends BaseController {
     }
 }
 
+const REQUEST_COLLECTION_NAME = 'requests';
+const USER_COLLECTION_NAME = 'users';
+
+async function getCurrentUser() {
+    const wxContext = cloud.getWXContext();
+    const openid = wxContext.OPENID;
+    return getUserByOpenid(openid);
+}
+async function getUserByOpenid(openid) {
+    const { data: [user] } = await db
+        .collection(USER_COLLECTION_NAME)
+        .where({
+        openid
+    })
+        .get();
+    console.log('get user by openid', user);
+    return user;
+}
+
 const roles2RoleSet = (roles) => {
     if (roles.length === 0) {
         return new Set();
@@ -55,30 +74,35 @@ const roles2RoleSet = (roles) => {
     }
     return roleSet;
 };
-async function update(collectionName, _id, newRecord) {
+async function update(collectionName, newRecord, database) {
     const timestamp = Date.now();
     console.log('update', arguments);
-    console.log('updatetime', timestamp);
+    const { _id } = newRecord;
+    if (!_id) {
+        return Promise.reject(Error('newRecord must has `_id`'));
+    }
+    const _db = database ? database : db;
     const newRecordWithTime = {
         ...newRecord,
         _updateTime: timestamp
     };
     // @ts-ignore
     delete newRecordWithTime._id;
-    await db.collection(collectionName).doc(_id).update({
+    await _db.collection(collectionName).doc(_id).update({
         data: newRecordWithTime
     });
     return { ...newRecordWithTime, _id };
 }
-async function add(collectionName, newRecord) {
+async function add(collectionName, newRecord, database) {
     console.log('add', arguments);
+    const _db = database ? database : db;
     const timestamp = Date.now();
     const newRecordWithTime = {
         ...newRecord,
         _createTime: timestamp,
         _updateTime: timestamp
     };
-    const { _id } = await db.collection(collectionName).add({
+    const { _id } = await _db.collection(collectionName).add({
         data: newRecordWithTime
     });
     return _id;
@@ -101,33 +125,6 @@ function checkPermission(requiredRole, roles) {
     return false;
 }
 
-// import { User } from '@/models/users';
-const COLLECTION_NAME$1 = 'users';
-async function getCurrentUser() {
-    const wxContext = cloud.getWXContext();
-    const openid = wxContext.OPENID;
-    return getUserByOpenid(openid);
-}
-async function updateUser(_id, newRecord) {
-    return update(COLLECTION_NAME$1, _id, newRecord);
-}
-async function addUser(newRecord) {
-    return add(COLLECTION_NAME$1, newRecord);
-}
-async function getUserByOpenid(openid) {
-    const { data: [user] } = await db
-        .collection('users')
-        .where({
-        openid
-    })
-        .get();
-    console.log('get user by openid', user);
-    return user;
-}
-async function getUserById(_id) {
-    return getById(COLLECTION_NAME$1, _id);
-}
-
 class UserController extends BaseController {
     async [EUserActions.Login]({ avatarUrl, nickName }) {
         const wxContext = cloud.getWXContext();
@@ -140,7 +137,7 @@ class UserController extends BaseController {
                 avatarUrl: avatarUrl ? avatarUrl : record.avatarUrl,
                 nickName: nickName ? nickName : record.nickName
             };
-            return this.success(await updateUser(record._id, newRecord));
+            return this.success(await update(USER_COLLECTION_NAME, newRecord));
         }
         else {
             if (!nickName || !avatarUrl) {
@@ -153,18 +150,10 @@ class UserController extends BaseController {
                 openid,
                 roles: []
             };
-            await addUser(newRecord);
+            await add(USER_COLLECTION_NAME, newRecord);
             return this.success(await getCurrentUser());
         }
     }
-}
-
-const COLLECTION_NAME = 'requests';
-async function updateRequest(_id, newRecord) {
-    return update(COLLECTION_NAME, _id, newRecord);
-}
-async function getRequestById(_id) {
-    return getById(COLLECTION_NAME, _id);
 }
 
 class ApplicationController extends BaseController {
@@ -173,7 +162,7 @@ class ApplicationController extends BaseController {
         if (!user) {
             return this.fail(500, 'No such user');
         }
-        const record = await getRequestById(requestId);
+        const record = await getById(REQUEST_COLLECTION_NAME, requestId);
         if (record.status !== 'pending') {
             return this.fail(500, 'Can only update pending request');
         }
@@ -186,23 +175,23 @@ class ApplicationController extends BaseController {
             switch (record.requestType) {
                 case 'permission': {
                     const applicantId = record.applicant;
-                    const applicant = await getUserById(applicantId);
+                    const applicant = await getById(USER_COLLECTION_NAME, applicantId);
                     console.log('applicant', applicant);
                     const roleSet = new Set([...applicant.roles, 'operator']); // 默认增加operator权限
                     const newUser = {
                         ...applicant,
                         roles: Array.from(roleSet)
                     };
-                    await updateUser(applicantId, newUser);
+                    await update(USER_COLLECTION_NAME, newUser);
                     break;
                 }
             }
         }
-        const newRecord = {
+        const newRequest = {
             ...record,
             status: action === 'approve' ? 'approved' : 'denied'
         };
-        await updateRequest(requestId, newRecord);
+        await update(REQUEST_COLLECTION_NAME, newRequest);
         return this.success({ _id: requestId });
     }
 }

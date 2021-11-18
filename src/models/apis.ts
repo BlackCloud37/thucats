@@ -1,5 +1,6 @@
 import { ActionFor, EController, Response } from '@/typings/interfaces';
 import { cloud, showToast } from 'remax/wechat';
+import { Collections } from '@/typings/db';
 
 export async function callApi(promise: Promise<any>): Promise<any> {
   const {
@@ -59,7 +60,6 @@ export async function requestCloudApi<C extends EController>(
   }
 }
 
-export type Collections = 'users' | 'cats';
 // 从集合中获取所有数据
 export async function fetchAllFromCollection(collection: Collections, localUpdateTime = 0) {
   const db = cloud.database();

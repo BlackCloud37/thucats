@@ -11,3 +11,7 @@ export type FileID = string;
 export * from './user';
 export * from './cat';
 export * from './request';
+
+export const REQUEST_COLLECTION_NAME = 'requests';
+export const USER_COLLECTION_NAME = 'users';
+export type Collections = 'requests' | 'users' | 'cats';
