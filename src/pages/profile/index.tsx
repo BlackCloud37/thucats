@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { View, getUserProfile, Text } from 'remax/wechat';
+import { View, getUserProfile, Text, showToast } from 'remax/wechat';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch, RootState } from '@/models/store';
 import Avatar from '@/components/avatar';
 import { Tabs, TabPanel } from '@/components/tabs';
+import Request from './request';
 const ProfilePage = () => {
   const { avatarUrl, nickName, roles, permissionRequests, imageRequests } = useSelector(
     (state: RootState) => ({
@@ -17,7 +18,8 @@ const ProfilePage = () => {
   const [isOperator, setOperator] = React.useState(false);
 
   const loggedin = !!avatarUrl && !!nickName;
-  const { loginAsync, checkPermission, getRequestsAsync } = useDispatch<Dispatch>().users;
+  const { loginAsync, checkPermission, getRequestsAsync, createRequestAsync } =
+    useDispatch<Dispatch>().users;
 
   React.useEffect(() => {
     if (checkPermission({ requiredRole: 'operator' })) {
@@ -54,6 +56,17 @@ const ProfilePage = () => {
         >
           {nickName ? '刷新信息' : '点击授权'}
         </View>
+        <View
+          onClick={() => {
+            createRequestAsync({
+              requestType: 'permission'
+            })
+              .then(() => showToast({ title: '成功' }))
+              .catch(() => showToast({ title: '失败' }));
+          }}
+        >
+          申请权限
+        </View>
       </View>
       {isOperator && (
         <Tabs>
@@ -61,13 +74,7 @@ const ProfilePage = () => {
             <TabPanel tab="权限审核">
               <View className="p-5 flex flex-col rounded-lg bg-white">
                 {permissionRequests.length ? (
-                  permissionRequests.map(
-                    ({ applicant: { nickName }, _id, status, requestType }) => (
-                      <View key={_id} className="">
-                        {nickName} {status} {requestType}
-                      </View>
-                    )
-                  )
+                  permissionRequests.map((req) => <Request key={req._id} req={req} />)
                 ) : (
                   <Text>这里空空如也</Text>
                 )}
@@ -78,11 +85,7 @@ const ProfilePage = () => {
             <TabPanel tab="图片审核">
               <View className="p-5 flex flex-col rounded-lg bg-white">
                 {imageRequests.length ? (
-                  imageRequests.map(({ applicant: { nickName }, _id, status, requestType }) => (
-                    <View key={_id} className="">
-                      {nickName} {status} {requestType}
-                    </View>
-                  ))
+                  imageRequests.map((req) => <Request key={req._id} req={req} />)
                 ) : (
                   <Text>这里空空如也</Text>
                 )}
