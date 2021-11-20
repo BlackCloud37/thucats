@@ -9,5 +9,3 @@ export interface DbUser extends JsonDbObject {
   openid: string;
   roles: Role[];
 }
-
-export type Add<T> = Omit<T, keyof JsonDbObject>;

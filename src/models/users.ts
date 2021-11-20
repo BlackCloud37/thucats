@@ -18,11 +18,17 @@ import { default as _l } from 'lodash';
 
 export interface UserState {
   user?: DbUser;
+  isLoggedin: boolean;
+  isOperator: boolean;
+  isAdmin: boolean;
   permissionRequests: ApiRequest[];
   imageRequests: ApiRequest[];
 }
 
 const initialState: UserState = {
+  isLoggedin: false,
+  isOperator: false,
+  isAdmin: false,
   permissionRequests: [],
   imageRequests: []
 };
@@ -30,10 +36,18 @@ const initialState: UserState = {
 export const users = createModel<RootModel>()({
   state: initialState,
   reducers: {
+    permission(state, { isOperator, isAdmin }: { isOperator: boolean; isAdmin: boolean }) {
+      return {
+        ...state,
+        isOperator,
+        isAdmin
+      };
+    },
     user(state, user: DbUser) {
       return {
         ...state,
-        user
+        user,
+        isLoggedin: !!user
       };
     },
     requests(state, requests: ApiRequest[]) {
@@ -90,6 +104,10 @@ export const users = createModel<RootModel>()({
         .then(async (result: UserLoginResult) => {
           console.log(result);
           dispatch.users.user(result);
+
+          const isOperator = dispatch.users.checkPermission({ requiredRole: 'operator' });
+          const isAdmin = dispatch.users.checkPermission({ requiredRole: 'admin' });
+          dispatch.users.permission({ isAdmin, isOperator });
         })
         .catch(console.error);
     },
