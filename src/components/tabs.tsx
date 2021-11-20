@@ -2,7 +2,8 @@ import * as React from 'react';
 import { View } from '@remax/wechat';
 import classNames from 'classnames';
 
-export const Tabs = (props: { children: any }) => {
+export const Tabs = (props: { children: any; className?: string }) => {
+  const tabClass = classNames('flex flex-col rounded-lg h-full overflow-hidden', props?.className);
   if (React.Children.count(props.children) === 0) {
     return null;
   }
@@ -10,9 +11,9 @@ export const Tabs = (props: { children: any }) => {
     const { children } = props;
     const tab = children.props.tab;
     return (
-      <View className="flex flex-col rounded-lg shadow-xl h-full bg-white">
+      <View className={tabClass}>
         <View className="flex flex-row flex-nowrap h-10 w-full flex-shrink-0">
-          <View className="font-light text-sm flex-grow flex items-center justify-evenly rounded-lg">
+          <View className="font-light text-sm flex-grow flex items-center justify-evenly rounded-lg bg-white">
             {tab}
           </View>
         </View>
@@ -28,8 +29,8 @@ export const Tabs = (props: { children: any }) => {
   const activeTabIdx = tabs.findIndex((t) => t === activeTab);
   const activeTabEl = children[activeTabIdx];
   return (
-    <View className="flex flex-col rounded-lg shadow-xl h-full bg-white">
-      <View className="flex flex-row flex-nowrap h-10 w-full flex-shrink-0">
+    <View className={tabClass}>
+      <View className="flex flex-row flex-nowrap h-10 w-full flex-shrink-0 bg-white">
         {tabs.map((tab, index) => (
           <View
             key={tab}
@@ -52,7 +53,7 @@ export const Tabs = (props: { children: any }) => {
   );
 };
 
-export const TabPanel = (props: { children: any; tab: string }) => {
-  const { children } = props;
-  return <View>{children}</View>;
+export const TabPanel = (props: { children: any; tab: string; className?: string }) => {
+  const { children, className } = props;
+  return <View className={className}>{children}</View>;
 };
