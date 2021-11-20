@@ -162,7 +162,7 @@ const CatProfilePage = () => {
             )}
           </View>
         </View>
-        <Tabs>
+        <Tabs className="shadow-xl bg-white">
           <TabPanel tab="精选照片">
             <View className="p-5 pt-0">
               {_photos?.slice(1)?.map((src) => (

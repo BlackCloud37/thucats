@@ -43,7 +43,7 @@ const CatListPage = () => {
 
   const catList =
     _l.size(selectedCats) > 0 ? (
-      selectedCats.map((cat: ApiCat) => <CatItem key={cat._id} cat={cat} />)
+      selectedCats.map((cat: ApiCat) => <CatItem key={cat._id} cat={cat} className="mb-5" />)
     ) : (
       <Text className="block w-full text-sm font-light text-gray-500 text-center">
         这里似乎没有猫咪

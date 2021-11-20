@@ -11,7 +11,15 @@ const Tag = ({ tag, className = 'bg-gray-200' }: { tag: string; className?: stri
   ) : null;
 };
 
-export default ({ cat, adopt = false }: { cat: ApiCat; adopt?: boolean }) => {
+export default ({
+  cat,
+  adopt = false,
+  className
+}: {
+  cat: ApiCat;
+  adopt?: boolean;
+  className?: string;
+}) => {
   const {
     name,
     _avatar,
@@ -25,7 +33,7 @@ export default ({ cat, adopt = false }: { cat: ApiCat; adopt?: boolean }) => {
   } = cat;
   return (
     <View
-      className="flex-col bg-white shadow-lg rounded-lg mb-5 p-5"
+      className={classNames('flex-col bg-white shadow-lg rounded-lg p-5', className)}
       onClick={() => navigateTo('cat-profile', { catKey: cat._id })}
     >
       <View className="flex h-20">

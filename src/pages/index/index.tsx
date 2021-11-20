@@ -19,17 +19,9 @@ const Index = () => {
   }));
 
   const { fetchSettingsAsync } = useDispatch<Dispatch>().settings;
-  // const { loginAsync, checkPermission } = useDispatch<Dispatch>().users;
 
   React.useEffect(() => {
     fetchSettingsAsync().catch(console.error);
-    // loginAsync()
-    //   .then(() => {
-    //     console.log(checkPermission('admin'));
-    //     console.log(checkPermission('operator'));
-    //     console.log(checkPermission('normal'));
-    //   })
-    //   .catch(console.error);
   }, []);
 
   return (

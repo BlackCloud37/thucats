@@ -12,7 +12,8 @@ const initialState: SettingState = {
   slogan: '',
   associationIcon: '',
   associationLogo: '',
-  associationIntroduction: ''
+  associationIntroduction: '',
+  adoptGuideUrl: ''
 };
 
 export const settings = createModel<RootModel>()({
