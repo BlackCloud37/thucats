@@ -44,7 +44,7 @@ export default class UserController
         roles: []
       };
       await add(USER_COLLECTION_NAME, newRecord);
-      return this.success(await getCurrentUser());
+      return this.success((await getCurrentUser())!);
     }
   }
 }

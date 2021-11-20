@@ -66,7 +66,7 @@ export async function getById<T>(
   return data;
 }
 
-export function checkPermission(requiredRole: Role, roles: Role[]): boolean {
+export function checkPermission(requiredRole: Role, roles: Role[] | undefined): boolean {
   console.log('checkpermission', 'roles', roles);
   if (!roles) {
     return false;

@@ -1,9 +1,9 @@
 import Loadable from '@/components/loadable';
-import { RootState } from '@/models/store';
+import { Dispatch, RootState } from '@/models/store';
 import { usePageEvent } from '@remax/framework-shared';
 import { Text, View } from '@remax/wechat';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { navigateTo } from '@/utils';
 import classNames from 'classnames';
 import Photo from '@/components/photo';
@@ -71,6 +71,7 @@ const RelatedCatItem = ({ cat, desc }: { cat: DbCat; desc?: string }) => {
 
 const CatProfilePage = () => {
   const [cat, setCat] = React.useState<ApiCat>();
+  const [catKey, setKey] = React.useState('');
 
   // TODO: 兜底没有这只猫的场景
   const { allCats, isOperator } = useSelector((state: RootState) => ({
@@ -78,12 +79,18 @@ const CatProfilePage = () => {
     ...state.users
   }));
 
+  const { updateCatAsync } = useDispatch<Dispatch>().cats;
+
   usePageEvent('onLoad', ({ payload }) => {
     // TODO: fetch server
     const { catKey } = JSON.parse(payload) as CatProfilePayload;
     console.log(allCats[catKey]);
-    setCat(allCats[catKey]);
+    setKey(catKey);
   });
+
+  React.useEffect(() => {
+    catKey && setCat(allCats[catKey]);
+  }, [allCats, catKey]);
 
   const {
     name,
