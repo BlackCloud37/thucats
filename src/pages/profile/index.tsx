@@ -8,30 +8,25 @@ import LButton from 'lin-ui/dist/button';
 import Request from './request';
 import { ApiRequest } from '@/typings/interfaces';
 const ProfilePage = () => {
-  const { avatarUrl, nickName, roles, permissionRequests, imageRequests } = useSelector(
-    (state: RootState) => ({
-      ...state.users.user,
-      ...state.users
-      // loading: state.loading.effects.settings.fetchSettingsAsync
-    })
-  );
+  const {
+    avatarUrl,
+    nickName,
+    permissionRequests,
+    imageRequests,
+    isLoggedin,
+    isOperator,
+    isAdmin
+  } = useSelector((state: RootState) => ({
+    ...state.users.user,
+    ...state.users
+    // loading: state.loading.effects.settings.fetchSettingsAsync
+  }));
 
-  const [isAdmin, setAdmin] = React.useState(false);
-  const [isOperator, setOperator] = React.useState(false);
-
-  const loggedin = !!avatarUrl && !!nickName;
-  const { loginAsync, checkPermission, getRequestsAsync /* createRequestAsync */ } =
-    useDispatch<Dispatch>().users;
+  const { loginAsync, getRequestsAsync /* createRequestAsync */ } = useDispatch<Dispatch>().users;
 
   React.useEffect(() => {
-    if (checkPermission({ requiredRole: 'operator' })) {
-      setOperator(true);
-      getRequestsAsync();
-    }
-    if (checkPermission({ requiredRole: 'admin' })) {
-      setAdmin(true);
-    }
-  }, [roles?.[0]]);
+    isOperator && getRequestsAsync();
+  }, [isOperator]);
 
   console.log(permissionRequests, imageRequests);
 
@@ -67,22 +62,20 @@ const ProfilePage = () => {
   return (
     <View className="p-5">
       <View className="rounded-lg shadow-2xl bg-white p-5 flex-col items-center flex text-center mb-5">
-        {loggedin && (
+        {isLoggedin && (
           <View>
             <Avatar src={avatarUrl} className="w-20 h-20 rounded-full" />
             <View>{nickName}</View>
           </View>
         )}
-        <LButton bindlintap={getProfileAndLogin}>{loggedin ? '刷新信息' : '点击授权'}</LButton>
+        <LButton bindlintap={getProfileAndLogin}>{isLoggedin ? '刷新信息' : '点击授权'}</LButton>
         {/* {!isOperator && <LButton bindlintap={requestPermission}>申请权限</LButton>} */}
       </View>
       {isOperator && (
-        <Tabs>
+        <Tabs className="bg-white shadow-2xl">
           {isAdmin && (
             <TabPanel tab="权限审批">
-              <View className="p-5 flex flex-col rounded-lg bg-white">
-                {reqList(permissionRequests)}
-              </View>
+              <View className="p-5 flex flex-col rounded-lg">{reqList(permissionRequests)}</View>
             </TabPanel>
           )}
           {/* {isOperator && (
