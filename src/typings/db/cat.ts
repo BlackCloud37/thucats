@@ -1,5 +1,6 @@
 import { JsonDbObject, FileID } from '.';
 
+export type CatStatus = '在野' | '已送养' | '喵星' | '未知' | '待领养';
 export interface DbCat extends JsonDbObject {
   _avatar?: FileID; // 头像
   _photos?: FileID[]; // 其他照片
@@ -10,7 +11,7 @@ export interface DbCat extends JsonDbObject {
   colorCategory: '纯黑' | '纯白' | '狸花' | '奶牛' | '橘猫与橘白' | '三花' | '玳瑁'; // 毛色分类
   colorDescription?: string; // 毛色描述, 可选
   sex: '公' | '母' | '未知'; // 性别
-  status: '在野' | '已送养' | '喵星' | '未知' | '待领养'; // 状态
+  status: CatStatus; // 状态
   neuteringStatus: '未绝育' | '已绝育' | '未知'; // 绝育状态
   neuteringDate?: string; // 绝育大致时间, 可选
   nameOrigin?: string; // 名字来源, 可选

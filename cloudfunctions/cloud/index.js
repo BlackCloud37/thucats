@@ -31,7 +31,8 @@ var EUserActions;
 })(EUserActions || (EUserActions = {}));
 var ECatAcions;
 (function (ECatAcions) {
-    ECatAcions["SomeMethod"] = "somemethod";
+    // 更新猫信息
+    ECatAcions["Update"] = "update";
 })(ECatAcions || (ECatAcions = {}));
 var EApplicationActions;
 (function (EApplicationActions) {
@@ -39,30 +40,9 @@ var EApplicationActions;
     EApplicationActions["Update"] = "update";
 })(EApplicationActions || (EApplicationActions = {}));
 
-class CatController extends BaseController {
-    async [ECatAcions.SomeMethod]() {
-        return this.fail(404, 'Boomed');
-    }
-}
-
 const REQUEST_COLLECTION_NAME = 'requests';
 const USER_COLLECTION_NAME = 'users';
-
-async function getCurrentUser() {
-    const wxContext = cloud.getWXContext();
-    const openid = wxContext.OPENID;
-    return getUserByOpenid(openid);
-}
-async function getUserByOpenid(openid) {
-    const { data: [user] } = await db
-        .collection(USER_COLLECTION_NAME)
-        .where({
-        openid
-    })
-        .get();
-    console.log('get user by openid', user);
-    return user;
-}
+const CAT_COLLECTION_NAME = 'cats';
 
 const roles2RoleSet = (roles) => {
     if (roles.length === 0) {
@@ -126,6 +106,38 @@ function checkPermission(requiredRole, roles) {
     return false;
 }
 
+async function getCurrentUser() {
+    const wxContext = cloud.getWXContext();
+    const openid = wxContext.OPENID;
+    return getUserByOpenid(openid);
+}
+async function getUserByOpenid(openid) {
+    const { data: [user] } = await db
+        .collection(USER_COLLECTION_NAME)
+        .where({
+        openid
+    })
+        .get();
+    console.log('get user by openid', user);
+    return user;
+}
+
+class CatController extends BaseController {
+    async [ECatAcions.Update](request) {
+        const user = await getCurrentUser();
+        if (!checkPermission('operator', user ? user.roles : [])) {
+            this.fail(403, '无修改权限');
+        }
+        const { _id, ...rest } = request;
+        const record = await getById(CAT_COLLECTION_NAME, _id);
+        if (!record) {
+            this.fail(500, '不存在该记录');
+        }
+        await update(CAT_COLLECTION_NAME, { ...record, ...rest });
+        return this.success({ _id });
+    }
+}
+
 class UserController extends BaseController {
     async [EUserActions.Login]({ avatarUrl, nickName }) {
         const wxContext = cloud.getWXContext();
@@ -152,7 +164,7 @@ class UserController extends BaseController {
                 roles: []
             };
             await add(USER_COLLECTION_NAME, newRecord);
-            return this.success(await getCurrentUser());
+            return this.success((await getCurrentUser()));
         }
     }
 }

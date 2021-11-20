@@ -42,7 +42,8 @@ export const enum EUserActions {
 }
 
 export const enum ECatAcions {
-  SomeMethod = 'somemethod'
+  // 更新猫信息
+  Update = 'update'
 }
 
 export const enum EApplicationActions {
