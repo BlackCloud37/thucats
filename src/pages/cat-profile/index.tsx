@@ -17,16 +17,26 @@ export interface CatProfilePayload {
   catKey: string;
 }
 
+// TODO: Editable
 const InfoItem = ({
   field,
   val,
   full = false,
-  clipable = false
+  clipable = false,
+  editable = false,
+  editConfig,
+  onEdit
 }: {
   field: string;
   val: string | undefined;
   full?: boolean;
   clipable?: boolean;
+  editable?: boolean;
+  editConfig?: {
+    editType: 'text' | 'enum';
+    enums: string[];
+  };
+  onEdit?: any; // callback
 }) => {
   const text = (
     <Text
@@ -61,11 +71,15 @@ const RelatedCatItem = ({ cat, desc }: { cat: DbCat; desc?: string }) => {
 
 const CatProfilePage = () => {
   const [cat, setCat] = React.useState<ApiCat>();
+
   // TODO: 兜底没有这只猫的场景
-  const { allCats } = useSelector((state: RootState) => ({
-    allCats: state.cats.allCats
+  const { allCats, isOperator } = useSelector((state: RootState) => ({
+    allCats: state.cats.allCats,
+    ...state.users
   }));
+
   usePageEvent('onLoad', ({ payload }) => {
+    // TODO: fetch server
     const { catKey } = JSON.parse(payload) as CatProfilePayload;
     console.log(allCats[catKey]);
     setCat(allCats[catKey]);
@@ -98,6 +112,7 @@ const CatProfilePage = () => {
     age
   } = cat ?? {};
 
+  // TODO: edit btn for operator
   return (
     <View className="p-5">
       <Loadable loading={!cat}>
