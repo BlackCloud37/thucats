@@ -14,7 +14,7 @@ const SciencePopularizingPage = () => {
   }));
   return (
     <View className="p-5">
-      <Tabs>
+      <Tabs className="shadow-xl bg-white">
         {articles.map(({ tab, content, author }) => (
           <TabPanel key={tab} tab={tab}>
             <View className="text-sm text-gray-500 font-light p-4 leading-relaxed">

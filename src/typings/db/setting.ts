@@ -5,4 +5,5 @@ export interface DbSetting {
   associationIcon: string;
   associationLogo: string;
   associationIntroduction: string;
+  adoptGuideUrl: string;
 }
