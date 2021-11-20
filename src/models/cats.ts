@@ -1,10 +1,16 @@
 import { createModel } from '@rematch/core';
-import { callApi } from './apis';
+import { callApi, requestCloudApi } from './apis';
 // import { requestCloudApi } from './apis';
 import type { RootModel } from './models';
 import { default as _l } from 'lodash';
 import wxRequest from 'wechat-request';
-import { ApiCat } from '@/typings/interfaces';
+import {
+  ApiCat,
+  ECatAcions,
+  EController,
+  UpdateCatRequest,
+  UpdateCatResult
+} from '@/typings/interfaces';
 
 export interface CatState {
   allCats: {
@@ -79,6 +85,23 @@ export const cats = createModel<RootModel>()({
       //   console.log(`${_l.size(data)} new cats fetched`);
       //   dispatch.cats.allCats(data);
       // }
+    },
+    async updateCatAsync(payload: UpdateCatRequest, state) {
+      requestCloudApi(EController.Cat, ECatAcions.Update, payload)
+        .then((res: UpdateCatResult) => {
+          console.log(res);
+          const { _id } = res;
+          const newCat = {
+            ...state.cats.allCats[_id],
+            ...payload
+          };
+          const newAllCatsList: ApiCat[] = [
+            ...state.cats.allCatsList.filter((c) => c._id !== _id),
+            newCat
+          ];
+          dispatch.cats.allCats(newAllCatsList);
+        })
+        .catch(console.error);
     }
   })
 });

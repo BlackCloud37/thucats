@@ -14,5 +14,6 @@ export * from './request';
 
 export const REQUEST_COLLECTION_NAME = 'requests';
 export const USER_COLLECTION_NAME = 'users';
+export const CAT_COLLECTION_NAME = 'cats';
 export type Collections = 'requests' | 'users' | 'cats';
 export type Add<T> = Omit<T, keyof JsonDbObject>;
