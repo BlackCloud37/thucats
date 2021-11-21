@@ -1,6 +1,9 @@
 import { JsonDbObject, FileID } from '.';
 
-export type CatStatus = '在野' | '已送养' | '喵星' | '未知' | '待领养';
+// export type CatStatus = '在野' | '已送养' | '喵星' | '未知' | '待领养';
+export const CAT_STATUS_ENUM = ['在野', '已送养', '喵星', '未知', '待领养'] as const;
+export type CatStatus = typeof CAT_STATUS_ENUM[number];
+
 export interface DbCat extends JsonDbObject {
   _avatar?: FileID; // 头像
   _photos?: FileID[]; // 其他照片

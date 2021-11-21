@@ -10,22 +10,22 @@ import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
 import Clipable from '@/components/clipable';
 import { ApiCat } from '@/typings/interfaces';
-import { CatStatus, DbCat } from '@/typings/db';
+import { CAT_STATUS_ENUM, DbCat } from '@/typings/db';
 import Avatar from '@/components/avatar';
-import { Button, Picker } from 'annar';
+import { Button, Picker, Input } from 'annar';
+import _ from 'lodash';
 
 export interface CatProfilePayload {
   catKey: string;
 }
 
-// TODO: Editable
-const InfoItem = ({
+const InfoItem = <T,>({
   field,
   val,
   full = false,
   clipable = false,
   editable = false,
-  editConfig,
+  range,
   onEdit
 }: {
   field: string;
@@ -33,12 +33,13 @@ const InfoItem = ({
   full?: boolean;
   clipable?: boolean;
   editable?: boolean;
-  editConfig?: {
-    editType: 'text' | 'enum';
-    enums: string[];
-  };
-  onEdit?: any; // callback
+  range?: readonly T[];
+  onEdit?: (value: T) => void; // callback
 }) => {
+  if (!val && !editable) {
+    return null;
+  }
+  // show
   const content = (
     <Text
       selectable
@@ -49,29 +50,38 @@ const InfoItem = ({
   );
   const showContent = clipable ? <Clipable clipContent={val!}>{content}</Clipable> : content;
 
-  const { editType, enums } = editConfig ?? {};
-  const isEnum = editType === 'enum';
-  const editContent = isEnum ? (
+  // edit
+  const editContent = range ? (
     <Picker
-      range={enums}
-      onChange={(v) => {
-        const index = v as number;
-        const status = enums?.[index] as CatStatus;
-        console.log({ status }, '  is selected');
-        onEdit(status);
+      range={range as any[]}
+      onChange={(index) => {
+        const selected = range[index as number];
+        selected && onEdit?.(selected);
       }}
     >
-      <Button>{val}</Button>
+      <Button plain shape="square">
+        {val}
+      </Button>
     </Picker>
   ) : (
-    <View>暂不支持</View>
+    // input
+    <Input
+      onChange={({ target: { value } }) => {
+        console.log(value);
+        onEdit?.(value);
+      }}
+      value={val}
+      className="shadow-inner"
+      style={{ borderRadius: '0.5rem' }} // rounded-lg
+    />
   );
-  return val ? (
+
+  return (
     <View className={`flex flex-col ${full ? 'w-full' : 'w-1on2'} font-light mt-4`}>
       <Text className="block text-xs text-gray-500">{field}</Text>
       {editable ? editContent : showContent}
     </View>
-  ) : null;
+  );
 };
 
 const RelatedCatItem = ({ cat, desc }: { cat: DbCat; desc?: string }) => {
@@ -140,25 +150,15 @@ const CatProfilePage = () => {
     age
   } = cat ?? {};
 
-  // TODO: edit btn for operator
+  const onEditCat = _.curry((key: keyof ApiCat, val: any) => {
+    setCat({
+      ...cat!,
+      [key]: val
+    });
+  });
+
   return (
     <View className="p-5">
-      <Button
-        onTap={() => {
-          if (editing) {
-            //  update
-            updateCatAsync({
-              _id: cat!._id,
-              status: cat!.status
-            }).catch(console.error);
-            console.log('上传修改信息');
-          }
-          setEditing(!editing);
-          console.log('修改状态为：', { editing });
-        }}
-      >
-        {editing ? '保存' : '修改'}
-      </Button>
       <Loadable loading={!cat}>
         <View className="p-5 bg-white rounded-lg shadow-xl mb-5">
           <Photo src={_photos?.[0] ?? _avatar} />
@@ -176,7 +176,24 @@ const CatProfilePage = () => {
               {noticeDescription}
             </View>
           )}
-          <Text className="block text-gray-700 text-xl mb-2 font-bold w-full mt-2">{name}</Text>
+          <View className="flex justify-between w-full mb-2 mt-2">
+            <Text className="block text-gray-700 text-xl font-bold">{name}</Text>
+            {isOperator && (
+              <Button
+                onTap={() => {
+                  if (editing && cat) {
+                    updateCatAsync(cat).catch(console.error);
+                  }
+                  setEditing(!editing);
+                }}
+                plain
+                shape="square"
+              >
+                {editing ? '保存' : '编辑'}
+              </Button>
+            )}
+          </View>
+
           {nickname && <Text className="block text-gray-500 text-sm mb-2 w-full">{nickname}</Text>}
           <View className="mt-2 flex flex-wrap">
             {/* 半行 */}
@@ -186,16 +203,8 @@ const CatProfilePage = () => {
               field="状况"
               val={status}
               editable={editing}
-              editConfig={{
-                editType: 'enum',
-                enums: ['待领养', '在野']
-              }}
-              onEdit={(status: CatStatus) => {
-                setCat({
-                  ...cat!,
-                  status
-                });
-              }}
+              range={CAT_STATUS_ENUM}
+              onEdit={onEditCat('status')}
             />
             <InfoItem field="年龄" val={age} />
             <InfoItem field="生日" val={birthday} />
@@ -211,8 +220,21 @@ const CatProfilePage = () => {
             <InfoItem field="出没地点" val={location} full />
             {status === '待领养' && (
               <>
-                <InfoItem field="领养简介" val={adoptDescription} full />
-                <InfoItem field="领养联系" val={adoptContact} full clipable />
+                <InfoItem
+                  field="领养简介"
+                  val={adoptDescription}
+                  full
+                  editable={editing}
+                  onEdit={onEditCat('adoptDescription')}
+                />
+                <InfoItem
+                  field="领养联系"
+                  val={adoptContact}
+                  full
+                  clipable
+                  editable={editing}
+                  onEdit={onEditCat('adoptContact')}
+                />
               </>
             )}
             <InfoItem field="备注" val={notes} full />
