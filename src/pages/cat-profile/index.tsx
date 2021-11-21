@@ -10,8 +10,9 @@ import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
 import Clipable from '@/components/clipable';
 import { ApiCat } from '@/typings/interfaces';
-import { DbCat } from '@/typings/db';
+import { CatStatus, DbCat } from '@/typings/db';
 import Avatar from '@/components/avatar';
+import { Button, Picker } from 'annar';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -38,7 +39,7 @@ const InfoItem = ({
   };
   onEdit?: any; // callback
 }) => {
-  const text = (
+  const content = (
     <Text
       selectable
       className={classNames('block text-sm', { 'underline text-blue-500': clipable })}
@@ -46,10 +47,29 @@ const InfoItem = ({
       {val}
     </Text>
   );
+  const showContent = clipable ? <Clipable clipContent={val!}>{content}</Clipable> : content;
+
+  const { editType, enums } = editConfig ?? {};
+  const isEnum = editType === 'enum';
+  const editContent = isEnum ? (
+    <Picker
+      range={enums}
+      onChange={(v) => {
+        const index = v as number;
+        const status = enums?.[index] as CatStatus;
+        console.log({ status }, '  is selected');
+        onEdit(status);
+      }}
+    >
+      <Button>{val}</Button>
+    </Picker>
+  ) : (
+    <View>暂不支持</View>
+  );
   return val ? (
     <View className={`flex flex-col ${full ? 'w-full' : 'w-1on2'} font-light mt-4`}>
       <Text className="block text-xs text-gray-500">{field}</Text>
-      {clipable ? <Clipable clipContent={val}>{text}</Clipable> : text}
+      {editable ? editContent : showContent}
     </View>
   ) : null;
 };
@@ -72,6 +92,7 @@ const RelatedCatItem = ({ cat, desc }: { cat: DbCat; desc?: string }) => {
 const CatProfilePage = () => {
   const [cat, setCat] = React.useState<ApiCat>();
   const [catKey, setKey] = React.useState('');
+  const [editing, setEditing] = React.useState(false);
 
   // TODO: 兜底没有这只猫的场景
   const { allCats, isOperator } = useSelector((state: RootState) => ({
@@ -122,6 +143,22 @@ const CatProfilePage = () => {
   // TODO: edit btn for operator
   return (
     <View className="p-5">
+      <Button
+        onTap={() => {
+          if (editing) {
+            //  update
+            updateCatAsync({
+              _id: cat!._id,
+              status: cat!.status
+            }).catch(console.error);
+            console.log('上传修改信息');
+          }
+          setEditing(!editing);
+          console.log('修改状态为：', { editing });
+        }}
+      >
+        {editing ? '保存' : '修改'}
+      </Button>
       <Loadable loading={!cat}>
         <View className="p-5 bg-white rounded-lg shadow-xl mb-5">
           <Photo src={_photos?.[0] ?? _avatar} />
@@ -145,7 +182,21 @@ const CatProfilePage = () => {
             {/* 半行 */}
             <InfoItem field="毛色" val={colorCategory} />
             <InfoItem field="性别" val={sex} />
-            <InfoItem field="状况" val={status} />
+            <InfoItem
+              field="状况"
+              val={status}
+              editable={editing}
+              editConfig={{
+                editType: 'enum',
+                enums: ['待领养', '在野']
+              }}
+              onEdit={(status: CatStatus) => {
+                setCat({
+                  ...cat!,
+                  status
+                });
+              }}
+            />
             <InfoItem field="年龄" val={age} />
             <InfoItem field="生日" val={birthday} />
             <InfoItem field="绝育情况" val={neuteringStatus} />
