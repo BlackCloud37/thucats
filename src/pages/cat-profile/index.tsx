@@ -10,21 +10,22 @@ import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
 import Clipable from '@/components/clipable';
 import { ApiCat } from '@/typings/interfaces';
-import { DbCat } from '@/typings/db';
+import { CAT_STATUS_ENUM, DbCat } from '@/typings/db';
 import Avatar from '@/components/avatar';
+import { Button, Picker, Input } from 'annar';
+import _ from 'lodash';
 
 export interface CatProfilePayload {
   catKey: string;
 }
 
-// TODO: Editable
-const InfoItem = ({
+const InfoItem = <T,>({
   field,
   val,
   full = false,
   clipable = false,
   editable = false,
-  editConfig,
+  range,
   onEdit
 }: {
   field: string;
@@ -32,13 +33,14 @@ const InfoItem = ({
   full?: boolean;
   clipable?: boolean;
   editable?: boolean;
-  editConfig?: {
-    editType: 'text' | 'enum';
-    enums: string[];
-  };
-  onEdit?: any; // callback
+  range?: readonly T[];
+  onEdit?: (value: T) => void; // callback
 }) => {
-  const text = (
+  if (!val && !editable) {
+    return null;
+  }
+  // show
+  const content = (
     <Text
       selectable
       className={classNames('block text-sm', { 'underline text-blue-500': clipable })}
@@ -46,12 +48,40 @@ const InfoItem = ({
       {val}
     </Text>
   );
-  return val ? (
+  const showContent = clipable ? <Clipable clipContent={val!}>{content}</Clipable> : content;
+
+  // edit
+  const editContent = range ? (
+    <Picker
+      range={range as any[]}
+      onChange={(index) => {
+        const selected = range[index as number];
+        selected && onEdit?.(selected);
+      }}
+    >
+      <Button plain shape="square">
+        {val}
+      </Button>
+    </Picker>
+  ) : (
+    // input
+    <Input
+      onChange={({ target: { value } }) => {
+        console.log(value);
+        onEdit?.(value);
+      }}
+      value={val}
+      className="shadow-inner"
+      style={{ borderRadius: '0.5rem' }} // rounded-lg
+    />
+  );
+
+  return (
     <View className={`flex flex-col ${full ? 'w-full' : 'w-1on2'} font-light mt-4`}>
       <Text className="block text-xs text-gray-500">{field}</Text>
-      {clipable ? <Clipable clipContent={val}>{text}</Clipable> : text}
+      {editable ? editContent : showContent}
     </View>
-  ) : null;
+  );
 };
 
 const RelatedCatItem = ({ cat, desc }: { cat: DbCat; desc?: string }) => {
@@ -72,6 +102,7 @@ const RelatedCatItem = ({ cat, desc }: { cat: DbCat; desc?: string }) => {
 const CatProfilePage = () => {
   const [cat, setCat] = React.useState<ApiCat>();
   const [catKey, setKey] = React.useState('');
+  const [editing, setEditing] = React.useState(false);
 
   // TODO: 兜底没有这只猫的场景
   const { allCats, isOperator } = useSelector((state: RootState) => ({
@@ -119,7 +150,13 @@ const CatProfilePage = () => {
     age
   } = cat ?? {};
 
-  // TODO: edit btn for operator
+  const onEditCat = _.curry((key: keyof ApiCat, val: any) => {
+    setCat({
+      ...cat!,
+      [key]: val
+    });
+  });
+
   return (
     <View className="p-5">
       <Loadable loading={!cat}>
@@ -139,13 +176,36 @@ const CatProfilePage = () => {
               {noticeDescription}
             </View>
           )}
-          <Text className="block text-gray-700 text-xl mb-2 font-bold w-full mt-2">{name}</Text>
+          <View className="flex justify-between w-full mb-2 mt-2">
+            <Text className="block text-gray-700 text-xl font-bold">{name}</Text>
+            {isOperator && (
+              <Button
+                onTap={() => {
+                  if (editing && cat) {
+                    updateCatAsync(cat).catch(console.error);
+                  }
+                  setEditing(!editing);
+                }}
+                plain
+                shape="square"
+              >
+                {editing ? '保存' : '编辑'}
+              </Button>
+            )}
+          </View>
+
           {nickname && <Text className="block text-gray-500 text-sm mb-2 w-full">{nickname}</Text>}
           <View className="mt-2 flex flex-wrap">
             {/* 半行 */}
             <InfoItem field="毛色" val={colorCategory} />
             <InfoItem field="性别" val={sex} />
-            <InfoItem field="状况" val={status} />
+            <InfoItem
+              field="状况"
+              val={status}
+              editable={editing}
+              range={CAT_STATUS_ENUM}
+              onEdit={onEditCat('status')}
+            />
             <InfoItem field="年龄" val={age} />
             <InfoItem field="生日" val={birthday} />
             <InfoItem field="绝育情况" val={neuteringStatus} />
@@ -160,8 +220,21 @@ const CatProfilePage = () => {
             <InfoItem field="出没地点" val={location} full />
             {status === '待领养' && (
               <>
-                <InfoItem field="领养简介" val={adoptDescription} full />
-                <InfoItem field="领养联系" val={adoptContact} full clipable />
+                <InfoItem
+                  field="领养简介"
+                  val={adoptDescription}
+                  full
+                  editable={editing}
+                  onEdit={onEditCat('adoptDescription')}
+                />
+                <InfoItem
+                  field="领养联系"
+                  val={adoptContact}
+                  full
+                  clipable
+                  editable={editing}
+                  onEdit={onEditCat('adoptContact')}
+                />
               </>
             )}
             <InfoItem field="备注" val={notes} full />
