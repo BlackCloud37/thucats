@@ -30,6 +30,7 @@
     "@rematch/core": "^2.1.0",
     "@rematch/loading": "^2.1.1",
     "@rematch/persist": "^2.1.0",
+    "annar": "^2.2.1",
     "classnames": "^2.3.1",
     "dotenv": "^10.0.0",
     "lin-ui": "^0.9.4",

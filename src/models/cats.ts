@@ -1,6 +1,5 @@
 import { createModel } from '@rematch/core';
 import { callApi, requestCloudApi } from './apis';
-// import { requestCloudApi } from './apis';
 import type { RootModel } from './models';
 import { default as _l } from 'lodash';
 import wxRequest from 'wechat-request';
