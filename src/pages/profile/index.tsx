@@ -4,9 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch, RootState } from '@/models/store';
 import Avatar from '@/components/avatar';
 import { Tabs, TabPanel } from '@/components/tabs';
-import LButton from 'lin-ui/dist/button';
 import Request from './request';
 import { ApiRequest } from '@/typings/interfaces';
+import { Button } from 'annar';
+
 const ProfilePage = () => {
   const {
     avatarUrl,
@@ -53,7 +54,7 @@ const ProfilePage = () => {
   // };
 
   const reqList = (reqs: ApiRequest[]) => {
-    return reqs.length ? (
+    return reqs?.length ? (
       reqs.map((req) => <Request key={req._id} req={req} />)
     ) : (
       <Text>这里空空如也</Text>
@@ -68,7 +69,9 @@ const ProfilePage = () => {
             <View>{nickName}</View>
           </View>
         )}
-        <LButton bindlintap={getProfileAndLogin}>{isLoggedin ? '刷新信息' : '点击授权'}</LButton>
+        <Button shape="square" onTap={getProfileAndLogin}>
+          {isLoggedin ? '刷新信息' : '点击授权'}
+        </Button>
         {/* {!isOperator && <LButton bindlintap={requestPermission}>申请权限</LButton>} */}
       </View>
       {isOperator && (

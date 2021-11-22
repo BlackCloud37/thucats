@@ -52,6 +52,7 @@
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "cross-env": "^7.0.2",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.0.1",
     "eslint-config-alloy": "^4.4.0",
     "eslint-plugin-react": "^7.26.1",
@@ -70,5 +71,18 @@
   "eslintIgnore": [
     "src/components/wemark/*",
     "extensions/**/*"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlackCloud37/thucats.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BlackCloud37/thucats/issues"
+  },
+  "homepage": "https://github.com/BlackCloud37/thucats#readme",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
