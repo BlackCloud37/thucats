@@ -1,36 +1,9 @@
 import { JsonDbObject, FileID } from '.';
+import { DbHistory } from './history';
 
 // export type CatStatus = '在野' | '已送养' | '喵星' | '未知' | '待领养';
 export const CAT_STATUS_ENUM = ['在野', '已送养', '喵星', '未知', '待领养'] as const;
 export type CatStatus = typeof CAT_STATUS_ENUM[number];
-
-interface Rec {
-  proirity?: 1 | 2 | 3 | 4 | 5;
-  detail?: string;
-  ownerID?: string;
-  done?: boolean;
-  reason?: string;
-  startDate?: string; // 时间字符串
-}
-
-export interface RescueRec extends Rec {
-  hospital?: {
-    name: string;
-    contact?: string;
-  }; // 医院
-  dueRemainDays?: number;
-}
-
-export interface FosterRec extends Rec {
-  family?: {
-    location?: string;
-    contact?: string;
-  };
-  adoptionPost?: {
-    posted?: boolean; // 已经发布领养贴
-    postImage?: string; // 领养贴图片
-  };
-}
 
 export interface DbCat extends JsonDbObject {
   _avatar?: FileID; // 头像
@@ -60,6 +33,5 @@ export interface DbCat extends JsonDbObject {
   adoptDescription?: string; // 领养简介
   age?: string;
   birthday?: string;
-  rescueHistory?: RescueRec[];
-  fosterHistory?: FosterRec[];
+  history?: DbHistory[];
 }

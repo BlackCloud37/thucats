@@ -54,37 +54,8 @@ export const cats = createModel<RootModel>()({
     async fetchAllCatsAsync() {
       const { data } = await callApi(wxRequest.get('/cats'));
       dispatch.cats.allCats(data);
-      // // TODO: BUG: 无法同步被删除的猫咪
-      // console.log('fetchAllCatsAsync');
-      // const { allCatsList } = state.cats;
-      // const updatedTime = _l.maxBy(allCatsList, (cat) => cat._updateTime)?._updateTime ?? 0;
-
-      // console.log(`local updated time of cat is ${updatedTime}`);
-      // let needFetch = false;
-      // if (updatedTime <= 0 || _l.isEmpty(allCatsList)) {
-      //   // 无数据，直接拉
-      //   console.log('theres no data, need fetch');
-      //   needFetch = true;
-      // } else {
-      //   // 比较数据库最后一条的updated
-      //   const serverUpdatedTime = await fetchUpdatedTime(COLLECTION_NAME);
-      //   if (updatedTime !== serverUpdatedTime) {
-      //     needFetch = true;
-      //   } else {
-      //     const count = await fetchCount(COLLECTION_NAME);
-      //     console.log(`server count is ${count} local count is ${_l.size(allCatsList)}`);
-      //     if (count !== _l.size(allCatsList)) {
-      //       needFetch = true;
-      //     }
-      //   }
-      // }
-      // if (needFetch) {
-      //   console.log('Fecth all cats start-----------------------------');
-      //   const { data } = await fetchAllFromCollection(COLLECTION_NAME);
-      //   console.log(`${_l.size(data)} new cats fetched`);
-      //   dispatch.cats.allCats(data);
-      // }
     },
+
     async updateCatAsync(payload: UpdateCatRequest, state) {
       requestCloudApi(EController.Cat, ECatAcions.Update, payload)
         .then((res: UpdateCatResult) => {
