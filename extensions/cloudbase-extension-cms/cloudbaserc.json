@@ -151,7 +151,7 @@
             },
             {
               "collectionName": "users",
-              "aclTag": "PRIVATE",
+              "aclTag": "READONLY",
               "createIndexes": [
                 {
                   "name": "查询索引",
