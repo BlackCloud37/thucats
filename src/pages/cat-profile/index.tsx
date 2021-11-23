@@ -147,7 +147,8 @@ const CatProfilePage = () => {
     adoptDescription,
     adoptContact,
     birthday,
-    age
+    age,
+    history
   } = cat ?? {};
 
   const onEditCat = _.curry((key: keyof ApiCat, val: any) => {
@@ -256,6 +257,7 @@ const CatProfilePage = () => {
               </View>
             )}
           </View>
+          {isOperator && history?.map((his) => his.historyType)}
         </View>
         <Tabs className="shadow-xl bg-white">
           <TabPanel tab="精选照片">
