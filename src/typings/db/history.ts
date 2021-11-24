@@ -1,12 +1,12 @@
-import { JsonDbObject } from '.';
-
-export interface DbHistory extends JsonDbObject {
+export interface History {
   historyType: '寄养' | '救助';
   owner?: string; // name
   startDate?: number;
+  endDate?: number;
+  isDone?: boolean;
+
   priority?: number;
   detail?: string;
-  done?: boolean;
   contact?: string;
   location?: string;
 
