@@ -7,7 +7,7 @@ import { Tabs, TabPanel } from '@/components/tabs';
 import Request from './request';
 import { ApiRequest } from '@/typings/interfaces';
 import { Button } from 'annar';
-
+import 'annar/esm/button/style/css';
 const ProfilePage = () => {
   const {
     avatarUrl,

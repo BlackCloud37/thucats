@@ -5,6 +5,7 @@ import { View } from '@remax/wechat';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { Button } from 'annar';
+import 'annar/esm/button/style/css';
 
 const Request = (props: { req: ApiRequest }) => {
   const { updateRequestAsync } = useDispatch<Dispatch>().users;
