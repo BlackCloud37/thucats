@@ -132,18 +132,38 @@ export const users = createModel<RootModel>()({
       dispatch.users.requests(data);
     },
 
-    async createRequestAsync(payload: { requestType: 'permission' | 'imageUpload' }, state) {
+    async createRequestAsync(payload: Pick<DbRequest, 'requestType' | 'permissionInfo'>, state) {
       if (!state.users.user?._id) {
         console.error('not logged in, cannot create request');
-        return;
+        return Promise.reject(Error('not logged in'));
       }
+
       const { requestType } = payload;
       console.log('Create Requests', arguments);
-      const request: Add<DbRequest> = {
+      let request: Add<DbRequest> = {
         requestType,
         status: 'pending',
         applicant: state.users.user._id
       };
+      // argument check
+      if (requestType === 'permission') {
+        const { permissionInfo } = payload;
+        if (
+          !permissionInfo ||
+          !permissionInfo.name ||
+          !permissionInfo.department ||
+          !permissionInfo.schoolID
+        ) {
+          console.error('no permission info');
+          return Promise.reject(Error('no permission info'));
+        }
+
+        request = {
+          ...request,
+          permissionInfo
+        };
+      }
+
       const { data } = await callApi(
         wxRequest.post('/requests', {
           data: request

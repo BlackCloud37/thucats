@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, getUserProfile, Text } from 'remax/wechat';
+import { View, getUserProfile, Text, showToast } from 'remax/wechat';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch, RootState } from '@/models/store';
 import Avatar from '@/components/avatar';
@@ -22,8 +22,9 @@ const ProfilePage = () => {
     ...state.users
     // loading: state.loading.effects.settings.fetchSettingsAsync
   }));
+  const [clickCnt, setClickCnt] = React.useState(0);
 
-  const { loginAsync, getRequestsAsync /* createRequestAsync */ } = useDispatch<Dispatch>().users;
+  const { loginAsync, getRequestsAsync, createRequestAsync } = useDispatch<Dispatch>().users;
 
   React.useEffect(() => {
     isOperator && getRequestsAsync();
@@ -45,13 +46,15 @@ const ProfilePage = () => {
   };
 
   // 申请权限
-  // const requestPermission = () => {
-  //   createRequestAsync({
-  //     requestType: 'permission'
-  //   })
-  //     .then(() => showToast({ title: '成功' }))
-  //     .catch(() => showToast({ title: '失败' }));
-  // };
+  const requestPermission = () => {
+    createRequestAsync({
+      requestType: 'permission'
+      // TODO: 表单
+      // permissionInfo: {}
+    })
+      .then(() => showToast({ title: '成功' }))
+      .catch(() => showToast({ title: '失败' }));
+  };
 
   const reqList = (reqs: ApiRequest[]) => {
     return reqs?.length ? (
@@ -62,9 +65,9 @@ const ProfilePage = () => {
   };
   return (
     <View className="p-5">
-      <View className="rounded-lg shadow-2xl bg-white p-5 flex-col items-center flex text-center mb-5">
+      <View className="rounded-lg shadow-2xl bg-white p-5 flex-col items-center flex text-center mb-5 gap-1">
         {isLoggedin && (
-          <View>
+          <View onClick={() => setClickCnt((cnt) => cnt + 1)}>
             <Avatar src={avatarUrl} className="w-20 h-20 rounded-full" />
             <View>{nickName}</View>
           </View>
@@ -72,6 +75,11 @@ const ProfilePage = () => {
         <Button shape="square" onTap={getProfileAndLogin}>
           {isLoggedin ? '刷新信息' : '点击授权'}
         </Button>
+        {clickCnt >= 5 && (
+          <Button shape="square" onTap={requestPermission}>
+            申请权限
+          </Button>
+        )}
         {/* {!isOperator && <LButton bindlintap={requestPermission}>申请权限</LButton>} */}
       </View>
       {isOperator && (
