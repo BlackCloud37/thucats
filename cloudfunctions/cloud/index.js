@@ -183,18 +183,24 @@ class ApplicationController extends BaseController {
         if (!checkPermission(requiredRole, user.roles)) {
             return this.fail(403, `No permission required role ${requiredRole}`);
         }
-        // WARNING: no transaction here
         try {
+            const { requestType, applicant: applicantID } = record;
             await db.runTransaction(async (transaction) => {
                 if (action === 'approve') {
-                    switch (record.requestType) {
+                    switch (requestType) {
                         case 'permission': {
-                            const applicant = await getById(USER_COLLECTION_NAME, record.applicant, // id
+                            const { permissionInfo } = record;
+                            console.log('permissionInfo', permissionInfo);
+                            if (!permissionInfo) {
+                                await transaction.rollback('申请信息不能为空');
+                            }
+                            const applicant = await getById(USER_COLLECTION_NAME, applicantID, // id
                             transaction);
                             console.log('applicant', applicant);
                             const newUser = {
                                 ...applicant,
-                                roles: db.command.addToSet('operator')
+                                roles: db.command.addToSet('operator'),
+                                ...permissionInfo
                             };
                             await update(USER_COLLECTION_NAME, newUser, transaction);
                             break;
@@ -215,7 +221,7 @@ class ApplicationController extends BaseController {
         }
         catch (e) {
             console.error('transaction failed', e);
-            this.fail(500, e.toString());
+            return this.fail(500, '操作失败');
         }
         return this.success({ _id: requestId });
     }
