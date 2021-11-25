@@ -17,6 +17,23 @@ class BaseController {
     }
 }
 
+var ECatAcions;
+(function (ECatAcions) {
+    // 更新猫信息
+    ECatAcions["Update"] = "update";
+})(ECatAcions || (ECatAcions = {}));
+
+var EUserActions;
+(function (EUserActions) {
+    EUserActions["Login"] = "login";
+})(EUserActions || (EUserActions = {}));
+
+var EApplicationActions;
+(function (EApplicationActions) {
+    // 同意、取消申请
+    EApplicationActions["Update"] = "update";
+})(EApplicationActions || (EApplicationActions = {}));
+
 var EController;
 (function (EController) {
     // Modify: add new controller
@@ -24,21 +41,6 @@ var EController;
     EController["Cat"] = "cat";
     EController["Application"] = "request"; // Request和请求有歧义，重命名一下
 })(EController || (EController = {}));
-// Modify: add new EActions
-var EUserActions;
-(function (EUserActions) {
-    EUserActions["Login"] = "login";
-})(EUserActions || (EUserActions = {}));
-var ECatAcions;
-(function (ECatAcions) {
-    // 更新猫信息
-    ECatAcions["Update"] = "update";
-})(ECatAcions || (ECatAcions = {}));
-var EApplicationActions;
-(function (EApplicationActions) {
-    // 同意、取消申请
-    EApplicationActions["Update"] = "update";
-})(EApplicationActions || (EApplicationActions = {}));
 
 const REQUEST_COLLECTION_NAME = 'requests';
 const USER_COLLECTION_NAME = 'users';

@@ -1,3 +1,5 @@
+import { EApplicationActions, ECatAcions, EUserActions } from '.';
+
 export interface CloudFunctionEvent<C extends EController> {
   controller: C;
   action: ActionFor<C>;
@@ -35,18 +37,3 @@ export type ActionFor<C extends EController> =
   C extends EController.Cat  ? ECatAcions:
   C extends EController.Application ? EApplicationActions:
   never;
-
-// Modify: add new EActions
-export const enum EUserActions {
-  Login = 'login'
-}
-
-export const enum ECatAcions {
-  // 更新猫信息
-  Update = 'update'
-}
-
-export const enum EApplicationActions {
-  // 同意、取消申请
-  Update = 'update'
-}
