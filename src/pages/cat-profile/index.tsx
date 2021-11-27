@@ -167,8 +167,14 @@ const CatProfilePage = () => {
         onTap={() => {
           addHistoryToCat({
             catId: cat!._id,
+            // TODO: 表单
+            //     首先能选择记录类型：寄养/救助
+            //     两者有不同的表单内容
             newHistory: {
-              historyType: '寄养'
+              historyType: '寄养',
+              startDate: new Date().getTime(),
+              owner: '张三',
+              priority: 5
             }
           });
         }}
