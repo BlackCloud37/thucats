@@ -113,7 +113,7 @@ const CatProfilePage = () => {
     ...state.users
   }));
 
-  const { updateCatAsync } = useDispatch<Dispatch>().cats;
+  const { updateCatAsync, addHistoryToCat } = useDispatch<Dispatch>().cats;
 
   usePageEvent('onLoad', ({ payload }) => {
     // TODO: fetch server
@@ -163,6 +163,18 @@ const CatProfilePage = () => {
 
   return (
     <View className="p-5">
+      <Button
+        onTap={() => {
+          addHistoryToCat({
+            catId: cat!._id,
+            newHistory: {
+              historyType: '寄养'
+            }
+          });
+        }}
+      >
+        his
+      </Button>
       <Loadable loading={!cat}>
         <View className="p-5 bg-white rounded-lg shadow-xl mb-5">
           <Photo src={_photos?.[0] ?? _avatar} />
