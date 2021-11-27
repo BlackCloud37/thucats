@@ -6,8 +6,15 @@ import Avatar from '@/components/avatar';
 import { Tabs, TabPanel } from '@/components/tabs';
 import Request from './request';
 import { ApiRequest } from '@/typings/interfaces';
-import { Button } from 'annar';
+/* Form Example Import Used Components and Their Styles */
+import { Form, Card, Cell, Button } from 'annar';
+import 'annar/esm/card/style/css';
+import 'annar/esm/form/style/css';
+import 'annar/esm/cell/style/css';
+import 'annar/esm/radio/style/css';
 import 'annar/esm/button/style/css';
+import 'annar/esm/row/style/css';
+import 'annar/esm/col/style/css';
 const ProfilePage = () => {
   const {
     avatarUrl,
@@ -45,16 +52,38 @@ const ProfilePage = () => {
     });
   };
 
-  // 申请权限
-  const requestPermission = () => {
+  const [requesting, setRequesting] = React.useState(false);
+  /* Form Example Callback Funcs */
+  const [form] = Form.useForm();
+  const handleFinish = (values: any) => {
+    console.log('values', values);
     createRequestAsync({
-      requestType: 'permission'
+      requestType: 'permission',
       // TODO: 表单
-      // permissionInfo: {}
+
+      permissionInfo: values
     })
       .then(() => showToast({ title: '成功' }))
       .catch(() => showToast({ title: '失败' }));
+    setRequesting(!requesting);
   };
+  const handleFinishFailed = (values: any, errorFields: any) => {
+    console.log('errorFields', errorFields);
+  };
+  const handleSubmit = () => {
+    form.submit();
+  };
+  // 申请权限
+  // const requestPermission = () => {
+  //   createRequestAsync({
+  //     requestType: 'permission'
+  //     // TODO: 表单
+
+  //     // permissionInfo: {}
+  //   })
+  //     .then(() => showToast({ title: '成功' }))
+  //     .catch(() => showToast({ title: '失败' }));
+  // };
 
   const reqList = (reqs: ApiRequest[]) => {
     return reqs?.length ? (
@@ -75,8 +104,16 @@ const ProfilePage = () => {
         <Button shape="square" onTap={getProfileAndLogin}>
           {isLoggedin ? '刷新信息' : '点击授权'}
         </Button>
-        {clickCnt >= 5 && (
-          <Button shape="square" onTap={requestPermission}>
+        {clickCnt >= 5 && !requesting && (
+          <Button
+            shape="square"
+            onTap={() => {
+              if (requesting) {
+                // requestPermission();
+              }
+              setRequesting(!requesting);
+            }}
+          >
             申请权限
           </Button>
         )}
@@ -97,6 +134,41 @@ const ProfilePage = () => {
             </TabPanel>
           )} */}
         </Tabs>
+      )}
+      {requesting && (
+        <Card contentStyle={{ padding: '20px 0 20px' }}>
+          <Form onFinish={handleFinish} onFinishFailed={handleFinishFailed}>
+            <Form.Item noStyle name="name" rules={[{ required: true, message: '姓名不可为空' }]}>
+              <Cell.Input label="姓名" placeholder="请输入" border={false} />
+            </Form.Item>
+            <Form.Item
+              noStyle
+              name="schoolID"
+              rules={[{ pattern: /\d{10}/, message: '学号不符合规范（10位）' }]}
+            >
+              <Cell.Input label="学号" placeholder="请输入" border={false} />
+            </Form.Item>
+            <Form.Item
+              noStyle
+              name="department"
+              rules={[{ required: true, message: '所在部门不可为空' }]}
+            >
+              <Cell.Input label="所在部门" placeholder="请输入" border={false} />
+            </Form.Item>
+            <Form.Item noStyle style={{ marginTop: 20, padding: '0 20px' }}>
+              <Button
+                type="primary"
+                size="large"
+                shape="square"
+                block
+                nativeType="submit"
+                onTap={handleSubmit}
+              >
+                提交
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card>
       )}
     </View>
   );
