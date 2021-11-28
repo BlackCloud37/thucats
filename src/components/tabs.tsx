@@ -9,6 +9,9 @@ export const Tabs = (props: { children: any; className?: string }) => {
   }
   if (React.Children.count(props.children) === 1) {
     const { children } = props;
+    if (!children) {
+      return null;
+    }
     const tab = children.props.tab;
     return (
       <View className={tabClass}>
