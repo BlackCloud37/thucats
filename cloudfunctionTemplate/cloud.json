@@ -9,5 +9,16 @@
         "status": "待领养"
       }
     }
+  },
+  {
+    "name": "update request",
+    "value": {
+      "controller": "request",
+      "action": "update",
+      "data": {
+        "requestId": "859059a56193b12e063df97d62812ee0",
+        "action": "approve"
+      }
+    }
   }
 ]
