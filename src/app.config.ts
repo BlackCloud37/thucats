@@ -38,8 +38,8 @@ const config: AppConfig = {
         selectedIconPath: '/images/tab-bar-icons/tx-sanjiaoxing-selected.png'
       },
       {
-        pagePath: 'pages/about/index',
-        text: '关于我们',
+        pagePath: 'pages/profile/index',
+        text: '我的',
         iconPath: '/images/tab-bar-icons/tx-yuanxing.png',
         selectedIconPath: '/images/tab-bar-icons/tx-yuanxing-selected.png'
       }
