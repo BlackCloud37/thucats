@@ -53,13 +53,13 @@ const Index = () => {
                 <Image src="/images/cat-1.svg" className="w-28 h-28 absolute -left-2 -bottom-8" />
               </View>
               <View
-                // style={{ backgroundImage: 'linear-gradient(135deg, #1BCF7D 0%, #9CFF75 100%)' }}
-                className="bg-gray-200 h-40 w-full rounded-lg relative shadow-lg"
-                onClick={() => navigateTo('profile')}
+                style={{ backgroundImage: 'linear-gradient(135deg, #1BCF7D 0%, #9CFF75 100%)' }}
+                className="h-40 w-full rounded-lg relative shadow-lg"
+                onClick={() => navigateTo('about')}
               >
                 <View className="pl-4 pt-4">
-                  <Text className="block text-left">救助</Text>
-                  <Text className="block text-left">申请</Text>
+                  <Text className="block text-left">关于</Text>
+                  <Text className="block text-left">我们</Text>
                 </View>
                 <Image
                   src="/images/cat-3.svg"
