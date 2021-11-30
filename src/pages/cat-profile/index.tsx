@@ -12,9 +12,6 @@ import Clipable from '@/components/clipable';
 import { ApiCat } from '@/typings/interfaces';
 import { CAT_STATUS_ENUM, DbCat } from '@/typings/db';
 import Avatar from '@/components/avatar';
-import 'annar/esm/picker/style/css';
-import 'annar/esm/input/style/css';
-import 'annar/esm/button/style/css';
 import { Button, Picker, Input } from 'annar';
 import _ from 'lodash';
 
