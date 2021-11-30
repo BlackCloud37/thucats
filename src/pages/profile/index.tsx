@@ -7,12 +7,7 @@ import { Tabs, TabPanel } from '@/components/tabs';
 import TabBar from '@/components/tabbar';
 import Request from './request';
 import { ApiRequest } from '@/typings/interfaces';
-
 import { Form, Card, Cell, Button } from 'annar';
-import 'annar/esm/card/style/css';
-import 'annar/esm/form/style/css';
-import 'annar/esm/cell/style/css';
-import 'annar/esm/button/style/css';
 
 const ProfilePage = () => {
   const { avatarUrl, nickName, permissionRequests, isLoggedin, isOperator, isAdmin } = useSelector(
