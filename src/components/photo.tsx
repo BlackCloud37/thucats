@@ -3,7 +3,14 @@ import { Image } from 'remax/wechat';
 
 const Photo = ({ src }: { src: string | undefined }) => {
   return src ? (
-    <Image lazyLoad webp src={src} mode="widthFix" className="w-full rounded-xl mt-2 shadow-xl" />
+    <Image
+      lazyLoad
+      webp
+      showMenuByLongpress
+      src={src}
+      mode="widthFix"
+      className="w-full rounded-xl mt-2 shadow-xl"
+    />
   ) : null;
 };
 
