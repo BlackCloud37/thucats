@@ -10,20 +10,17 @@ import { PersistGate } from 'redux-persist/es/integration/react';
 import wxRequest from 'wechat-request';
 import 'annar/dist/annar.css';
 
-// TODO: config
 // @ts-ignore
-wxRequest.defaults.baseURL =
-  'https://thucats-3grq39dr7a44e550-1307824186.ap-shanghai.service.tcloudbase.com/api/v1.0';
+wxRequest.defaults.baseURL = process.env.REMAX_APP_BASE_URL;
 // @ts-ignore
 wxRequest.defaults.headers['Content-Type'] = 'application/json';
 // @ts-ignore
-wxRequest.defaults.headers[
-  'Authorization'
-] = `Bearer cJHphmsIB2iUgQRzFvtZNvlOhG_pxv3_EnZV6BGzCXiMEt15ll-K2oM3QvVpz3pVkrkrvFnp8VUuAjfMjpOyLHzC1AtFKV3oSBpESyeRr4AQbGFUAnE_XjN3CGRkHFRf`;
+wxRequest.defaults.headers['Authorization'] = `Bearer ${process.env.REMAX_APP_API_TOKEN}`;
 
 const persistor = getPersistor();
 
 const App: React.FC = (props) => {
+  console.log(process.env.REMAX_APP_BASE_URL, process.env.REMAX_APP_ENVID);
   useAppEvent('onLaunch', () => {
     cloud.init({
       env: process.env.REMAX_APP_ENVID
