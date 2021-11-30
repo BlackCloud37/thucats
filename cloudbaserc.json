@@ -36,7 +36,7 @@
           },
           "commands": {
             "install": "npm install",
-            "build": "REMAX_APP_ENVID={{ env.ENV_ID }} npm run build-mp"
+            "build": "REMAX_APP_ENVID={{ env.ENV_ID }} REMAX_APP_BASE_URL={{ env.CMS_BASE_URL }} REMAX_APP_API_TOKEN={{ env.CMS_API_TOKEN }} npm run build-mp"
           }
         }
       }
@@ -68,6 +68,14 @@
             },
             "errorMessage": "必须是BASE64格式密钥"
           }
+        },
+        "CMS_BASE_URL": {
+          "description": "请填写CMS的API Url，以 `https://` 开头，以 `/v1.0` 结尾",
+          "required": true
+        },
+        "CMS_API_TOKEN": {
+          "description": "请填写CMS的API Token，请注意开启该Token的读与修改权限",
+          "required": true
         }
       }
     }
