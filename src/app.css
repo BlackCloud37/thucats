@@ -4,8 +4,13 @@ page {
 }
 /* 强制覆盖tab bar的style */
 .lu-tab-bar {
+  box-sizing: content-box !important; /* annar conflict */
   border-top: 1px solid white !important;
   background: rgba(210, 210, 210, 0.6) !important;
   backdrop-filter: blur(30px) !important;
   -webkit-backdrop-filter: blur(30px) !important;
+}
+
+.lu-tab-bar__item-wrapper {
+  box-sizing: content-box !important; /* annar conflict */
 }
