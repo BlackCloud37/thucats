@@ -1,105 +1,40 @@
 import Loadable from '@/components/loadable';
 import { Dispatch, RootState } from '@/models/store';
 import { usePageEvent } from '@remax/framework-shared';
-import { Text, View } from '@remax/wechat';
+import { Text, View, showActionSheet } from '@remax/wechat';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { navigateTo } from '@/utils';
 import classNames from 'classnames';
 import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
-import Clipable from '@/components/clipable';
 import { ApiCat } from '@/typings/interfaces';
-import { CAT_STATUS_ENUM, DbCat } from '@/typings/db';
-import Avatar from '@/components/avatar';
+import { CAT_STATUS_ENUM } from '@/typings/db';
 import 'annar/esm/picker/style/css';
 import 'annar/esm/input/style/css';
 import 'annar/esm/button/style/css';
-import { Button, Picker, Input } from 'annar';
+import { Button, Card } from 'annar';
 import _ from 'lodash';
-
+import InfoItem from './info-item';
+import RelatedCatItem from './related-cat';
+import UniForm from '@/components/uni-form';
+import { FOSTER_SCHEMA, RESCUE_SCHEMA } from './form-schemas';
+import { History } from '@/typings/db/history';
 export interface CatProfilePayload {
   catKey: string;
 }
 
-const InfoItem = <T,>({
-  field,
-  val,
-  full = false,
-  clipable = false,
-  editable = false,
-  range,
-  onEdit
-}: {
-  field: string;
-  val: string | undefined;
-  full?: boolean;
-  clipable?: boolean;
-  editable?: boolean;
-  range?: readonly T[];
-  onEdit?: (value: T) => void; // callback
-}) => {
-  if (!val && !editable) {
-    return null;
+const parseForm = (form: any): History => {
+  // TODO: check
+  if (form.startDate) {
+    form.startDate = new Date(form.startDate).getTime();
   }
-  // show
-  const content = (
-    <Text
-      selectable
-      className={classNames('block text-sm', { 'underline text-blue-500': clipable })}
-    >
-      {val}
-    </Text>
-  );
-  const showContent = clipable ? <Clipable clipContent={val!}>{content}</Clipable> : content;
-
-  // edit
-  const editContent = range ? (
-    <Picker
-      range={range as any[]}
-      onChange={(index) => {
-        const selected = range[index as number];
-        selected && onEdit?.(selected);
-      }}
-    >
-      <Button plain shape="square">
-        {val}
-      </Button>
-    </Picker>
-  ) : (
-    // input
-    <Input
-      onChange={({ target: { value } }) => {
-        console.log(value);
-        onEdit?.(value);
-      }}
-      value={val}
-      className="shadow-inner"
-      style={{ borderRadius: '0.5rem' }} // rounded-lg
-    />
-  );
-
-  return (
-    <View className={`flex flex-col ${full ? 'w-full' : 'w-1on2'} font-light mt-4`}>
-      <Text className="block text-xs text-gray-500">{field}</Text>
-      {editable ? editContent : showContent}
-    </View>
-  );
-};
-
-const RelatedCatItem = ({ cat, desc }: { cat: DbCat; desc?: string }) => {
-  return (
-    <View
-      className="flex mt-2 w-full"
-      onClick={() => navigateTo('cat-profile', { catKey: cat._id })}
-    >
-      <Avatar src={cat._avatar} className="w-12 h-12 rounded-full" />
-      <View className="flex-col pl-2">
-        <Text className="block w-full text-xs font-normal">{cat.name}</Text>
-        <Text className="block w-full text-xs font-light">{desc}</Text>
-      </View>
-    </View>
-  );
+  if (form.endDate) {
+    form.endDate = new Date(form.endDate).getTime();
+  }
+  if (form.dueRemainDays) {
+    form.dueRemainDays = parseInt(form.dueRemainDays, 10);
+  }
+  return form;
 };
 
 const CatProfilePage = () => {
@@ -161,26 +96,38 @@ const CatProfilePage = () => {
     });
   });
 
+  const [editingForm, setEditingForm] = React.useState(false);
+  const [formType, setFormType] = React.useState<'寄养' | '救助'>('寄养');
+
+  const onCommit = (v: any) => {
+    console.log(v);
+    addHistoryToCat({
+      catId: cat!._id,
+      newHistory: {
+        ...parseForm(v),
+        historyType: formType
+      }
+    }).finally(() => {
+      setEditingForm(false);
+    });
+  };
+
+  const onNewHistoryTap = () => {
+    showActionSheet({
+      itemList: ['寄养', '救助'],
+      success: (v) => {
+        if (v.tapIndex === 0) {
+          setFormType('寄养');
+        } else if (v.tapIndex === 1) {
+          setFormType('救助');
+        }
+        setEditingForm(true);
+      }
+    });
+  };
+
   return (
     <View className="p-5">
-      <Button
-        onTap={() => {
-          addHistoryToCat({
-            catId: cat!._id,
-            // TODO: 表单
-            //     首先能选择记录类型：寄养/救助
-            //     两者有不同的表单内容
-            newHistory: {
-              historyType: '寄养',
-              startDate: new Date().getTime(),
-              owner: '张三',
-              priority: 5
-            }
-          });
-        }}
-      >
-        his
-      </Button>
       <Loadable loading={!cat}>
         <View className="p-5 bg-white rounded-lg shadow-xl mb-5">
           <Photo src={_photos?.[0] ?? _avatar} />
@@ -260,6 +207,7 @@ const CatProfilePage = () => {
               </>
             )}
             <InfoItem field="备注" val={notes} full />
+            {/* 关联猫 */}
             {(relatedCats ?? relatedCatsDescription) && (
               <View className="flex flex-col w-full font-light mt-4">
                 <Text className="block text-xs text-gray-500">关联猫咪</Text>
@@ -278,7 +226,6 @@ const CatProfilePage = () => {
               </View>
             )}
           </View>
-          {isOperator && history?.map((his) => his.historyType)}
         </View>
         <Tabs className="shadow-xl bg-white">
           <TabPanel tab="精选照片">
@@ -288,6 +235,27 @@ const CatProfilePage = () => {
               ))}
             </View>
           </TabPanel>
+          {isOperator && (
+            <TabPanel tab="记录">
+              <View className="p-5 pt-0">
+                {/* 展示 */}
+                {history?.map((his, index) => (
+                  <View key={index}>{JSON.stringify(his)}</View>
+                ))}
+                {/* 新增 */}
+                <Button onTap={onNewHistoryTap}>新增记录</Button>
+                {editingForm && (formType === '寄养' || formType === '救助') && (
+                  <Card contentStyle={{ padding: '20px 0 20px' }} shadow>
+                    <UniForm
+                      onFinish={onCommit}
+                      schemas={formType === '寄养' ? FOSTER_SCHEMA : RESCUE_SCHEMA}
+                      onCancel={() => setEditingForm(false)}
+                    />
+                  </Card>
+                )}
+              </View>
+            </TabPanel>
+          )}
           {/* <TabPanel tab="用户上传">
             <View />
           </TabPanel> */}

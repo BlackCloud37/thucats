@@ -2,7 +2,7 @@ export interface History {
   historyType: '寄养' | '救助';
   owner: string; // 负责人姓名
   startDate: number; // 开始日期
-  priority: 1 | 2 | 3 | 4 | 5; // 优先级
+  priority: 1 | 2 | 3; // 优先级
 
   isDone?: boolean;
   endDate?: number; // 结束日期

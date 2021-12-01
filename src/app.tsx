@@ -8,6 +8,7 @@ import { useAppEvent } from '@remax/framework-shared';
 import { getPersistor } from '@rematch/persist';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import wxRequest from 'wechat-request';
+import 'annar/dist/annar.css';
 
 // @ts-ignore
 wxRequest.defaults.baseURL = process.env.REMAX_APP_BASE_URL;
