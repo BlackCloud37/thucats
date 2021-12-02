@@ -32,6 +32,7 @@
     "@rematch/persist": "^2.1.0",
     "annar": "^2.2.1",
     "classnames": "^2.3.1",
+    "dayjs": "^1.10.7",
     "dotenv": "^10.0.0",
     "lin-ui": "^0.9.4",
     "lodash": "^4.17.21",

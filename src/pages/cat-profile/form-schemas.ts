@@ -27,7 +27,7 @@ export const RESCUE_SCHEMA: any[] = [
     type: 'enum',
     name: 'priority',
     label: '优先级',
-    range: [1, 2, 3]
+    range: ['低', '中', '高']
   },
   {
     type: 'str',
@@ -76,7 +76,7 @@ export const FOSTER_SCHEMA: any[] = [
     type: 'enum',
     name: 'priority',
     label: '优先级',
-    range: [1, 2, 3]
+    range: ['低', '中', '高']
   },
   {
     type: 'str',

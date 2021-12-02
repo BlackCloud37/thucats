@@ -2,9 +2,6 @@ import { Text, View } from '@remax/wechat';
 import * as React from 'react';
 import classNames from 'classnames';
 import Clipable from '@/components/clipable';
-import 'annar/esm/picker/style/css';
-import 'annar/esm/input/style/css';
-import 'annar/esm/button/style/css';
 import { Button, Picker, Input } from 'annar';
 
 const InfoItem = <T,>({

@@ -9,9 +9,6 @@ import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
 import { ApiCat } from '@/typings/interfaces';
 import { CAT_STATUS_ENUM } from '@/typings/db';
-import 'annar/esm/picker/style/css';
-import 'annar/esm/input/style/css';
-import 'annar/esm/button/style/css';
 import { Button, Card } from 'annar';
 import _ from 'lodash';
 import InfoItem from './info-item';
@@ -19,18 +16,14 @@ import RelatedCatItem from './related-cat';
 import UniForm from '@/components/uni-form';
 import { FOSTER_SCHEMA, RESCUE_SCHEMA } from './form-schemas';
 import { History } from '@/typings/db/history';
+import dayjs from 'dayjs';
+
 export interface CatProfilePayload {
   catKey: string;
 }
 
 const parseForm = (form: any): History => {
   // TODO: check
-  if (form.startDate) {
-    form.startDate = new Date(form.startDate).getTime();
-  }
-  if (form.endDate) {
-    form.endDate = new Date(form.endDate).getTime();
-  }
   if (form.dueRemainDays) {
     form.dueRemainDays = parseInt(form.dueRemainDays, 10);
   }
@@ -239,13 +232,25 @@ const CatProfilePage = () => {
             <TabPanel tab="记录">
               <View className="p-5 pt-0">
                 {/* 展示 */}
-                {history?.map((his, index) => (
-                  <View key={index}>{JSON.stringify(his)}</View>
-                ))}
+                {history?.map((his, index) => {
+                  return (
+                    <View key={index} className="rounded-lg mt-1 mb-1 flex flex-wrap relative pl-2">
+                      <View className="absolute left-0 top-2 h-full rounded-l bg-blue-500 w-1" />
+                      <InfoItem val={his.historyType} field="类型" full />
+                      <InfoItem val={his.owner} field="负责人" />
+                      <InfoItem val={dayjs(his.startDate).format('YYYY-MM-DD')} field="开始日期" />
+                      <InfoItem val={his.contact} field="联系方式" />
+                      <InfoItem val={`${his.priority}`} field="优先级" />
+                      <InfoItem val={his.detail} field="详情" />
+                    </View>
+                  );
+                })}
                 {/* 新增 */}
-                <Button onTap={onNewHistoryTap}>新增记录</Button>
+                <Button className="mt-2" onTap={onNewHistoryTap}>
+                  新增记录
+                </Button>
                 {editingForm && (formType === '寄养' || formType === '救助') && (
-                  <Card contentStyle={{ padding: '20px 0 20px' }} shadow>
+                  <Card contentStyle={{ padding: '20px 0 20px', marginTop: '20px' }} shadow>
                     <UniForm
                       onFinish={onCommit}
                       schemas={formType === '寄养' ? FOSTER_SCHEMA : RESCUE_SCHEMA}
