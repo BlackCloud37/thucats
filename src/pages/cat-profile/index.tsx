@@ -16,7 +16,7 @@ import RelatedCatItem from './related-cat';
 import UniForm from '@/components/uni-form';
 import { FOSTER_SCHEMA, RESCUE_SCHEMA } from './form-schemas';
 import { History } from '@/typings/db/history';
-import dayjs from 'dayjs';
+import HistoryCard from './history-card';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -232,19 +232,9 @@ const CatProfilePage = () => {
             <TabPanel tab="记录">
               <View className="p-5 pt-0">
                 {/* 展示 */}
-                {history?.map((his, index) => {
-                  return (
-                    <View key={index} className="rounded-lg mt-1 mb-1 flex flex-wrap relative pl-2">
-                      <View className="absolute left-0 top-2 h-full rounded-l bg-blue-500 w-1" />
-                      <InfoItem val={his.historyType} field="类型" full />
-                      <InfoItem val={his.owner} field="负责人" />
-                      <InfoItem val={dayjs(his.startDate).format('YYYY-MM-DD')} field="开始日期" />
-                      <InfoItem val={his.contact} field="联系方式" />
-                      <InfoItem val={`${his.priority}`} field="优先级" />
-                      <InfoItem val={his.detail} field="详情" />
-                    </View>
-                  );
-                })}
+                {history?.map((his, index) => (
+                  <HistoryCard key={index} history={his} />
+                ))}
                 {/* 新增 */}
                 <Button className="mt-2" onTap={onNewHistoryTap}>
                   新增记录

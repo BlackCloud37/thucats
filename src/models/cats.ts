@@ -91,3 +91,8 @@ export const cats = createModel<RootModel>()({
     }
   })
 });
+
+export const catLastHistory = (cat: ApiCat) => {
+  const [last] = cat.history?.slice(-1) ?? [];
+  return last;
+};
