@@ -3,6 +3,8 @@ import * as React from 'react';
 import classNames from 'classnames';
 import Clipable from '@/components/clipable';
 import { Button, Picker, Input } from 'annar';
+import isNil from 'lodash.isnil';
+import toString from 'lodash.tostring';
 
 const InfoItem = <T,>({
   field,
@@ -14,26 +16,28 @@ const InfoItem = <T,>({
   onEdit
 }: {
   field: string;
-  val: string | undefined;
+  val: number | string | undefined;
   full?: boolean;
   clipable?: boolean;
   editable?: boolean;
   range?: readonly T[];
   onEdit?: (value: T) => void; // callback
 }) => {
-  if (!val && !editable) {
+  const strVal = toString(val);
+  if ((isNil(val) || strVal.length === 0) && !editable) {
     return null;
   }
+
   // show
   const content = (
     <Text
       selectable
       className={classNames('block text-sm', { 'underline text-blue-500': clipable })}
     >
-      {val}
+      {strVal}
     </Text>
   );
-  const showContent = clipable ? <Clipable clipContent={val!}>{content}</Clipable> : content;
+  const showContent = clipable ? <Clipable clipContent={strVal}>{content}</Clipable> : content;
 
   // edit
   const editContent = range ? (
@@ -45,7 +49,7 @@ const InfoItem = <T,>({
       }}
     >
       <Button plain shape="square">
-        {val}
+        {strVal}
       </Button>
     </Picker>
   ) : (
@@ -55,7 +59,7 @@ const InfoItem = <T,>({
         console.log(value);
         onEdit?.(value);
       }}
-      value={val}
+      value={strVal}
       className="shadow-inner"
       style={{ borderRadius: '0.5rem' }} // rounded-lg
     />

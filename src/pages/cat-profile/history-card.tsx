@@ -19,12 +19,12 @@ const HistoryCard = (props: { history: History }) => {
         })}
       />
       <InfoItem val={owner} field="负责人" />
-      <InfoItem val={`${priority}`} field="优先级" />
+      <InfoItem val={priority} field="优先级" />
 
       <InfoItem val={dayjs(startDate).format('YYYY-MM-DD')} field="开始日期" />
-      <InfoItem val={`${dueRemainDays}`} field="预计住院时长" />
+      <InfoItem val={dueRemainDays} field="预计住院时长" />
 
-      {!!duraDays && <InfoItem val={`${duraDays}`} field="已持续(天)" />}
+      {duraDays > 0 && <InfoItem val={duraDays} field="已持续(天)" />}
 
       <InfoItem val={contact} field="联系方式" />
       <InfoItem val={detail} field="详情" />
