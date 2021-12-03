@@ -10,6 +10,7 @@ import { usePageEvent } from '@remax/macro';
 import { ApiCat } from '@/typings/interfaces';
 import CatItem from './components/cat-item';
 import { catLastHistory } from '@/models/cats';
+import dayjs from 'dayjs';
 
 const FilterItem = ({ fieldName, filterCallback }: { fieldName: string; filterCallback: any }) => {
   return (
@@ -57,8 +58,44 @@ const CatListPage = () => {
   const filter = _l.curry(
     (k: keyof ApiCat, v: string) => () => setSelectedCats(_l.filter(allCatsList, (c) => c[k] === v))
   );
-  const filterPred = (pred: (c: ApiCat) => boolean) =>
-    setSelectedCats(_l.filter(allCatsList, pred));
+
+  const priority2num = {
+    高: 2,
+    中: 1,
+    低: 0
+  };
+  const filterHistoryAndSort = (pred: (c: ApiCat) => boolean) => {
+    setSelectedCats(
+      _l
+        .sortBy(
+          _l.filter(allCatsList, pred),
+          (c) => {
+            const lastHistory = catLastHistory(c);
+            return lastHistory ? priority2num[lastHistory.priority] : -1;
+          },
+          (c) => {
+            const lastHistory = catLastHistory(c);
+            const { historyType, startDate } = lastHistory;
+            const duraDays = Math.max(dayjs().diff(startDate, 'days'), 0);
+            console.log(lastHistory, startDate, duraDays);
+            if (historyType === '寄养') {
+              return duraDays;
+            } else if (historyType === '救助') {
+              const { dueRemainDays = 0 } = lastHistory;
+              const remianDays = Math.max(dueRemainDays - duraDays, 0);
+              return -remianDays;
+            }
+          }
+        )
+        .reverse()
+    );
+  };
+  // .sortBy(
+  //   _l.values(id2cats),
+  //   (c) => (c.noticeLevel ? noticeOrder[c.noticeLevel] : -1),
+  //   'name'
+  // )
+  // .reverse()
 
   const filterByColorCategory = filter('colorCategory');
   return (
@@ -93,7 +130,7 @@ const CatListPage = () => {
               <FilterItem
                 fieldName="寄养中"
                 filterCallback={() => {
-                  filterPred((c) => {
+                  filterHistoryAndSort((c) => {
                     const lastHistory = catLastHistory(c);
                     return lastHistory?.historyType === '寄养';
                   });
@@ -102,7 +139,7 @@ const CatListPage = () => {
               <FilterItem
                 fieldName="住院中"
                 filterCallback={() => {
-                  filterPred((c) => {
+                  filterHistoryAndSort((c) => {
                     const lastHistory = catLastHistory(c);
                     return lastHistory?.historyType === '救助';
                   });

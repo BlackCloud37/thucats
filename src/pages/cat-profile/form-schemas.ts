@@ -27,7 +27,8 @@ export const RESCUE_SCHEMA: any[] = [
     type: 'enum',
     name: 'priority',
     label: '优先级',
-    range: ['低', '中', '高']
+    range: ['低', '中', '高'],
+    rules: [{ required: true, message: '请选择优先级' }]
   },
   {
     type: 'str',
@@ -43,7 +44,8 @@ export const RESCUE_SCHEMA: any[] = [
     type: 'num',
     name: 'dueRemainDays',
     label: '预计天数',
-    placeholder: '预计住院天数'
+    placeholder: '预计住院天数',
+    rules: [{ required: true, message: '请填写预计住院天数' }]
   }
 ];
 
@@ -76,7 +78,8 @@ export const FOSTER_SCHEMA: any[] = [
     type: 'enum',
     name: 'priority',
     label: '优先级',
-    range: ['低', '中', '高']
+    range: ['低', '中', '高'],
+    rules: [{ required: true, message: '请选择优先级' }]
   },
   {
     type: 'str',

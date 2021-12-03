@@ -9,7 +9,7 @@ import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
 import { ApiCat } from '@/typings/interfaces';
 import { CAT_STATUS_ENUM } from '@/typings/db';
-import { Button, Card } from 'annar';
+import { Button, Card, Icon } from 'annar';
 import _ from 'lodash';
 import InfoItem from './info-item';
 import RelatedCatItem from './related-cat';
@@ -17,6 +17,7 @@ import UniForm from '@/components/uni-form';
 import { FOSTER_SCHEMA, RESCUE_SCHEMA } from './form-schemas';
 import { History } from '@/typings/db/history';
 import HistoryCard from './history-card';
+import dayjs from 'dayjs';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -24,8 +25,12 @@ export interface CatProfilePayload {
 
 const parseForm = (form: any): History => {
   // TODO: check
+  console.log(form);
   if (form.dueRemainDays) {
     form.dueRemainDays = parseInt(form.dueRemainDays, 10);
+  }
+  if (!form.startDate) {
+    form.startDate = dayjs().format('YYYY-MM-DD');
   }
   return form;
 };
@@ -205,7 +210,6 @@ const CatProfilePage = () => {
               <View className="flex flex-col w-full font-light mt-4">
                 <Text className="block text-xs text-gray-500">关联猫咪</Text>
                 {relatedCats?.map((cat, index) => {
-                  console.log(cat);
                   return (
                     cat && (
                       <RelatedCatItem
@@ -230,15 +234,23 @@ const CatProfilePage = () => {
           </TabPanel>
           {isOperator && (
             <TabPanel tab="记录">
-              <View className="p-5 pt-0">
+              <View className="p-5 pt-0 flex flex-col items-start">
                 {/* 展示 */}
                 {history?.map((his, index) => (
                   <HistoryCard key={index} history={his} />
                 ))}
                 {/* 新增 */}
-                <Button className="mt-2" onTap={onNewHistoryTap}>
-                  新增记录
-                </Button>
+                <Button
+                  style={{
+                    marginTop: '2rem',
+                    alignSelf: 'center'
+                  }}
+                  onTap={onNewHistoryTap}
+                  type="primary"
+                  shape="circle"
+                  icon={<Icon type="roundadd" color="#1890FF" size="50px" />}
+                  ghost
+                />
                 {editingForm && (formType === '寄养' || formType === '救助') && (
                   <Card contentStyle={{ padding: '20px 0 20px', marginTop: '20px' }} shadow>
                     <UniForm
