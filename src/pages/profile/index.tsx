@@ -7,7 +7,8 @@ import { Tabs, TabPanel } from '@/components/tabs';
 import TabBar from '@/components/tabbar';
 import Request from './request';
 import { ApiRequest } from '@/typings/interfaces';
-import { Form, Card, Cell, Button } from 'annar';
+import { Card, Button } from 'annar';
+import UniForm from '@/components/uni-form';
 
 const ProfilePage = () => {
   const { avatarUrl, nickName, permissionRequests, isLoggedin, isOperator, isAdmin } = useSelector(
@@ -44,7 +45,6 @@ const ProfilePage = () => {
   };
 
   const [editingForm, setEditingForm] = React.useState(false);
-  const [form] = Form.useForm();
   const handleFinish = (permissionInfo: any) => {
     createRequestAsync({
       requestType: 'permission',
@@ -79,37 +79,29 @@ const ProfilePage = () => {
 
         {editingForm && (
           <Card contentStyle={{ padding: '20px 0 20px' }} shadow>
-            <Form onFinish={handleFinish}>
-              <Form.Item noStyle name="name" rules={[{ required: true, message: '姓名不可为空' }]}>
-                <Cell.Input label="姓名" placeholder="请输入" border={false} />
-              </Form.Item>
-              <Form.Item
-                noStyle
-                name="schoolID"
-                rules={[{ pattern: /\d{10}/, message: '学号不符合规范（10位）' }]} // TODO: 其他学校的pattern
-              >
-                <Cell.Input label="学号" placeholder="请输入" border={false} />
-              </Form.Item>
-              <Form.Item
-                noStyle
-                name="department"
-                rules={[{ required: true, message: '所在部门不可为空' }]}
-              >
-                <Cell.Input label="所在部门" placeholder="请输入" border={false} />
-              </Form.Item>
-              <Form.Item noStyle style={{ marginTop: 20, padding: '0 20px' }}>
-                <Button
-                  type="primary"
-                  size="large"
-                  shape="square"
-                  block
-                  nativeType="submit"
-                  onTap={() => form.submit()}
-                >
-                  提交
-                </Button>
-              </Form.Item>
-            </Form>
+            <UniForm
+              onFinish={handleFinish}
+              schemas={[
+                {
+                  type: 'str',
+                  name: 'name',
+                  label: '姓名',
+                  rules: [{ required: true, message: '姓名不可为空' }]
+                },
+                {
+                  type: 'str',
+                  name: 'schoolID',
+                  label: '学号',
+                  rules: [{ required: true, message: '学号不可为空' }]
+                },
+                {
+                  type: 'str',
+                  name: 'department',
+                  label: '部门',
+                  rules: [{ required: true, message: '部门不能为空' }]
+                }
+              ]}
+            />
           </Card>
         )}
         {isOperator && (

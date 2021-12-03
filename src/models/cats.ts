@@ -10,6 +10,7 @@ import {
   UpdateCatRequest,
   UpdateCatResult
 } from '@/typings/interfaces';
+import { History } from '@/typings/db/history';
 
 export interface CatState {
   allCats: {
@@ -72,6 +73,26 @@ export const cats = createModel<RootModel>()({
           dispatch.cats.allCats(newAllCatsList);
         })
         .catch(console.error);
+    },
+
+    async addHistoryToCat(payload: { catId: string; newHistory: History }, state) {
+      const { catId, newHistory } = payload;
+      const cat = state.cats.allCats[catId];
+      if (!cat) {
+        return Promise.reject(Error('没有相关猫咪'));
+      }
+
+      const oldHistory = cat?.history ?? [];
+      // TODO: check
+      await dispatch.cats.updateCatAsync({
+        _id: catId,
+        history: [...oldHistory, newHistory]
+      });
     }
   })
 });
+
+export const catLastHistory = (cat: ApiCat) => {
+  const [last] = cat.history?.slice(-1) ?? [];
+  return last;
+};

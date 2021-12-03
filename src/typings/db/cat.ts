@@ -1,5 +1,5 @@
 import { JsonDbObject, FileID } from '.';
-import { DbHistory } from './history';
+import { History } from './history';
 
 // export type CatStatus = '在野' | '已送养' | '喵星' | '未知' | '待领养';
 export const CAT_STATUS_ENUM = ['在野', '已送养', '喵星', '未知', '待领养'] as const;
@@ -33,5 +33,5 @@ export interface DbCat extends JsonDbObject {
   adoptDescription?: string; // 领养简介
   age?: string;
   birthday?: string;
-  history?: DbHistory[];
+  history?: History[];
 }

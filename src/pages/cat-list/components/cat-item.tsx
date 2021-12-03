@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import Clipable from '@/components/clipable';
 import { ApiCat } from '@/typings/interfaces';
 import Avatar from '@/components/avatar';
+import { catLastHistory } from '@/models/cats';
+import HistoryCard from '@/pages/cat-profile/history-card';
 const Tag = ({ tag, className = 'bg-gray-200' }: { tag: string; className?: string }) => {
   return tag !== '未知' ? (
     <View className={`rounded-md p-1 shadow-inner text-xs ${className}`}>{tag}</View>
@@ -14,10 +16,12 @@ const Tag = ({ tag, className = 'bg-gray-200' }: { tag: string; className?: stri
 export default ({
   cat,
   adopt = false,
+  showHistory = false,
   className
 }: {
   cat: ApiCat;
   adopt?: boolean;
+  showHistory?: boolean;
   className?: string;
 }) => {
   const {
@@ -29,8 +33,10 @@ export default ({
     status,
     colorCategory,
     adoptContact,
-    adoptDescription
+    adoptDescription,
+    history
   } = cat;
+  const lastHistory = catLastHistory(cat);
   return (
     <View
       className={classNames('flex-col bg-white shadow-lg rounded-lg p-5', className)}
@@ -60,7 +66,7 @@ export default ({
         </View>
       </View>
 
-      {adopt ? (
+      {adopt && (
         <View className="mt-5 text-sm">
           {adoptDescription && (
             <View>
@@ -77,7 +83,12 @@ export default ({
             </View>
           )}
         </View>
-      ) : null}
+      )}
+      {showHistory && lastHistory && (
+        <View className="mt-5 text-sm">
+          <HistoryCard history={lastHistory} />
+        </View>
+      )}
     </View>
   );
 };

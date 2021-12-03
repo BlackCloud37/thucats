@@ -1,102 +1,38 @@
 import Loadable from '@/components/loadable';
 import { Dispatch, RootState } from '@/models/store';
 import { usePageEvent } from '@remax/framework-shared';
-import { Text, View } from '@remax/wechat';
+import { Text, View, showActionSheet } from '@remax/wechat';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { navigateTo } from '@/utils';
 import classNames from 'classnames';
 import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
-import Clipable from '@/components/clipable';
 import { ApiCat } from '@/typings/interfaces';
-import { CAT_STATUS_ENUM, DbCat } from '@/typings/db';
-import Avatar from '@/components/avatar';
-import { Button, Picker, Input } from 'annar';
+import { CAT_STATUS_ENUM } from '@/typings/db';
+import { Button, Card, Icon } from 'annar';
 import _ from 'lodash';
+import InfoItem from './info-item';
+import RelatedCatItem from './related-cat';
+import UniForm from '@/components/uni-form';
+import { FOSTER_SCHEMA, RESCUE_SCHEMA } from './form-schemas';
+import { History } from '@/typings/db/history';
+import HistoryCard from './history-card';
+import dayjs from 'dayjs';
 
 export interface CatProfilePayload {
   catKey: string;
 }
 
-const InfoItem = <T,>({
-  field,
-  val,
-  full = false,
-  clipable = false,
-  editable = false,
-  range,
-  onEdit
-}: {
-  field: string;
-  val: string | undefined;
-  full?: boolean;
-  clipable?: boolean;
-  editable?: boolean;
-  range?: readonly T[];
-  onEdit?: (value: T) => void; // callback
-}) => {
-  if (!val && !editable) {
-    return null;
+const parseForm = (form: any): History => {
+  // TODO: check
+  console.log(form);
+  if (form.dueRemainDays) {
+    form.dueRemainDays = parseInt(form.dueRemainDays, 10);
   }
-  // show
-  const content = (
-    <Text
-      selectable
-      className={classNames('block text-sm', { 'underline text-blue-500': clipable })}
-    >
-      {val}
-    </Text>
-  );
-  const showContent = clipable ? <Clipable clipContent={val!}>{content}</Clipable> : content;
-
-  // edit
-  const editContent = range ? (
-    <Picker
-      range={range as any[]}
-      onChange={(index) => {
-        const selected = range[index as number];
-        selected && onEdit?.(selected);
-      }}
-    >
-      <Button plain shape="square">
-        {val}
-      </Button>
-    </Picker>
-  ) : (
-    // input
-    <Input
-      onChange={({ target: { value } }) => {
-        console.log(value);
-        onEdit?.(value);
-      }}
-      value={val}
-      className="shadow-inner"
-      style={{ borderRadius: '0.5rem' }} // rounded-lg
-    />
-  );
-
-  return (
-    <View className={`flex flex-col ${full ? 'w-full' : 'w-1on2'} font-light mt-4`}>
-      <Text className="block text-xs text-gray-500">{field}</Text>
-      {editable ? editContent : showContent}
-    </View>
-  );
-};
-
-const RelatedCatItem = ({ cat, desc }: { cat: DbCat; desc?: string }) => {
-  return (
-    <View
-      className="flex mt-2 w-full"
-      onClick={() => navigateTo('cat-profile', { catKey: cat._id })}
-    >
-      <Avatar src={cat._avatar} className="w-12 h-12 rounded-full" />
-      <View className="flex-col pl-2">
-        <Text className="block w-full text-xs font-normal">{cat.name}</Text>
-        <Text className="block w-full text-xs font-light">{desc}</Text>
-      </View>
-    </View>
-  );
+  if (!form.startDate) {
+    form.startDate = dayjs().format('YYYY-MM-DD');
+  }
+  return form;
 };
 
 const CatProfilePage = () => {
@@ -110,7 +46,7 @@ const CatProfilePage = () => {
     ...state.users
   }));
 
-  const { updateCatAsync } = useDispatch<Dispatch>().cats;
+  const { updateCatAsync, addHistoryToCat } = useDispatch<Dispatch>().cats;
 
   usePageEvent('onLoad', ({ payload }) => {
     // TODO: fetch server
@@ -157,6 +93,36 @@ const CatProfilePage = () => {
       [key]: val
     });
   });
+
+  const [editingForm, setEditingForm] = React.useState(false);
+  const [formType, setFormType] = React.useState<'寄养' | '救助'>('寄养');
+
+  const onCommit = (v: any) => {
+    console.log(v);
+    addHistoryToCat({
+      catId: cat!._id,
+      newHistory: {
+        ...parseForm(v),
+        historyType: formType
+      }
+    }).finally(() => {
+      setEditingForm(false);
+    });
+  };
+
+  const onNewHistoryTap = () => {
+    showActionSheet({
+      itemList: ['寄养', '救助'],
+      success: (v) => {
+        if (v.tapIndex === 0) {
+          setFormType('寄养');
+        } else if (v.tapIndex === 1) {
+          setFormType('救助');
+        }
+        setEditingForm(true);
+      }
+    });
+  };
 
   return (
     <View className="p-5">
@@ -239,11 +205,11 @@ const CatProfilePage = () => {
               </>
             )}
             <InfoItem field="备注" val={notes} full />
+            {/* 关联猫 */}
             {(relatedCats ?? relatedCatsDescription) && (
               <View className="flex flex-col w-full font-light mt-4">
                 <Text className="block text-xs text-gray-500">关联猫咪</Text>
                 {relatedCats?.map((cat, index) => {
-                  console.log(cat);
                   return (
                     cat && (
                       <RelatedCatItem
@@ -257,7 +223,6 @@ const CatProfilePage = () => {
               </View>
             )}
           </View>
-          {isOperator && history?.map((his) => his.historyType)}
         </View>
         <Tabs className="shadow-xl bg-white">
           <TabPanel tab="精选照片">
@@ -267,6 +232,37 @@ const CatProfilePage = () => {
               ))}
             </View>
           </TabPanel>
+          {isOperator && (
+            <TabPanel tab="记录">
+              <View className="p-5 pt-0 flex flex-col items-start">
+                {/* 展示 */}
+                {history?.map((his, index) => (
+                  <HistoryCard key={index} history={his} />
+                ))}
+                {/* 新增 */}
+                <Button
+                  style={{
+                    marginTop: '2rem',
+                    alignSelf: 'center'
+                  }}
+                  onTap={onNewHistoryTap}
+                  type="primary"
+                  shape="circle"
+                  icon={<Icon type="roundadd" color="#1890FF" size="50px" />}
+                  ghost
+                />
+                {editingForm && (formType === '寄养' || formType === '救助') && (
+                  <Card contentStyle={{ padding: '20px 0 20px', marginTop: '20px' }} shadow>
+                    <UniForm
+                      onFinish={onCommit}
+                      schemas={formType === '寄养' ? FOSTER_SCHEMA : RESCUE_SCHEMA}
+                      onCancel={() => setEditingForm(false)}
+                    />
+                  </Card>
+                )}
+              </View>
+            </TabPanel>
+          )}
           {/* <TabPanel tab="用户上传">
             <View />
           </TabPanel> */}
