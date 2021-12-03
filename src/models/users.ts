@@ -14,7 +14,7 @@ import type { RootModel } from './models';
 import wxRequest from 'wechat-request';
 import { Role, DbUser, DbRequest, Add } from '@/typings/db';
 import { checkPermission } from '@/cloudfunctions/cloud/utils';
-import { default as _l } from 'lodash';
+import filter from 'lodash.filter';
 
 export interface UserState {
   user?: DbUser;
@@ -51,19 +51,18 @@ export const users = createModel<RootModel>()({
       };
     },
     requests(state, requests: ApiRequest[]) {
-      // console.log(_l.filter(requests, (req) => req.requestType === 'permission'));
       return {
         ...state,
-        permissionRequests: _l.filter(requests, (req) => req.requestType === 'permission'),
-        imageRequests: _l.filter(requests, (req) => req.requestType === 'imageUpload')
+        permissionRequests: filter(requests, (req) => req.requestType === 'permission'),
+        imageRequests: filter(requests, (req) => req.requestType === 'imageUpload')
       };
     },
     removeReq(state, _id) {
       const { permissionRequests } = state;
       return {
         ...state,
-        permissionRequests: _l.filter(permissionRequests, (req) => req._id !== _id),
-        imageRequests: _l.filter(permissionRequests, (req) => req._id !== _id)
+        permissionRequests: filter(permissionRequests, (req) => req._id !== _id),
+        imageRequests: filter(permissionRequests, (req) => req._id !== _id)
       };
     }
   },
