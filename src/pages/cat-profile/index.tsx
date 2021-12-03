@@ -10,7 +10,6 @@ import { TabPanel, Tabs } from '@/components/tabs';
 import { ApiCat } from '@/typings/interfaces';
 import { CAT_STATUS_ENUM } from '@/typings/db';
 import { Button, Card, Icon } from 'annar';
-import _ from 'lodash';
 import InfoItem from './info-item';
 import RelatedCatItem from './related-cat';
 import UniForm from '@/components/uni-form';
@@ -18,6 +17,7 @@ import { FOSTER_SCHEMA, RESCUE_SCHEMA } from './form-schemas';
 import { History } from '@/typings/db/history';
 import HistoryCard from './history-card';
 import dayjs from 'dayjs';
+import curry from 'lodash.curry';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -87,7 +87,7 @@ const CatProfilePage = () => {
     history
   } = cat ?? {};
 
-  const onEditCat = _.curry((key: keyof ApiCat, val: any) => {
+  const onEditCat = curry((key: keyof ApiCat, val: any) => {
     setCat({
       ...cat!,
       [key]: val

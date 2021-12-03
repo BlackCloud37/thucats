@@ -1,7 +1,6 @@
 import { createModel } from '@rematch/core';
 import { callApi, requestCloudApi } from './apis';
 import type { RootModel } from './models';
-import { default as _l } from 'lodash';
 import wxRequest from 'wechat-request';
 import {
   ApiCat,
@@ -11,6 +10,8 @@ import {
   UpdateCatResult
 } from '@/typings/interfaces';
 import { History } from '@/typings/db/history';
+import sortBy from 'lodash.sortby';
+import values from 'lodash.values';
 
 export interface CatState {
   allCats: {
@@ -41,13 +42,11 @@ export const cats = createModel<RootModel>()({
       return {
         ...state,
         allCats: id2cats,
-        allCatsList: _l
-          .sortBy(
-            _l.values(id2cats),
-            (c) => (c.noticeLevel ? noticeOrder[c.noticeLevel] : -1),
-            'name'
-          )
-          .reverse()
+        allCatsList: sortBy(
+          values(id2cats),
+          (c) => (c.noticeLevel ? noticeOrder[c.noticeLevel] : -1),
+          'name'
+        ).reverse()
       };
     }
   },
