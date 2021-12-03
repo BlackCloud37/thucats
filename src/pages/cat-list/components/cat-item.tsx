@@ -33,8 +33,7 @@ export default ({
     status,
     colorCategory,
     adoptContact,
-    adoptDescription,
-    history
+    adoptDescription
   } = cat;
   const lastHistory = catLastHistory(cat);
   return (
@@ -86,7 +85,7 @@ export default ({
       )}
       {showHistory && lastHistory && (
         <View className="mt-5 text-sm">
-          <HistoryCard history={lastHistory} />
+          <HistoryCard history={lastHistory} showIcon />
         </View>
       )}
     </View>
