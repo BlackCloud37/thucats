@@ -9,6 +9,8 @@ import TabBar from '@/components/tabbar';
 import { usePageEvent } from '@remax/macro';
 import { ApiCat } from '@/typings/interfaces';
 import CatItem from './components/cat-item';
+import { catLastHistory } from '@/models/cats';
+import dayjs from 'dayjs';
 
 const FilterItem = ({ fieldName, filterCallback }: { fieldName: string; filterCallback: any }) => {
   return (
@@ -28,9 +30,10 @@ const CatListPage = () => {
   }));
 
   const [selectedCats, setSelectedCats] = React.useState<ApiCat[]>([]);
-  const { allCatsList, loading } = useSelector((state: RootState) => ({
+  const { allCatsList, loading, isOperator } = useSelector((state: RootState) => ({
     allCatsList: state.cats.allCatsList,
-    loading: state.loading.effects.cats.fetchAllCatsAsync
+    loading: state.loading.effects.cats.fetchAllCatsAsync,
+    isOperator: state.users.isOperator
   }));
   const { fetchAllCatsAsync } = useDispatch<Dispatch>().cats;
 
@@ -43,7 +46,9 @@ const CatListPage = () => {
 
   const catList =
     _l.size(selectedCats) > 0 ? (
-      selectedCats.map((cat: ApiCat) => <CatItem key={cat._id} cat={cat} className="mb-5" />)
+      selectedCats.map((cat: ApiCat) => (
+        <CatItem key={cat._id} cat={cat} className="mb-5" showHistory={isOperator} />
+      ))
     ) : (
       <Text className="block w-full text-sm font-light text-gray-500 text-center">
         这里似乎没有猫咪
@@ -53,6 +58,45 @@ const CatListPage = () => {
   const filter = _l.curry(
     (k: keyof ApiCat, v: string) => () => setSelectedCats(_l.filter(allCatsList, (c) => c[k] === v))
   );
+
+  const priority2num = {
+    高: 2,
+    中: 1,
+    低: 0
+  };
+  const filterHistoryAndSort = (pred: (c: ApiCat) => boolean) => {
+    setSelectedCats(
+      _l
+        .sortBy(
+          _l.filter(allCatsList, pred),
+          (c) => {
+            const lastHistory = catLastHistory(c);
+            return lastHistory ? priority2num[lastHistory.priority] : -1;
+          },
+          (c) => {
+            const lastHistory = catLastHistory(c);
+            const { historyType, startDate } = lastHistory;
+            const duraDays = Math.max(dayjs().diff(startDate, 'days'), 0);
+            console.log(lastHistory, startDate, duraDays);
+            if (historyType === '寄养') {
+              return duraDays;
+            } else if (historyType === '救助') {
+              const { dueRemainDays = 0 } = lastHistory;
+              const remianDays = Math.max(dueRemainDays - duraDays, 0);
+              return -remianDays;
+            }
+          }
+        )
+        .reverse()
+    );
+  };
+  // .sortBy(
+  //   _l.values(id2cats),
+  //   (c) => (c.noticeLevel ? noticeOrder[c.noticeLevel] : -1),
+  //   'name'
+  // )
+  // .reverse()
+
   const filterByColorCategory = filter('colorCategory');
   return (
     <>
@@ -81,6 +125,28 @@ const CatListPage = () => {
           <FilterItem fieldName="橘猫" filterCallback={filterByColorCategory('橘猫与橘白')} />
           <FilterItem fieldName="三花" filterCallback={filterByColorCategory('三花')} />
           <FilterItem fieldName="玳瑁" filterCallback={filterByColorCategory('玳瑁')} />
+          {isOperator && (
+            <>
+              <FilterItem
+                fieldName="寄养中"
+                filterCallback={() => {
+                  filterHistoryAndSort((c) => {
+                    const lastHistory = catLastHistory(c);
+                    return lastHistory?.historyType === '寄养';
+                  });
+                }}
+              />
+              <FilterItem
+                fieldName="住院中"
+                filterCallback={() => {
+                  filterHistoryAndSort((c) => {
+                    const lastHistory = catLastHistory(c);
+                    return lastHistory?.historyType === '救助';
+                  });
+                }}
+              />
+            </>
+          )}
         </View>
         <Loadable loading={loading} loader="running-cat">
           {catList}
