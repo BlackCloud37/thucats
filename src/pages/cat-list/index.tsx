@@ -2,7 +2,6 @@ import { Dispatch, RootState } from '@/models/store';
 import { Text, View } from '@remax/wechat';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { default as _l } from 'lodash';
 import Loadable from '@/components/loadable';
 import LInput from 'lin-ui/dist/input';
 import TabBar from '@/components/tabbar';
@@ -11,6 +10,11 @@ import { ApiCat } from '@/typings/interfaces';
 import CatItem from './components/cat-item';
 import { catLastHistory } from '@/models/cats';
 import dayjs from 'dayjs';
+import size from 'lodash.size';
+import curry from 'lodash.curry';
+import sortBy from 'lodash.sortby';
+import filter from 'lodash.filter';
+import throttle from 'lodash.throttle';
 
 const FilterItem = ({ fieldName, filterCallback }: { fieldName: string; filterCallback: any }) => {
   return (
@@ -45,7 +49,7 @@ const CatListPage = () => {
   }, [allCatsList]);
 
   const catList =
-    _l.size(selectedCats) > 0 ? (
+    size(selectedCats) > 0 ? (
       selectedCats.map((cat: ApiCat) => (
         <CatItem key={cat._id} cat={cat} className="mb-5" showHistory={isOperator} />
       ))
@@ -55,10 +59,6 @@ const CatListPage = () => {
       </Text>
     );
 
-  const filter = _l.curry(
-    (k: keyof ApiCat, v: string) => () => setSelectedCats(_l.filter(allCatsList, (c) => c[k] === v))
-  );
-
   const priority2num = {
     高: 2,
     中: 1,
@@ -66,38 +66,33 @@ const CatListPage = () => {
   };
   const filterHistoryAndSort = (pred: (c: ApiCat) => boolean) => {
     setSelectedCats(
-      _l
-        .sortBy(
-          _l.filter(allCatsList, pred),
-          (c) => {
-            const lastHistory = catLastHistory(c);
-            return lastHistory ? priority2num[lastHistory.priority] : -1;
-          },
-          (c) => {
-            const lastHistory = catLastHistory(c);
-            const { historyType, startDate } = lastHistory;
-            const duraDays = Math.max(dayjs().diff(startDate, 'days'), 0);
-            console.log(lastHistory, startDate, duraDays);
-            if (historyType === '寄养') {
-              return duraDays;
-            } else if (historyType === '救助') {
-              const { dueRemainDays = 0 } = lastHistory;
-              const remianDays = Math.max(dueRemainDays - duraDays, 0);
-              return -remianDays;
-            }
+      sortBy(
+        filter(allCatsList, pred),
+        (c) => {
+          const lastHistory = catLastHistory(c);
+          return lastHistory ? priority2num[lastHistory.priority] : -1;
+        },
+        (c) => {
+          const lastHistory = catLastHistory(c);
+          const { historyType, startDate } = lastHistory;
+          const duraDays = Math.max(dayjs().diff(startDate, 'days'), 0);
+          console.log(lastHistory, startDate, duraDays);
+          if (historyType === '寄养') {
+            return duraDays;
+          } else if (historyType === '救助') {
+            const { dueRemainDays = 0 } = lastHistory;
+            const remianDays = Math.max(dueRemainDays - duraDays, 0);
+            return -remianDays;
           }
-        )
-        .reverse()
+        }
+      ).reverse()
     );
   };
-  // .sortBy(
-  //   _l.values(id2cats),
-  //   (c) => (c.noticeLevel ? noticeOrder[c.noticeLevel] : -1),
-  //   'name'
-  // )
-  // .reverse()
 
-  const filterByColorCategory = filter('colorCategory');
+  const filterByKeyValue = curry(
+    (k: keyof ApiCat, v: string) => () => setSelectedCats(filter(allCatsList, (c) => c[k] === v))
+  );
+  const filterByColorCategory = filterByKeyValue('colorCategory');
   return (
     <>
       <View className="p-5 font-light">
@@ -105,9 +100,9 @@ const CatListPage = () => {
           hide-label={true}
           placeholder="搜索"
           clear={true}
-          bindlininput={_l.throttle(({ detail: { value } }) => {
+          bindlininput={throttle(({ detail: { value } }) => {
             value
-              ? setSelectedCats(_l.filter(allCatsList, (cat) => cat.name.includes(value)))
+              ? setSelectedCats(filter(allCatsList, (cat) => cat.name.includes(value)))
               : setSelectedCats(allCatsList);
           }, 500)}
           bindlinclear={() => {
