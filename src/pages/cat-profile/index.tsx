@@ -236,8 +236,8 @@ const CatProfilePage = () => {
             <TabPanel tab="记录">
               <View className="p-5 pt-0 flex flex-col items-start">
                 {/* 展示 */}
-                {history?.map((his, index) => (
-                  <HistoryCard key={index} history={his} />
+                {history?.reverse().map((his, index) => (
+                  <HistoryCard key={index} history={his} showIcon />
                 ))}
                 {/* 新增 */}
                 <Button
