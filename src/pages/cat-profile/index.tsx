@@ -9,7 +9,7 @@ import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
 import { ApiCat } from '@/typings/interfaces';
 import { CAT_STATUS_ENUM } from '@/typings/db';
-import { Button, Card, Icon } from 'annar';
+import { Button, Icon } from 'annar';
 import InfoItem from './info-item';
 import RelatedCatItem from './related-cat';
 import UniForm from '@/components/uni-form';
@@ -252,13 +252,11 @@ const CatProfilePage = () => {
                   ghost
                 />
                 {editingForm && (formType === '寄养' || formType === '救助') && (
-                  <Card contentStyle={{ padding: '20px 0 20px', marginTop: '20px' }} shadow>
-                    <UniForm
-                      onFinish={onCommit}
-                      schemas={formType === '寄养' ? FOSTER_SCHEMA : RESCUE_SCHEMA}
-                      onCancel={() => setEditingForm(false)}
-                    />
-                  </Card>
+                  <UniForm
+                    onFinish={onCommit}
+                    schemas={formType === '寄养' ? FOSTER_SCHEMA : RESCUE_SCHEMA}
+                    onCancel={() => setEditingForm(false)}
+                  />
                 )}
               </View>
             </TabPanel>
