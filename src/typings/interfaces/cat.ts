@@ -4,8 +4,13 @@ export const enum ECatAcions {
   // 更新猫信息
   Update = 'update'
 }
-
-type AllowedFields = 'status' | 'history' | 'adoptContact' | 'adoptDescription';
+export const CAT_ALLOWED_EDIT_FIELDS = [
+  'status',
+  'history',
+  'adoptContact',
+  'adoptDescription'
+] as const;
+type AllowedFields = typeof CAT_ALLOWED_EDIT_FIELDS[number];
 export type UpdateCatRequest = Partial<Pick<DbCat, AllowedFields>> & {
   _id: NonNullable<string>;
   updatedFields: AllowedFields[];
