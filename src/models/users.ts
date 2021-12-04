@@ -23,6 +23,7 @@ export interface UserState {
   isAdmin: boolean;
   permissionRequests: ApiRequest[];
   imageRequests: ApiRequest[];
+  myRequests: ApiRequest[];
 }
 
 const initialState: UserState = {
@@ -30,7 +31,8 @@ const initialState: UserState = {
   isOperator: false,
   isAdmin: false,
   permissionRequests: [],
-  imageRequests: []
+  imageRequests: [],
+  myRequests: []
 };
 
 export const users = createModel<RootModel>()({
@@ -63,6 +65,12 @@ export const users = createModel<RootModel>()({
         ...state,
         permissionRequests: filter(permissionRequests, (req) => req._id !== _id),
         imageRequests: filter(permissionRequests, (req) => req._id !== _id)
+      };
+    },
+    myRequests(state, myRequests: ApiRequest[]) {
+      return {
+        ...state,
+        myRequests
       };
     }
   },
@@ -125,7 +133,7 @@ export const users = createModel<RootModel>()({
           ? {}
           : { requestType: { $neq: 'permission' } })
       };
-      console.log({ query });
+
       const { data } = await callApi(wxRequest.post('/requests/find', { query }));
       console.log(data);
       dispatch.users.requests(data);
@@ -137,8 +145,14 @@ export const users = createModel<RootModel>()({
         return Promise.reject(Error('not logged in'));
       }
 
-      const { requestType } = payload;
       console.log('Create Requests', arguments);
+      const { requestType } = payload;
+      const pendingCnt = state.users.myRequests.filter(
+        (req) => req.requestType === requestType && req.status === 'pending'
+      ).length;
+      if (requestType === 'permission' && pendingCnt > 0) {
+        return Promise.resolve();
+      }
       let request: Add<DbRequest> = {
         requestType,
         status: 'pending',
@@ -175,6 +189,23 @@ export const users = createModel<RootModel>()({
       const { requestId } = payload;
       await requestCloudApi(EController.Application, EApplicationActions.Update, payload);
       dispatch.users.removeReq(requestId);
+    },
+
+    async getMyRequestsAsync(_, state) {
+      const { _id } = state.users.user ?? {};
+      if (!_id) {
+        console.error('not logged in, cannot create request');
+        return Promise.reject(Error('not logged in'));
+      }
+
+      const { data } = await callApi(
+        wxRequest.post('/requests/find', {
+          query: {
+            applicant: { $eq: _id }
+          }
+        })
+      );
+      dispatch.users.myRequests(data);
     }
   })
 });
