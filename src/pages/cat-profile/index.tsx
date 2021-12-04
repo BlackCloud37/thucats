@@ -125,6 +125,36 @@ const CatProfilePage = () => {
     });
   };
 
+  const cancelEditBtn = (
+    <Button
+      onTap={() => {
+        setEditing(false);
+        setCat(allCats[catKey]);
+      }}
+      plain
+      shape="square"
+    >
+      取消
+    </Button>
+  );
+
+  const editBtn = (
+    <Button
+      onTap={() => {
+        if (editing && cat) {
+          updateCatAsync({
+            ...cat,
+            updatedFields: ['status', 'adoptContact', 'adoptDescription']
+          }).catch(console.error);
+        }
+        setEditing(!editing);
+      }}
+      plain
+      shape="square"
+    >
+      {editing ? '保存' : '编辑'}
+    </Button>
+  );
   return (
     <View className="p-5">
       <Loadable loading={!cat}>
@@ -147,21 +177,10 @@ const CatProfilePage = () => {
           <View className="flex justify-between w-full mb-2 mt-2">
             <Text className="block text-gray-700 text-xl font-bold">{name}</Text>
             {isOperator && (
-              <Button
-                onTap={() => {
-                  if (editing && cat) {
-                    updateCatAsync({
-                      ...cat,
-                      updatedFields: ['status', 'adoptContact', 'adoptDescription']
-                    }).catch(console.error);
-                  }
-                  setEditing(!editing);
-                }}
-                plain
-                shape="square"
-              >
-                {editing ? '保存' : '编辑'}
-              </Button>
+              <View className="flex gap-1">
+                {editing && cancelEditBtn}
+                {editBtn}
+              </View>
             )}
           </View>
 
