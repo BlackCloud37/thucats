@@ -17,7 +17,7 @@ export async function callApi(promise: Promise<any>): Promise<any> {
       title: '请求错误',
       icon: 'error'
     });
-    console.error('callApi', status, statusText);
+    console.error('callApi', data, status, statusText);
     return Promise.reject(Error(statusText));
   } else {
     console.log('callApi', data, status, statusText);

@@ -11,20 +11,24 @@ import { Card, Button } from 'annar';
 import UniForm from '@/components/uni-form';
 
 const ProfilePage = () => {
-  const { avatarUrl, nickName, permissionRequests, isLoggedin, isOperator, isAdmin } = useSelector(
-    (state: RootState) => ({
+  const { avatarUrl, nickName, permissionRequests, isLoggedin, isOperator, isAdmin, myRequests } =
+    useSelector((state: RootState) => ({
       ...state.users.user,
       ...state.users
       // loading: state.loading.effects.settings.fetchSettingsAsync
-    })
-  );
+    }));
   const [clickCnt, setClickCnt] = React.useState(0);
 
-  const { loginAsync, getRequestsAsync, createRequestAsync } = useDispatch<Dispatch>().users;
+  const { loginAsync, getRequestsAsync, createRequestAsync, getMyRequestsAsync } =
+    useDispatch<Dispatch>().users;
 
   React.useEffect(() => {
     isOperator && getRequestsAsync();
   }, [isOperator]);
+
+  React.useEffect(() => {
+    isLoggedin && getMyRequestsAsync({});
+  }, [isLoggedin]);
 
   const reqList = (reqs: ApiRequest[]) => {
     return reqs?.length ? (
@@ -104,20 +108,25 @@ const ProfilePage = () => {
             />
           </Card>
         )}
-        {isOperator && (
+        {isLoggedin && (
           <Tabs className="bg-white shadow-2xl">
             {isAdmin && (
               <TabPanel tab="权限审批">
                 <View className="p-5 flex flex-col rounded-lg">{reqList(permissionRequests)}</View>
               </TabPanel>
             )}
-            {/* {isOperator && (
-            <TabPanel tab="图片审核">
-              <View className="p-5 flex flex-col rounded-lg bg-white">
-                {reqList(imageRequests)}
-              </View>
-            </TabPanel>
-          )} */}
+            {/* {!isOperator && (
+              <TabPanel tab="我的申请">
+                <View className="p-5 flex flex-col rounded-lg">{reqList(myRequests)}</View>
+              </TabPanel>
+            )}
+            {isOperator && (
+              <TabPanel tab="图片审核">
+                <View className="p-5 flex flex-col rounded-lg bg-white">
+                  {reqList(imageRequests)}
+                </View>
+              </TabPanel>
+            )} */}
           </Tabs>
         )}
       </View>
