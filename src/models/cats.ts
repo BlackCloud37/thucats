@@ -57,6 +57,7 @@ export const cats = createModel<RootModel>()({
     },
 
     async updateCatAsync(payload: UpdateCatRequest, state) {
+      // TODO: check
       requestCloudApi(EController.Cat, ECatAcions.Update, payload)
         .then((res: UpdateCatResult) => {
           console.log(res);
@@ -82,7 +83,6 @@ export const cats = createModel<RootModel>()({
       }
 
       const oldHistory = cat?.history ?? [];
-      // TODO: check
       await dispatch.cats.updateCatAsync({
         _id: catId,
         history: [...oldHistory, newHistory],
