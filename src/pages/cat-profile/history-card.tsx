@@ -21,6 +21,7 @@ const HistoryCard = (props: { history: History; showIcon?: boolean }) => {
     postPosted
     // isDone
   } = history;
+  // TODO: 时轴展示
   const duraDays = Math.max(dayjs().diff(startDate, 'days'), 0);
   return (
     <View
@@ -47,6 +48,7 @@ const HistoryCard = (props: { history: History; showIcon?: boolean }) => {
       <InfoItem val={owner} field="负责人" />
 
       <InfoItem val={hospitalName} field="所在医院" />
+      <InfoItem val={postPosted ? '已发' : '未发'} field="已发领养贴" />
       <InfoItem val={location} field="所在地点" />
 
       <InfoItem val={contact} field={`${historyType === '寄养' ? '寄养' : '医院'}联系方式`} full />
