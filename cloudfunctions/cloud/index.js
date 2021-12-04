@@ -130,11 +130,15 @@ class CatController extends BaseController {
         if (!checkPermission('operator', user ? user.roles : [])) {
             this.fail(403, '无修改权限');
         }
-        const { _id, status, history } = request;
+        const { _id, updatedFields } = request;
         const record = await getById(CAT_COLLECTION_NAME, _id);
         if (!record) {
             this.fail(500, '不存在该记录');
         }
+        const updated = {};
+        updatedFields.forEach((k) => {
+            updated[k] = request[k];
+        });
         await update(CAT_COLLECTION_NAME, { ...record, status, history });
         return this.success({ _id });
     }
