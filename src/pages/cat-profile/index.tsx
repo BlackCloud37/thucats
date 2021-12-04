@@ -150,7 +150,10 @@ const CatProfilePage = () => {
               <Button
                 onTap={() => {
                   if (editing && cat) {
-                    updateCatAsync(cat).catch(console.error);
+                    updateCatAsync({
+                      ...cat,
+                      updatedFields: ['status', 'adoptContact', 'adoptDescription']
+                    }).catch(console.error);
                   }
                   setEditing(!editing);
                 }}
