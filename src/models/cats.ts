@@ -85,7 +85,8 @@ export const cats = createModel<RootModel>()({
       // TODO: check
       await dispatch.cats.updateCatAsync({
         _id: catId,
-        history: [...oldHistory, newHistory]
+        history: [...oldHistory, newHistory],
+        updatedFields: ['history']
       });
     }
   })

@@ -18,11 +18,15 @@ export default class CatController extends BaseController implements IController
       this.fail(403, '无修改权限');
     }
 
-    const { _id, status, history } = request;
+    const { _id, updatedFields } = request;
     const record: DbCat = await getById(CAT_COLLECTION_NAME, _id);
     if (!record) {
       this.fail(500, '不存在该记录');
     }
+    const updated: any = {};
+    updatedFields.forEach((k) => {
+      updated[k] = request[k];
+    });
     await update(CAT_COLLECTION_NAME, { ...record, status, history });
     return this.success({ _id });
   }

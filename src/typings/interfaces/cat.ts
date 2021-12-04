@@ -5,8 +5,10 @@ export const enum ECatAcions {
   Update = 'update'
 }
 
-export type UpdateCatRequest = Partial<Pick<DbCat, 'status' | 'history'>> & {
+type AllowedFields = 'status' | 'history' | 'adoptContact' | 'adoptDescription';
+export type UpdateCatRequest = Partial<Pick<DbCat, AllowedFields>> & {
   _id: NonNullable<string>;
+  updatedFields: AllowedFields[];
 };
 
 export interface UpdateCatResult {
