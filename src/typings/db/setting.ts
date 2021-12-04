@@ -1,3 +1,5 @@
+import { FileID } from '.';
+
 export interface DbSetting {
   navigationBarTitleText: string;
   associationName: string;
@@ -6,4 +8,5 @@ export interface DbSetting {
   associationLogo: string;
   associationIntroduction: string;
   adoptGuideUrl: string;
+  filterIconIcons: FileID[];
 }

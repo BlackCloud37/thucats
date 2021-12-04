@@ -12,6 +12,7 @@ import {
 import { History } from '@/typings/db/history';
 import sortBy from 'lodash.sortby';
 import values from 'lodash.values';
+import dayjs from 'dayjs';
 
 export interface CatState {
   allCats: {
@@ -95,4 +96,33 @@ export const cats = createModel<RootModel>()({
 export const catLastHistory = (cat: ApiCat) => {
   const [last] = cat.history?.slice(-1) ?? [];
   return last;
+};
+
+const priority2num = {
+  高: 2,
+  中: 1,
+  低: 0
+};
+
+export const sortCatByHistoryPriority = (cats: ApiCat[]) => {
+  return sortBy(
+    cats,
+    (c) => {
+      const lastHistory = catLastHistory(c);
+      return lastHistory ? priority2num[lastHistory.priority] : -1;
+    },
+    (c) => {
+      const lastHistory = catLastHistory(c);
+      const { historyType, startDate } = lastHistory;
+      const duraDays = Math.max(dayjs().diff(startDate, 'days'), 0);
+      console.log(lastHistory, startDate, duraDays);
+      if (historyType === '寄养') {
+        return duraDays;
+      } else if (historyType === '救助') {
+        const { dueRemainDays = 0 } = lastHistory;
+        const remianDays = Math.max(dueRemainDays - duraDays, 0);
+        return -remianDays;
+      }
+    }
+  ).reverse();
 };

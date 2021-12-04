@@ -1,5 +1,11 @@
 'use strict';
 
+var _l = require('lodash');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var _l__default = /*#__PURE__*/_interopDefaultLegacy(_l);
+
 class BaseController {
     /**
      * 调用成功
@@ -22,6 +28,12 @@ var ECatAcions;
     // 更新猫信息
     ECatAcions["Update"] = "update";
 })(ECatAcions || (ECatAcions = {}));
+const CAT_ALLOWED_EDIT_FIELDS = [
+    'status',
+    'history',
+    'adoptContact',
+    'adoptDescription'
+];
 
 var EUserActions;
 (function (EUserActions) {
@@ -135,11 +147,8 @@ class CatController extends BaseController {
         if (!record) {
             this.fail(500, '不存在该记录');
         }
-        const updated = {};
-        updatedFields.forEach((k) => {
-            updated[k] = request[k];
-        });
-        await update(CAT_COLLECTION_NAME, { ...record, status, history });
+        const updated = _l__default["default"].pick(_l__default["default"].pick(request, updatedFields), CAT_ALLOWED_EDIT_FIELDS);
+        await update(CAT_COLLECTION_NAME, { ...record, ...updated });
         return this.success({ _id });
     }
 }

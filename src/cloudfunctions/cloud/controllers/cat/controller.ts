@@ -5,11 +5,13 @@ import {
   ECatAcions,
   EController,
   UpdateCatResult,
-  UpdateCatRequest
+  UpdateCatRequest,
+  CAT_ALLOWED_EDIT_FIELDS
 } from '@/typings/interfaces';
 import { CAT_COLLECTION_NAME, DbCat } from '@/typings/db';
 import { checkPermission, getById, update } from '../../utils';
 import { getCurrentUser } from '../user/db';
+import { default as _l } from 'lodash';
 
 export default class CatController extends BaseController implements IController<EController.Cat> {
   public async [ECatAcions.Update](request: UpdateCatRequest): Promise<Response<UpdateCatResult>> {
@@ -23,11 +25,8 @@ export default class CatController extends BaseController implements IController
     if (!record) {
       this.fail(500, '不存在该记录');
     }
-    const updated: any = {};
-    updatedFields.forEach((k) => {
-      updated[k] = request[k];
-    });
-    await update(CAT_COLLECTION_NAME, { ...record, status, history });
+    const updated = _l.pick(_l.pick(request, updatedFields), CAT_ALLOWED_EDIT_FIELDS);
+    await update(CAT_COLLECTION_NAME, { ...record, ...updated });
     return this.success({ _id });
   }
 }
