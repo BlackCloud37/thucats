@@ -111,6 +111,7 @@ const CatProfilePage = () => {
   };
 
   const onNewHistoryTap = () => {
+    // TODO: 检查是否能新增
     showActionSheet({
       itemList: ['寄养', '救助'],
       success: (v) => {
@@ -235,7 +236,7 @@ const CatProfilePage = () => {
           {isOperator && (
             <TabPanel tab="记录">
               <View className="p-5 pt-0 flex flex-col items-start">
-                {/* 展示 */}
+                {/* 展示 TODO: 收起 */}
                 {history?.reverse().map((his, index) => (
                   <HistoryCard key={index} history={his} showIcon />
                 ))}
