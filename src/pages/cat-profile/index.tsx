@@ -15,9 +15,9 @@ import RelatedCatItem from './related-cat';
 import UniForm from '@/components/uni-form';
 import { FOSTER_SCHEMA, RESCUE_SCHEMA } from './form-schemas';
 import { History } from '@/typings/db/history';
-import HistoryCard from './history-card';
 import dayjs from 'dayjs';
 import curry from 'lodash.curry';
+import HistoryCard from './history-card';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -84,7 +84,7 @@ const CatProfilePage = () => {
     adoptContact,
     birthday,
     age,
-    history
+    history = []
   } = cat ?? {};
 
   const onEditCat = curry((key: keyof ApiCat, val: any) => {
@@ -96,6 +96,7 @@ const CatProfilePage = () => {
 
   const [editingForm, setEditingForm] = React.useState(false);
   const [formType, setFormType] = React.useState<'寄养' | '救助'>('寄养');
+  const [folding, setFolding] = React.useState(true);
 
   const onCommit = (v: any) => {
     console.log(v);
@@ -155,6 +156,11 @@ const CatProfilePage = () => {
       {editing ? '保存' : '编辑'}
     </Button>
   );
+
+  const historyList = (folding ? [...history]?.slice(-1) : [...history].reverse())?.map(
+    (history, index) => <HistoryCard key={index} history={history} showIcon />
+  );
+
   return (
     <View className="p-5">
       <Loadable loading={!cat}>
@@ -247,6 +253,7 @@ const CatProfilePage = () => {
             )}
           </View>
         </View>
+
         <Tabs className="shadow-xl bg-white">
           <TabPanel tab="精选照片">
             <View className="p-5 pt-0">
@@ -258,10 +265,11 @@ const CatProfilePage = () => {
           {isOperator && (
             <TabPanel tab="记录">
               <View className="p-5 pt-0 flex flex-col items-start">
-                {/* 展示 TODO: 收起 */}
-                {history?.reverse().map((his, index) => (
-                  <HistoryCard key={index} history={his} showIcon />
-                ))}
+                {historyList}
+                {history.length > 1 && (
+                  <Button onTap={() => setFolding(!folding)}>{folding ? '展开' : '收起'}</Button>
+                )}
+
                 {/* 新增 */}
                 <Button
                   style={{
