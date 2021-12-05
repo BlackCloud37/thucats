@@ -2,6 +2,9 @@
 
 部署你的猫咪图鉴小程序
 
+## 体验
+![](https://github.com/BlackCloud37/PictureBed/blob/master/blog-img/gh_0393f08cc430_258.jpg)
+
 ## 如何使用
 
 参考[部署流程](https://github.com/BlackCloud37/thucats/wiki/部署流程)
