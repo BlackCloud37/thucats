@@ -29,7 +29,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Lint Check
         run: npm run lint
