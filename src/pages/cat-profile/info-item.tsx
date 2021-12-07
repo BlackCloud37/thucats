@@ -13,6 +13,7 @@ const InfoItem = <T,>({
   clipable = false,
   editable = false,
   range,
+  hide = false,
   onEdit
 }: {
   field: string;
@@ -21,8 +22,12 @@ const InfoItem = <T,>({
   clipable?: boolean;
   editable?: boolean;
   range?: readonly T[];
+  hide?: boolean;
   onEdit?: (value: T) => void; // callback
 }) => {
+  if (hide) {
+    return null;
+  }
   const strVal = toString(val);
   if ((isNil(val) || strVal.length === 0) && !editable) {
     return null;

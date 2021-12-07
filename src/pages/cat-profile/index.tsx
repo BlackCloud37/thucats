@@ -213,7 +213,7 @@ const CatProfilePage = () => {
             <InfoItem field="性格" val={character} full />
             <InfoItem field="外貌描述" val={colorDescription} full />
             <InfoItem field="名字来源" val={nameOrigin} full />
-            <InfoItem field="出没地点" val={location} full />
+            <InfoItem field="出没地点" val={location} full hide={!isOperator} />
             {status === '待领养' && (
               <>
                 <InfoItem
