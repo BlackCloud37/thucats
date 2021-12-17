@@ -20,7 +20,9 @@ const ProfilePage = () => {
     isLoggedin,
     isOperator,
     isAdmin,
-    imageUploadCount
+    imageUploadCount,
+    name,
+    department
   } = useSelector((state: RootState) => ({
     ...state.users.user,
     ...state.users
@@ -76,12 +78,19 @@ const ProfilePage = () => {
       <View className="p-5">
         <View className="rounded-lg shadow-2xl bg-white p-5 flex-col items-center flex text-center mb-5 gap-1">
           {isLoggedin && (
-            <View onClick={() => setClickCnt((cnt) => cnt + 1)}>
-              <Avatar src={avatarUrl} className="w-20 h-20 rounded-full" />
-              <View>{nickName}</View>
-            </View>
+            <>
+              <View onClick={() => setClickCnt((cnt) => cnt + 1)}>
+                <Avatar src={avatarUrl} className="w-20 h-20 rounded-full" />
+                <View>{nickName}</View>
+              </View>
+              <View className="w-full flex flex-row flex-wrap items-start">
+                <InfoItem field="姓名" val={name} />
+                <InfoItem field="部门" val={department} />
+                <InfoItem field="图片上传数" val={imageUploadCount ?? 0} />
+              </View>
+            </>
           )}
-          <InfoItem field="图片上传数" val={imageUploadCount ?? 0} />
+
           <Button shape="square" onTap={getProfileAndLogin}>
             {isLoggedin ? '刷新信息' : '点击授权'}
           </Button>
