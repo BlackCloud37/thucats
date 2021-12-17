@@ -15,7 +15,9 @@ import {
   Role,
   DbRequest,
   REQUEST_COLLECTION_NAME,
-  USER_COLLECTION_NAME
+  USER_COLLECTION_NAME,
+  DbCat,
+  CAT_COLLECTION_NAME
 } from '@/typings/db';
 
 export default class ApplicationController
@@ -46,6 +48,12 @@ export default class ApplicationController
     try {
       const { requestType, applicant: applicantID } = record;
       await db.runTransaction(async (transaction: any) => {
+        const applicant: DbUser = await getById(
+          USER_COLLECTION_NAME,
+          applicantID, // id
+          transaction
+        );
+        console.log('applicant', applicant);
         if (action === 'approve') {
           switch (requestType) {
             case 'permission': {
@@ -54,14 +62,6 @@ export default class ApplicationController
               if (!permissionInfo) {
                 await transaction.rollback('申请信息不能为空');
               }
-
-              const applicant: DbUser = await getById(
-                USER_COLLECTION_NAME,
-                applicantID, // id
-                transaction
-              );
-              console.log('applicant', applicant);
-
               const newUser: DbUser = {
                 ...applicant,
                 roles: db.command.addToSet('operator' as Role),
@@ -71,7 +71,32 @@ export default class ApplicationController
               break;
             }
             case 'imageUpload': {
-              // TODO:
+              const { imageUploadInfo } = record;
+              console.log('imageUploadInfo', imageUploadInfo);
+              if (!imageUploadInfo) {
+                await transaction.rollback('图片信息不能为空');
+              }
+              const { catID, filePaths, _createTime } = imageUploadInfo!;
+              const cat: DbCat = await getById(CAT_COLLECTION_NAME, catID, transaction);
+              console.log('cat', cat);
+              const newCat: DbCat = {
+                ...cat,
+                _userPhotos: db.command.addToSet({
+                  $each: filePaths.map((url) => {
+                    return {
+                      url,
+                      uploader: applicantID,
+                      _createTime
+                    };
+                  })
+                })
+              };
+              const newUser: DbUser = {
+                ...applicant,
+                imageUploadCount: db.command.inc(filePaths.length)
+              };
+              await update(USER_COLLECTION_NAME, newUser, transaction);
+              await update(CAT_COLLECTION_NAME, newCat, transaction);
               break;
             }
           }
