@@ -9,14 +9,23 @@ import Request from './request';
 import { ApiRequest } from '@/typings/interfaces';
 import { Card, Button } from 'annar';
 import UniForm from '@/components/uni-form';
+import InfoItem from '@/components/info-item';
 
 const ProfilePage = () => {
-  const { avatarUrl, nickName, permissionRequests, isLoggedin, isOperator, isAdmin, myRequests } =
-    useSelector((state: RootState) => ({
-      ...state.users.user,
-      ...state.users
-      // loading: state.loading.effects.settings.fetchSettingsAsync
-    }));
+  const {
+    avatarUrl,
+    nickName,
+    permissionRequests,
+    imageRequests,
+    isLoggedin,
+    isOperator,
+    isAdmin,
+    imageUploadCount
+  } = useSelector((state: RootState) => ({
+    ...state.users.user,
+    ...state.users
+    // loading: state.loading.effects.settings.fetchSettingsAsync
+  }));
   const [clickCnt, setClickCnt] = React.useState(0);
 
   const { loginAsync, getRequestsAsync, createRequestAsync, getMyRequestsAsync } =
@@ -27,6 +36,7 @@ const ProfilePage = () => {
   }, [isOperator]);
 
   React.useEffect(() => {
+    isLoggedin && loginAsync({});
     isLoggedin && getMyRequestsAsync({});
   }, [isLoggedin]);
 
@@ -71,6 +81,7 @@ const ProfilePage = () => {
               <View>{nickName}</View>
             </View>
           )}
+          <InfoItem field="图片上传数" val={imageUploadCount ?? 0} />
           <Button shape="square" onTap={getProfileAndLogin}>
             {isLoggedin ? '刷新信息' : '点击授权'}
           </Button>
@@ -119,14 +130,14 @@ const ProfilePage = () => {
               <TabPanel tab="我的申请">
                 <View className="p-5 flex flex-col rounded-lg">{reqList(myRequests)}</View>
               </TabPanel>
-            )}
+            )} */}
             {isOperator && (
               <TabPanel tab="图片审核">
                 <View className="p-5 flex flex-col rounded-lg bg-white">
                   {reqList(imageRequests)}
                 </View>
               </TabPanel>
-            )} */}
+            )}
           </Tabs>
         )}
       </View>

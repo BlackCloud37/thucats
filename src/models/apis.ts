@@ -32,7 +32,7 @@ export async function requestCloudApi<C extends EController>(
   payload: any = {}
 ) {
   await showLoading({
-    title: '操作中',
+    title: '',
     mask: true
   });
   try {
@@ -51,27 +51,27 @@ export async function requestCloudApi<C extends EController>(
       // success
       const { data } = result;
       console.log(`Request success with data ${JSON.stringify(data)}`);
-      await showToast({
-        title: '成功',
-        icon: 'success'
-      });
+      // await showToast({
+      //   title: '',
+      //   icon: 'success'
+      // });
       return Promise.resolve(data);
     } else {
       // failed
       const { errCode, errMsg } = result;
       console.error(`Requset error with code ${errCode} and msg ${errMsg}`);
-      await showToast({
-        title: '请求失败',
-        icon: 'error'
-      });
+      // await showToast({
+      //   title: '请求失败',
+      //   icon: 'error'
+      // });
       return Promise.reject(errMsg);
     }
   } catch (e) {
     console.error(e);
-    await showToast({
-      title: '请求失败',
-      icon: 'error'
-    });
+    // await showToast({
+    //   title: '请求失败',
+    //   icon: 'error'
+    // });
     return Promise.reject(e);
   } finally {
     await hideLoading();

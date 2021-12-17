@@ -8,4 +8,6 @@ export interface DbUser extends JsonDbObject {
 
   openid: string;
   roles: Role[];
+
+  imageUploadCount: number;
 }
