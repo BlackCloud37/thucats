@@ -9,5 +9,9 @@ export interface DbUser extends JsonDbObject {
   openid: string;
   roles: Role[];
 
+  name?: string;
+  department?: string;
+  studentID?: string;
+
   imageUploadCount: number;
 }
