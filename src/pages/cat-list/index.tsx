@@ -40,6 +40,8 @@ const CatListPage = () => {
   }));
 
   const [selectedCats, setSelectedCats] = React.useState<ApiCat[]>([]);
+  const [showHistory, setShowHistory] = React.useState(false);
+
   const { allCatsList, loading, isOperator, filterIconIcons } = useSelector((state: RootState) => ({
     allCatsList: state.cats.allCatsList,
     loading: state.loading.effects.cats.fetchAllCatsAsync,
@@ -59,7 +61,7 @@ const CatListPage = () => {
   const catList =
     size(selectedCats) > 0 ? (
       selectedCats.map((cat: ApiCat) => (
-        <CatItem key={cat._id} cat={cat} className="mb-5" showHistory={isOperator} />
+        <CatItem key={cat._id} cat={cat} className="mb-5" showHistory={showHistory} />
       ))
     ) : (
       <Text className="block w-full text-sm font-light text-gray-500 text-center">
@@ -68,14 +70,15 @@ const CatListPage = () => {
     );
 
   // filters
-  const filterByKeyValues = curry(
-    (k: keyof ApiCat, vs: string[]) => () =>
-      setSelectedCats(filter(allCatsList, (c) => vs.some((v) => c[k] === v)))
-  );
+  const filterByKeyValues = curry((k: keyof ApiCat, vs: string[]) => () => {
+    setShowHistory(false);
+    setSelectedCats(filter(allCatsList, (c) => vs.some((v) => c[k] === v)));
+  });
   const filterByColorCategory = filterByKeyValues('colorCategory');
   const filterByStatus = filterByKeyValues('status');
 
   const filterAndSortByHistory = (pred: (c: ApiCat) => boolean) => {
+    setShowHistory(true);
     setSelectedCats(sortCatByHistoryPriority(filter(allCatsList, pred)));
   };
   const filterByRescue = () => {
@@ -112,7 +115,10 @@ const CatListPage = () => {
         <View className="flex flex-nowrap gap-3 overflow-scroll">
           <FilterItem
             fieldName="所有"
-            filterCallback={() => setSelectedCats(allCatsList)}
+            filterCallback={() => {
+              setShowHistory(false);
+              setSelectedCats(allCatsList);
+            }}
             bgImg={filterIconIcons[0]}
           />
           <FilterItem
@@ -122,7 +128,7 @@ const CatListPage = () => {
           />
           <FilterItem
             fieldName="狸花"
-            filterCallback={filterByColorCategory(['狸花'])}
+            filterCallback={filterByColorCategory(['狸花', '狸白'])}
             bgImg={filterIconIcons[2]}
           />
           <FilterItem
@@ -132,7 +138,7 @@ const CatListPage = () => {
           />
           <FilterItem
             fieldName="橘猫"
-            filterCallback={filterByColorCategory(['橘猫与橘白'])}
+            filterCallback={filterByColorCategory(['橘猫', '橘白'])}
             bgImg={filterIconIcons[4]}
           />
           <FilterItem
