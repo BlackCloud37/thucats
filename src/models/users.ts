@@ -60,11 +60,11 @@ export const users = createModel<RootModel>()({
       };
     },
     removeReq(state, _id) {
-      const { permissionRequests } = state;
+      const { permissionRequests, imageRequests } = state;
       return {
         ...state,
         permissionRequests: filter(permissionRequests, (req) => req._id !== _id),
-        imageRequests: filter(permissionRequests, (req) => req._id !== _id)
+        imageRequests: filter(imageRequests, (req) => req._id !== _id)
       };
     },
     myRequests(state, myRequests: ApiRequest[]) {
@@ -139,7 +139,10 @@ export const users = createModel<RootModel>()({
       dispatch.users.requests(data);
     },
 
-    async createRequestAsync(payload: Pick<DbRequest, 'requestType' | 'permissionInfo'>, state) {
+    async createRequestAsync(
+      payload: Pick<DbRequest, 'requestType' | 'permissionInfo' | 'imageUploadInfo'>,
+      state
+    ) {
       if (!state.users.user?._id) {
         console.error('not logged in, cannot create request');
         return Promise.reject(Error('not logged in'));
@@ -174,6 +177,19 @@ export const users = createModel<RootModel>()({
         request = {
           ...request,
           permissionInfo
+        };
+      }
+
+      if (requestType === 'imageUpload') {
+        const { imageUploadInfo } = payload;
+        if (!imageUploadInfo || !imageUploadInfo.catID || !imageUploadInfo.filePaths) {
+          console.error('no image upload info', imageUploadInfo);
+          return Promise.reject(Error('no image upload info'));
+        }
+
+        request = {
+          ...request,
+          imageUploadInfo
         };
       }
 

@@ -9,4 +9,10 @@ export interface DbRequest extends JsonDbObject {
     schoolID: string;
     department: string;
   };
+  imageUploadInfo?: {
+    catID: string;
+    filePaths: string[];
+    _createTime: number;
+    catName: string;
+  };
 }

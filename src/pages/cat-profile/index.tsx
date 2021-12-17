@@ -1,7 +1,19 @@
+/* eslint-disable complexity */
 import Loadable from '@/components/loadable';
 import { Dispatch, RootState } from '@/models/store';
 import { usePageEvent } from '@remax/framework-shared';
-import { Text, View, showActionSheet } from '@remax/wechat';
+import {
+  Text,
+  View,
+  showActionSheet,
+  cloud,
+  compressImage,
+  showToast,
+  hideLoading,
+  showLoading,
+  pageScrollTo,
+  getUserProfile
+} from '@remax/wechat';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
@@ -9,15 +21,16 @@ import Photo from '@/components/photo';
 import { TabPanel, Tabs } from '@/components/tabs';
 import { ApiCat } from '@/typings/interfaces';
 import { CAT_STATUS_ENUM } from '@/typings/db';
-import { Button, Icon } from 'annar';
-import InfoItem from './info-item';
-import RelatedCatItem from './related-cat';
+import { Button, Icon, ImageUpload } from 'annar';
+import InfoItem from '@/components/info-item';
+import RelatedCatItem from '@/components/related-cat';
 import UniForm from '@/components/uni-form';
 import { FOSTER_SCHEMA, RESCUE_SCHEMA } from './form-schemas';
 import { History } from '@/typings/db/history';
 import dayjs from 'dayjs';
 import curry from 'lodash.curry';
-import HistoryCard from './history-card';
+import HistoryCard from '@/components/history-card';
+import Album from '@/components/album';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -39,14 +52,18 @@ const CatProfilePage = () => {
   const [cat, setCat] = React.useState<ApiCat>();
   const [catKey, setKey] = React.useState('');
   const [editing, setEditing] = React.useState(false);
+  const [uploadFiles, setUploadFiles] = React.useState([]);
+  const [uploading, setUploading] = React.useState(false);
 
   // TODO: 兜底没有这只猫的场景
-  const { allCats, isOperator } = useSelector((state: RootState) => ({
+  const { allCats, isOperator, user } = useSelector((state: RootState) => ({
     allCats: state.cats.allCats,
     ...state.users
   }));
+  const { openid } = user ?? {};
 
   const { updateCatAsync, addHistoryToCat } = useDispatch<Dispatch>().cats;
+  const { createRequestAsync, loginAsync } = useDispatch<Dispatch>().users;
 
   usePageEvent('onLoad', ({ payload }) => {
     // TODO: fetch server
@@ -84,9 +101,9 @@ const CatProfilePage = () => {
     adoptContact,
     birthday,
     age,
-    history = []
+    history = [],
+    _userPhotos = []
   } = cat ?? {};
-
   const onEditCat = curry((key: keyof ApiCat, val: any) => {
     setCat({
       ...cat!,
@@ -161,6 +178,78 @@ const CatProfilePage = () => {
     (history, index) => <HistoryCard key={index} history={history} showIcon />
   );
 
+  const handleUploadImage = () => {
+    const timestamp = new Date().getTime();
+    console.log(uploadFiles);
+
+    if (uploadFiles?.length) {
+      showLoading({
+        title: '上传中'
+      });
+      // 压缩并上传图片
+      const uploadPromises = uploadFiles.map((src, index) => {
+        return compressImage({
+          src,
+          quality: 80
+        }).then(({ tempFilePath, errMsg }) => {
+          console.log(tempFilePath, errMsg);
+          return cloud.uploadFile({
+            cloudPath: `userupload/${openid}/${timestamp}-${index}.jpg`,
+            filePath: tempFilePath
+          });
+        });
+      });
+      // 发起请求
+      Promise.all(uploadPromises)
+        .then((values) => {
+          const uploadFileIDs = values.map(({ errMsg, fileID }) => {
+            console.log(errMsg, fileID);
+            return fileID;
+          });
+          console.log(uploadFileIDs);
+
+          return createRequestAsync({
+            requestType: 'imageUpload',
+            imageUploadInfo: {
+              catID: catKey,
+              filePaths: uploadFileIDs,
+              _createTime: new Date().getTime(),
+              catName: name!
+            }
+          });
+        })
+        .then(() => {
+          showToast({
+            title: '上传成功',
+            icon: 'success'
+          });
+          setUploadFiles([]);
+        })
+        .catch((e) => {
+          console.error(e);
+          showToast({
+            title: '上传失败',
+            icon: 'error'
+          });
+        })
+        .finally(() => {
+          hideLoading();
+        });
+    } else {
+      showToast({
+        title: '没有选择图片',
+        icon: 'error'
+      });
+    }
+  };
+
+  const getProfileAndLogin = () => {
+    return getUserProfile({
+      desc: '获取你的昵称、头像'
+    }).then((result) => {
+      return loginAsync(result.userInfo);
+    });
+  };
   return (
     <View className="p-5">
       <Loadable loading={!cat}>
@@ -262,6 +351,9 @@ const CatProfilePage = () => {
               ))}
             </View>
           </TabPanel>
+          <TabPanel tab="用户上传">
+            <Album urls={_userPhotos.map(({ url }) => url)} />
+          </TabPanel>
           {isOperator && (
             <TabPanel tab="记录">
               <View className="p-5 pt-0 flex flex-col items-start">
@@ -292,10 +384,55 @@ const CatProfilePage = () => {
               </View>
             </TabPanel>
           )}
-          {/* <TabPanel tab="用户上传">
-            <View />
-          </TabPanel> */}
         </Tabs>
+
+        {/* 上传按钮及图片上传器 */}
+        <Button
+          style={{
+            height: '100px',
+            width: '100px',
+            position: 'fixed',
+            right: '10px',
+            bottom: '110px'
+          }}
+          shape="circle"
+          ghost
+          icon={<Icon type="roundaddfill" color="#1890FF" size="100px" />}
+          onTap={() => {
+            if (openid) {
+              setUploading(true);
+              pageScrollTo({
+                selector: '#uploader'
+              });
+            } else {
+              getProfileAndLogin().then(() => {
+                setUploading(true);
+                pageScrollTo({
+                  selector: '#uploader'
+                });
+              });
+            }
+          }}
+        />
+        <View
+          className={classNames('mt-2 rounded-lg bg-white', {
+            'p-5': uploading
+          })}
+          id="uploader"
+        >
+          {uploading && (
+            <>
+              <ImageUpload
+                maxCount={9}
+                files={uploadFiles}
+                onChange={(files: any) => setUploadFiles(files)}
+              />
+              <Button style={{ marginTop: '10px' }} onTap={handleUploadImage}>
+                上传照片
+              </Button>
+            </>
+          )}
+        </View>
       </Loadable>
     </View>
   );

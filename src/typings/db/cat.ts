@@ -8,6 +8,11 @@ export type CatStatus = typeof CAT_STATUS_ENUM[number];
 export interface DbCat extends JsonDbObject {
   _avatar?: FileID; // 头像
   _photos?: FileID[]; // 其他照片
+  _userPhotos?: {
+    uploader: string;
+    _createTime: number;
+    url: FileID;
+  }[];
 
   // 用户字段，展示
   name: string; // 名字

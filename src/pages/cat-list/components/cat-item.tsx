@@ -6,7 +6,7 @@ import Clipable from '@/components/clipable';
 import { ApiCat } from '@/typings/interfaces';
 import Avatar from '@/components/avatar';
 import { catLastHistory } from '@/models/cats';
-import HistoryCard from '@/pages/cat-profile/history-card';
+import HistoryCard from '@/components/history-card';
 const Tag = ({ tag, className = 'bg-gray-200' }: { tag: string; className?: string }) => {
   return tag !== '未知' ? (
     <View className={`rounded-md p-1 shadow-inner text-xs ${className}`}>{tag}</View>
