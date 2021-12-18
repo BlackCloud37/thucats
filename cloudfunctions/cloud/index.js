@@ -27,13 +27,10 @@ var ECatAcions;
 (function (ECatAcions) {
     // 更新猫信息
     ECatAcions["Update"] = "update";
+    ECatAcions["AddHistory"] = "addHistory";
+    ECatAcions["FinishLastHistory"] = "finishLastHistory";
 })(ECatAcions || (ECatAcions = {}));
-const CAT_ALLOWED_EDIT_FIELDS = [
-    'status',
-    'history',
-    'adoptContact',
-    'adoptDescription'
-];
+const CAT_ALLOWED_EDIT_FIELDS = ['status', 'adoptContact', 'adoptDescription'];
 
 var EUserActions;
 (function (EUserActions) {
@@ -140,16 +137,66 @@ class CatController extends BaseController {
     async [ECatAcions.Update](request) {
         const user = await getCurrentUser();
         if (!checkPermission('operator', user ? user.roles : [])) {
-            this.fail(403, '无修改权限');
+            return this.fail(403, '无修改权限');
         }
         const { _id, updatedFields } = request;
         const record = await getById(CAT_COLLECTION_NAME, _id);
         if (!record) {
-            this.fail(500, '不存在该记录');
+            return this.fail(500, '不存在该记录');
         }
-        const updated = _l__default["default"].pick(_l__default["default"].pick(request, updatedFields), CAT_ALLOWED_EDIT_FIELDS);
+        const updated = _l__default["default"].pick(_l__default["default"].pick(request, updatedFields), CAT_ALLOWED_EDIT_FIELDS); // 只选择允许修改的且请求表明修改了的字段修改
         await update(CAT_COLLECTION_NAME, { ...record, ...updated });
         return this.success({ _id });
+    }
+    async [ECatAcions.AddHistory](requset) {
+        const user = await getCurrentUser();
+        if (!checkPermission('operator', user ? user.roles : [])) {
+            return this.fail(403, '无修改权限');
+        }
+        const { _id, history } = requset;
+        const record = await getById(CAT_COLLECTION_NAME, _id);
+        if (!record) {
+            return this.fail(500, '不存在该记录');
+        }
+        const lastHistory = _l__default["default"].last(record.history);
+        if (lastHistory && !lastHistory.isDone) {
+            return this.fail(500, '需要先完成最后一条记录');
+        }
+        await update(CAT_COLLECTION_NAME, {
+            ...record,
+            history: db.command.push(history)
+        });
+        const newRec = await getById(CAT_COLLECTION_NAME, _id);
+        return this.success({ _id, history: newRec.history ? newRec.history : [] });
+    }
+    async [ECatAcions.FinishLastHistory](requset) {
+        const user = await getCurrentUser();
+        if (!checkPermission('operator', user ? user.roles : [])) {
+            return this.fail(403, '无修改权限');
+        }
+        const { _id } = requset;
+        const record = await getById(CAT_COLLECTION_NAME, _id);
+        if (!record) {
+            return this.fail(500, '不存在该记录');
+        }
+        const { history = [] } = record;
+        const lastHistory = _l__default["default"].last(history);
+        history.pop(); // remove last history
+        if (!lastHistory) {
+            return this.success({ _id, history: [] });
+        }
+        const newHistory = [
+            ...history,
+            {
+                ...lastHistory,
+                isDone: true
+            }
+        ];
+        await update(CAT_COLLECTION_NAME, {
+            ...record,
+            history: newHistory
+        });
+        return this.success({ _id, history: newHistory });
     }
 }
 
