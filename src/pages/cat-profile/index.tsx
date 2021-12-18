@@ -11,7 +11,6 @@ import {
   showToast,
   hideLoading,
   showLoading,
-  pageScrollTo,
   getUserProfile,
   showModal
 } from '@remax/wechat';
@@ -33,7 +32,9 @@ import curry from 'lodash.curry';
 import HistoryCard from '@/components/history-card';
 import Album from '@/components/album';
 import { catLastHistory } from '@/models/cats';
-
+import { pageScrollTo, createSelectorQuery } from 'remax/wechat';
+import groupBy from 'lodash.groupby';
+import LLoadMore from 'lin-ui/dist/loadmore';
 export interface CatProfilePayload {
   catKey: string;
 }
@@ -48,6 +49,17 @@ const parseForm = (form: any): History => {
     form.startDate = dayjs().format('YYYY-MM-DD');
   }
   return form;
+};
+
+const scrollToBottom = () => {
+  createSelectorQuery()
+    .select('#page')
+    .boundingClientRect((rect) => {
+      pageScrollTo({
+        scrollTop: rect.bottom
+      });
+    })
+    .exec();
 };
 
 const CatProfilePage = () => {
@@ -266,8 +278,32 @@ const CatProfilePage = () => {
       return loginAsync(result.userInfo);
     });
   };
+
+  // albums
+  // 按日期分组并排序
+  const photosGroupByMon = groupBy(_userPhotos, ({ _createTime }) =>
+    dayjs(_createTime).format('YYYY/M')
+  );
+  const sortedKeys = Object.keys(photosGroupByMon)
+    .sort((a, b) => {
+      const [ay, am] = a.split('/');
+      const [by, bm] = b.split('/');
+      return 100 * (parseInt(ay, 10) - parseInt(by, 10)) + (parseInt(am, 10) - parseInt(bm, 10));
+    })
+    .reverse();
+  const albums = sortedKeys.map((date) => {
+    const [y, m] = date.split('/');
+    return (
+      <View key={date}>
+        <View className="pl-3 mt-1">
+          <Text className="text-sm">{`${y}年${m}月`}</Text>
+        </View>
+        <Album urls={photosGroupByMon[date].map(({ url }) => url)} />
+      </View>
+    );
+  });
   return (
-    <View className="p-5">
+    <View className="p-5" id="page">
       <Loadable loading={!cat}>
         <View className="p-5 bg-white rounded-lg shadow-xl mb-5">
           <Photo src={_photos?.[0] ?? _avatar} />
@@ -368,7 +404,9 @@ const CatProfilePage = () => {
             </View>
           </TabPanel>
           <TabPanel tab="用户上传">
-            <Album urls={_userPhotos.map(({ url }) => url)} />
+            {albums}
+            {/* <Album urls={_userPhotos.map(({ url }) => url)} /> */}
+            <LLoadMore line={true} show={true} type="end" end-text="到底啦" />
           </TabPanel>
           {isOperator && (
             <TabPanel tab="记录">
@@ -407,28 +445,24 @@ const CatProfilePage = () => {
 
         {/* 上传按钮及图片上传器 */}
         <Button
+          type="primary"
+          shape="circle"
+          icon="picfill"
+          float
+          size="large"
           style={{
-            height: '100px',
-            width: '100px',
             position: 'fixed',
             right: '10px',
             bottom: '110px'
           }}
-          shape="circle"
-          ghost
-          icon={<Icon type="roundaddfill" color="#1890FF" size="100px" />}
           onTap={() => {
             if (openid) {
               setUploading(true);
-              pageScrollTo({
-                selector: '#uploader'
-              });
+              scrollToBottom();
             } else {
               getProfileAndLogin().then(() => {
                 setUploading(true);
-                pageScrollTo({
-                  selector: '#uploader'
-                });
+                scrollToBottom();
               });
             }
           }}
@@ -437,7 +471,6 @@ const CatProfilePage = () => {
           className={classNames('mt-2 rounded-lg bg-white', {
             'p-5': uploading
           })}
-          id="uploader"
         >
           {uploading && (
             <>
