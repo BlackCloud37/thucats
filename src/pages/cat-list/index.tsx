@@ -84,14 +84,15 @@ const CatListPage = () => {
   const filterByRescue = () => {
     filterAndSortByHistory((c) => {
       const lastHistory = catLastHistory(c);
-      return lastHistory?.historyType === '救助';
+      console.log(lastHistory);
+      return lastHistory?.historyType === '救助' && !lastHistory?.isDone;
     });
   };
 
   const filterByFoster = () => {
     filterAndSortByHistory((c) => {
       const lastHistory = catLastHistory(c);
-      return lastHistory?.historyType === '寄养';
+      return lastHistory?.historyType === '寄养' && !lastHistory?.isDone;
     });
   };
   return (

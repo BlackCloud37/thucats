@@ -12,7 +12,8 @@ import {
   hideLoading,
   showLoading,
   pageScrollTo,
-  getUserProfile
+  getUserProfile,
+  showModal
 } from '@remax/wechat';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,6 +32,7 @@ import dayjs from 'dayjs';
 import curry from 'lodash.curry';
 import HistoryCard from '@/components/history-card';
 import Album from '@/components/album';
+import { catLastHistory } from '@/models/cats';
 
 export interface CatProfilePayload {
   catKey: string;
@@ -62,7 +64,7 @@ const CatProfilePage = () => {
   }));
   const { openid } = user ?? {};
 
-  const { updateCatAsync, addHistoryToCat } = useDispatch<Dispatch>().cats;
+  const { updateCatAsync, addHistoryToCatAsync: addHistoryToCat } = useDispatch<Dispatch>().cats;
   const { createRequestAsync, loginAsync } = useDispatch<Dispatch>().users;
 
   usePageEvent('onLoad', ({ payload }) => {
@@ -104,6 +106,10 @@ const CatProfilePage = () => {
     history = [],
     _userPhotos = []
   } = cat ?? {};
+
+  const lastHistory = catLastHistory(cat);
+  const canAddHistory = !lastHistory || lastHistory.isDone;
+
   const onEditCat = curry((key: keyof ApiCat, val: any) => {
     setCat({
       ...cat!,
@@ -118,18 +124,28 @@ const CatProfilePage = () => {
   const onCommit = (v: any) => {
     console.log(v);
     addHistoryToCat({
-      catId: cat!._id,
-      newHistory: {
+      _id: cat!._id,
+      history: {
         ...parseForm(v),
         historyType: formType
       }
-    }).finally(() => {
-      setEditingForm(false);
-    });
+    })
+      .then(() => showToast({ title: '成功', icon: 'success' }))
+      .catch(() => showToast({ title: '失败', icon: 'error' }))
+      .finally(() => {
+        setEditingForm(false);
+      });
   };
 
   const onNewHistoryTap = () => {
-    // TODO: 检查是否能新增
+    if (!canAddHistory) {
+      showModal({
+        title: '提示',
+        content: '请先将最后一条记录标记为完成，才能发起新的记录',
+        showCancel: false
+      });
+      return;
+    }
     showActionSheet({
       itemList: ['寄养', '救助'],
       success: (v) => {
@@ -175,7 +191,7 @@ const CatProfilePage = () => {
   );
 
   const historyList = (folding ? [...history]?.slice(-1) : [...history].reverse())?.map(
-    (history, index) => <HistoryCard key={index} history={history} showIcon />
+    (history, index) => <HistoryCard key={index} history={history} showIcon catID={catKey} />
   );
 
   const handleUploadImage = () => {
@@ -359,7 +375,9 @@ const CatProfilePage = () => {
               <View className="p-5 pt-0 flex flex-col items-start">
                 {historyList}
                 {history.length > 1 && (
-                  <Button onTap={() => setFolding(!folding)}>{folding ? '展开' : '收起'}</Button>
+                  <Button style={{ marginTop: '1rem' }} onTap={() => setFolding(!folding)}>
+                    {folding ? '展开所有' : '收起'}
+                  </Button>
                 )}
 
                 {/* 新增 */}
@@ -372,6 +390,7 @@ const CatProfilePage = () => {
                   type="primary"
                   shape="circle"
                   icon={<Icon type="roundadd" color="#1890FF" size="50px" />}
+                  // disabled={!canAddHistory}
                   ghost
                 />
                 {editingForm && (formType === '寄养' || formType === '救助') && (

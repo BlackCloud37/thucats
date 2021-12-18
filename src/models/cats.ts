@@ -3,23 +3,32 @@ import { callApi, requestCloudApi } from './apis';
 import type { RootModel } from './models';
 import wxRequest from 'wechat-request';
 import {
+  AddHistoryRequest,
+  AddHistoryResult,
   ApiCat,
   ECatAcions,
   EController,
+  FinishLastHistoryRequest,
+  FinishLastHistoryResult,
   UpdateCatRequest,
   UpdateCatResult
 } from '@/typings/interfaces';
-import { History } from '@/typings/db/history';
 import sortBy from 'lodash.sortby';
 import values from 'lodash.values';
 import dayjs from 'dayjs';
-
 export interface CatState {
   allCats: {
     [key: string]: ApiCat;
   };
   allCatsList: ApiCat[];
 }
+
+const noticeOrder = {
+  高: 3,
+  中: 2,
+  低: 1,
+  内部: 0
+};
 
 const initialState: CatState = {
   allCats: {},
@@ -34,12 +43,24 @@ export const cats = createModel<RootModel>()({
       payload.forEach((cat) => {
         id2cats[cat._id] = cat;
       });
-      const noticeOrder = {
-        高: 3,
-        中: 2,
-        低: 1,
-        内部: 0
+
+      return {
+        ...state,
+        allCats: id2cats,
+        allCatsList: sortBy(
+          values(id2cats),
+          (c) => (c.noticeLevel ? noticeOrder[c.noticeLevel] : -1),
+          'name'
+        ).reverse()
       };
+    },
+    cat(state, payload: ApiCat) {
+      const { _id } = payload;
+      const newAllCatsList: ApiCat[] = [...state.allCatsList.filter((c) => c._id !== _id), payload];
+      const id2cats: { [key: string]: ApiCat } = {};
+      newAllCatsList.forEach((cat) => {
+        id2cats[cat._id] = cat;
+      });
       return {
         ...state,
         allCats: id2cats,
@@ -67,34 +88,60 @@ export const cats = createModel<RootModel>()({
             ...state.cats.allCats[_id],
             ...payload
           };
-          const newAllCatsList: ApiCat[] = [
-            ...state.cats.allCatsList.filter((c) => c._id !== _id),
-            newCat
-          ];
-          dispatch.cats.allCats(newAllCatsList);
+
+          dispatch.cats.cat(newCat);
         })
         .catch(console.error);
     },
 
-    async addHistoryToCat(payload: { catId: string; newHistory: History }, state) {
-      const { catId, newHistory } = payload;
-      const cat = state.cats.allCats[catId];
+    async addHistoryToCatAsync(payload: AddHistoryRequest, state) {
+      const { _id, history } = payload;
+      if (!_id || !history) {
+        return Promise.reject(Error('参数不能为空'));
+      }
+      const cat = state.cats.allCats[_id];
       if (!cat) {
         return Promise.reject(Error('没有相关猫咪'));
       }
 
-      const oldHistory = cat?.history ?? [];
-      await dispatch.cats.updateCatAsync({
-        _id: catId,
-        history: [...oldHistory, newHistory],
-        updatedFields: ['history']
-      });
+      requestCloudApi(EController.Cat, ECatAcions.AddHistory, payload)
+        .then((res: AddHistoryResult) => {
+          console.log(res);
+          const { history } = res;
+          dispatch.cats.cat({
+            ...cat,
+            history
+          });
+        })
+        .catch(console.error);
+    },
+
+    async finishLastHistoryAsync(payload: FinishLastHistoryRequest, state) {
+      const { _id } = payload;
+      if (!_id) {
+        return Promise.reject(Error('参数不能为空'));
+      }
+      const cat = state.cats.allCats[_id];
+      if (!cat) {
+        return Promise.reject(Error('没有相关猫咪'));
+      }
+
+      requestCloudApi(EController.Cat, ECatAcions.FinishLastHistory, payload)
+        .then((res: FinishLastHistoryResult) => {
+          console.log(res);
+          const { history } = res;
+          dispatch.cats.cat({
+            ...cat,
+            history
+          });
+        })
+        .catch(console.error);
     }
   })
 });
 
-export const catLastHistory = (cat: ApiCat) => {
-  const [last] = cat.history?.slice(-1) ?? [];
+export const catLastHistory = (cat: ApiCat | undefined) => {
+  const [last] = cat?.history?.slice(-1) ?? [];
   return last;
 };
 
