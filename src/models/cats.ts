@@ -136,6 +136,15 @@ export const cats = createModel<RootModel>()({
           });
         })
         .catch(console.error);
+    },
+
+    async pullCatByIdAsync(payload: string) {
+      if (!payload) {
+        return Promise.reject(Error('id不能为空'));
+      }
+      const { data } = await callApi(wxRequest.get(`/cats/${payload}`));
+      console.log(data);
+      dispatch.cats.cat(data);
     }
   })
 });

@@ -76,7 +76,11 @@ const CatProfilePage = () => {
   }));
   const { openid } = user ?? {};
 
-  const { updateCatAsync, addHistoryToCatAsync: addHistoryToCat } = useDispatch<Dispatch>().cats;
+  const {
+    updateCatAsync,
+    addHistoryToCatAsync: addHistoryToCat,
+    pullCatByIdAsync
+  } = useDispatch<Dispatch>().cats;
   const { createRequestAsync, loginAsync } = useDispatch<Dispatch>().users;
 
   usePageEvent('onLoad', ({ payload }) => {
@@ -84,6 +88,10 @@ const CatProfilePage = () => {
     const { catKey } = JSON.parse(payload) as CatProfilePayload;
     console.log(allCats[catKey]);
     setKey(catKey);
+  });
+
+  usePageEvent('onPullDownRefresh', () => {
+    pullCatByIdAsync(catKey);
   });
 
   React.useEffect(() => {
