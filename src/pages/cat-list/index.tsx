@@ -50,8 +50,14 @@ const CatListPage = () => {
   }));
   const { fetchAllCatsAsync } = useDispatch<Dispatch>().cats;
 
-  React.useEffect(() => {
+  const initData = () => {
     fetchAllCatsAsync().catch(console.error);
+  };
+  usePageEvent('onPullDownRefresh', () => {
+    initData();
+  });
+  React.useEffect(() => {
+    initData();
   }, []);
 
   React.useEffect(() => {

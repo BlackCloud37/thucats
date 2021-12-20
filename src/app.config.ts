@@ -16,7 +16,8 @@ const config: AppConfig = {
   window: {
     navigationBarTitleText: '猫咪图鉴',
     navigationBarBackgroundColor: '#f9f9f9',
-    navigationBarTextStyle: 'black'
+    navigationBarTextStyle: 'black',
+    enablePullDownRefresh: true
   },
 
   tabBar: {
