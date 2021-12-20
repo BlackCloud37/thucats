@@ -6,7 +6,7 @@ import './album.css';
 const Album = (props: { urls: string[] }) => {
   const { urls } = props;
   return (
-    <View className="flex flex-wrap justify-evenly p-2 w-full">
+    <View className="flex flex-wrap justify-between p-2 w-full">
       {urls.map((url) => (
         <Image
           key={url}
