@@ -17,7 +17,17 @@ export interface DbCat extends JsonDbObject {
   // 用户字段，展示
   name: string; // 名字
   nickname?: string; // 昵称, 可选
-  colorCategory: '纯黑' | '纯白' | '狸花' | '奶牛' | '橘猫与橘白' | '三花' | '玳瑁'; // 毛色分类
+  colorCategory:
+    | '纯黑'
+    | '纯白'
+    | '奶牛'
+    | '狸花'
+    | '狸白'
+    | '橘猫'
+    | '橘白'
+    | '三花'
+    | '玳瑁'
+    | '其他'; // 毛色分类
   colorDescription?: string; // 毛色描述, 可选
   sex: '公' | '母' | '未知'; // 性别
   status: CatStatus; // 状态
