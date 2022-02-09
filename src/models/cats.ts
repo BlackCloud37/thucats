@@ -74,7 +74,7 @@ export const cats = createModel<RootModel>()({
   },
   effects: (dispatch) => ({
     async fetchAllCatsAsync() {
-      const { data } = await callApi(wxRequest.get('/cats'));
+      const { data } = await callApi(wxRequest.get('/cats/?limit=1000'));
       dispatch.cats.allCats(data);
     },
 
