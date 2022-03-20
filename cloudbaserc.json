@@ -34,6 +34,13 @@
             "searchQuery": "",
             "scene": 1011
           },
+          "uploadOptions": {
+            "version": "1.0.0",
+            "desc": "Sha: {{ env.COMMIT_SHA }} Branch: {{ env.BRANCH }} ",
+            "setting": {
+              "es6": false
+            }
+          },
           "commands": {
             "install": "npm install",
             "build": "REMAX_APP_ENVID={{ env.ENV_ID }} REMAX_APP_BASE_URL={{ env.CMS_BASE_URL }} REMAX_APP_API_TOKEN={{ env.CMS_API_TOKEN }} npm run build-mp"
