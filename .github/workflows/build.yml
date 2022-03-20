@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Deploy
 
 # Controls when the workflow will run
 on:
@@ -60,6 +60,22 @@ jobs:
       #     UPLOAD_PRIVATE_KEY: ${{ secrets.UPLOAD_PRIVATE_KEY }}
       #     ENV_ID: ${{ secrets.ENV_ID }} 
 
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      # - name: DEBUG
+      #   run: |
+      #     echo $GITHUB_SHA
+      #     echo $GITHUB_REF
+      #     echo $(git rev-parse --short "$GITHUB_SHA")
+      #     echo ${GITHUB_REF#refs/heads/}
+      #     echo ${{ steps.vars.outputs.sha_short }} 
+      #     echo ${{ steps.vars.outputs.branch }}
+
       - name: Deploy
         run: npm run deploy --verbose
         env:
@@ -70,6 +86,8 @@ jobs:
           ENV_ID: ${{ secrets.ENV_ID }}
           CMS_API_TOKEN: ${{ secrets.CMS_API_TOKEN }}
           CMS_BASE_URL: ${{ secrets.CMS_BASE_URL }}
+          COMMIT_SHA: ${{ steps.vars.outputs.sha_short }}
+          BRANCH: ${{ steps.vars.outputs.branch }}
     
       # - name: Upload Artifacts 🚀
       #   uses: actions/upload-artifact@v2
