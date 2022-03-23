@@ -13,7 +13,8 @@ const initialState: SettingState = {
   associationIcon: '',
   associationLogo: '',
   associationIntroduction: '',
-  adoptGuideUrl: ''
+  adoptGuideUrl: '',
+  filterIconIcons: []
 };
 
 export const settings = createModel<RootModel>()({

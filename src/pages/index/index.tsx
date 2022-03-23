@@ -8,9 +8,8 @@ import { Dispatch, RootState } from '@/models/store';
 import Loadable from '@/components/loadable';
 
 const Index = () => {
-  const { associationName, associationIcon, slogan, loading } = useSelector((state: RootState) => ({
-    ...state.settings,
-    loading: state.loading.effects.settings.fetchSettingsAsync
+  const { associationName, associationIcon, slogan } = useSelector((state: RootState) => ({
+    ...state.settings
   }));
 
   usePageEvent('onShareAppMessage', () => ({
@@ -26,7 +25,8 @@ const Index = () => {
 
   return (
     <>
-      <Loadable loading={loading} loader="running-cat">
+      {/* 不存在associationIcon, 即 settings 不存在时才展示 loading */}
+      <Loadable loading={!associationIcon} loader="running-cat">
         <View className="p-5">
           {/* 头部 */}
           <View className="flex flex-col items-start ml-3 mt-8 mb-12">
