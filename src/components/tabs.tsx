@@ -29,7 +29,7 @@ export const Tabs = (props: { children: any; className?: string }) => {
   const tabs = React.Children.map(children, (el) => el.props.tab);
   const [activeTab, setTab] = React.useState(tabs[0]);
   const tabCount = tabs.length;
-  const activeTabIdx = tabs.findIndex((t) => t === activeTab);
+  const activeTabIdx = tabs.findIndex((t) => t === activeTab) ?? 0;
   const activeTabEl = children[activeTabIdx];
   return (
     <View className={tabClass}>
