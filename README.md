@@ -9,6 +9,10 @@
 
 参考[部署流程](https://github.com/BlackCloud37/thucats/wiki/部署流程)
 
+## ⚠️ Warning ⚠️
+
+- 修改 CMS schemas 后一定记得build schema
+
 ## 工程化
 
 - [x] eslint
