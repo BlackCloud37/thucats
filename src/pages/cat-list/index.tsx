@@ -42,10 +42,10 @@ const CatListPage = () => {
   const [selectedCats, setSelectedCats] = React.useState<ApiCat[]>([]);
   const [showHistory, setShowHistory] = React.useState(false);
 
-  const { allCatsList, loading, isOperator, filterIconIcons } = useSelector((state: RootState) => ({
+  const { allCatsList, loading, isAdmin, filterIconIcons } = useSelector((state: RootState) => ({
     allCatsList: state.cats.allCatsList,
     loading: state.loading.effects.cats.fetchAllCatsAsync,
-    isOperator: state.users.isOperator,
+    isAdmin: state.users.isAdmin,
     filterIconIcons: state.settings.filterIconIcons
   }));
   const { fetchAllCatsAsync } = useDispatch<Dispatch>().cats;
@@ -174,7 +174,7 @@ const CatListPage = () => {
             bgImg={filterIconIcons[9]}
           />
         </View>
-        {isOperator && (
+        {isAdmin && (
           <View className="flex flex-nowrap gap-3 overflow-scroll mb-3">
             <FilterItem
               fieldName="寄养中"

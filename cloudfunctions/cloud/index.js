@@ -55,16 +55,6 @@ const REQUEST_COLLECTION_NAME = 'requests';
 const USER_COLLECTION_NAME = 'users';
 const CAT_COLLECTION_NAME = 'cats';
 
-const roles2RoleSet = (roles) => {
-    if (roles.length === 0) {
-        return new Set();
-    }
-    const roleSet = new Set(roles);
-    if (roleSet.has('admin')) {
-        roleSet.add('operator');
-    }
-    return roleSet;
-};
 async function update(collectionName, newRecord, database) {
     const timestamp = Date.now();
     console.log('update', arguments);
@@ -105,17 +95,6 @@ async function getById(collectionName, _id, database) {
     console.log('getById result', data);
     return data;
 }
-function checkPermission(requiredRole, roles) {
-    console.log('checkpermission', 'roles', roles);
-    if (!roles) {
-        return false;
-    }
-    const roleSet = roles2RoleSet(roles);
-    if (roleSet.has(requiredRole)) {
-        return true;
-    }
-    return false;
-}
 
 async function getCurrentUser() {
     const wxContext = cloud.getWXContext();
@@ -136,7 +115,7 @@ async function getUserByOpenid(openid) {
 class CatController extends BaseController {
     async [ECatAcions.Update](request) {
         const user = await getCurrentUser();
-        if (!checkPermission('operator', user ? user.roles : [])) {
+        if (!user || !user.isAdmin) {
             return this.fail(403, '无修改权限');
         }
         const { _id, updatedFields } = request;
@@ -150,7 +129,7 @@ class CatController extends BaseController {
     }
     async [ECatAcions.AddHistory](requset) {
         const user = await getCurrentUser();
-        if (!checkPermission('operator', user ? user.roles : [])) {
+        if (!user || !user.isAdmin) {
             return this.fail(403, '无修改权限');
         }
         const { _id, history } = requset;
@@ -171,7 +150,7 @@ class CatController extends BaseController {
     }
     async [ECatAcions.FinishLastHistory](requset) {
         const user = await getCurrentUser();
-        if (!checkPermission('operator', user ? user.roles : [])) {
+        if (!user || !user.isAdmin) {
             return this.fail(403, '无修改权限');
         }
         const { _id } = requset;
@@ -241,9 +220,8 @@ class ApplicationController extends BaseController {
         if (record.status !== 'pending') {
             return this.fail(500, 'Can only update pending request');
         }
-        const requiredRole = record.requestType === 'imageUpload' ? 'operator' : 'admin';
-        if (!checkPermission(requiredRole, user.roles)) {
-            return this.fail(403, `No permission required role ${requiredRole}`);
+        if (!user.isAdmin) {
+            return this.fail(403, `No permission.`);
         }
         try {
             const { requestType, applicant: applicantID } = record;
@@ -253,20 +231,6 @@ class ApplicationController extends BaseController {
                 console.log('applicant', applicant);
                 if (action === 'approve') {
                     switch (requestType) {
-                        case 'permission': {
-                            const { permissionInfo } = record;
-                            console.log('permissionInfo', permissionInfo);
-                            if (!permissionInfo) {
-                                await transaction.rollback('申请信息不能为空');
-                            }
-                            const newUser = {
-                                ...applicant,
-                                roles: db.command.addToSet('operator'),
-                                ...permissionInfo
-                            };
-                            await update(USER_COLLECTION_NAME, newUser, transaction);
-                            break;
-                        }
                         case 'imageUpload': {
                             const { imageUploadInfo } = record;
                             console.log('imageUploadInfo', imageUploadInfo);

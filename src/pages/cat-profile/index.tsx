@@ -70,7 +70,7 @@ const CatProfilePage = () => {
   const [uploading, setUploading] = React.useState(false);
 
   // TODO: 兜底没有这只猫的场景
-  const { allCats, isOperator, user } = useSelector((state: RootState) => ({
+  const { allCats, isAdmin, user } = useSelector((state: RootState) => ({
     allCats: state.cats.allCats,
     ...state.users
   }));
@@ -331,7 +331,7 @@ const CatProfilePage = () => {
           )}
           <View className="flex justify-between w-full mb-2 mt-2">
             <Text className="block text-gray-700 text-xl font-bold">{name}</Text>
-            {isOperator && (
+            {isAdmin && (
               <View className="flex gap-1">
                 {editing && cancelEditBtn}
                 {editBtn}
@@ -362,7 +362,7 @@ const CatProfilePage = () => {
             <InfoItem field="性格" val={character} full />
             <InfoItem field="外貌描述" val={colorDescription} full />
             <InfoItem field="名字来源" val={nameOrigin} full />
-            <InfoItem field="出没地点" val={location} full hide={!isOperator} />
+            <InfoItem field="出没地点" val={location} full hide={!isAdmin} />
             {status === '待领养' && (
               <>
                 <InfoItem
@@ -416,7 +416,7 @@ const CatProfilePage = () => {
             {/* <Album urls={_userPhotos.map(({ url }) => url)} /> */}
             <LLoadMore line={true} show={true} type="end" end-text="到底啦" />
           </TabPanel>
-          {isOperator && (
+          {isAdmin && (
             <TabPanel tab="记录">
               <View className="p-5 pt-0 flex flex-col items-start">
                 {historyList}

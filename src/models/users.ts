@@ -12,25 +12,20 @@ import { showToast } from 'remax/wechat';
 import { callApi, requestCloudApi } from './apis';
 import type { RootModel } from './models';
 import wxRequest from 'wechat-request';
-import { Role, DbUser, DbRequest, Add } from '@/typings/db';
-import { checkPermission } from '@/cloudfunctions/cloud/utils';
+import { DbUser, DbRequest, Add } from '@/typings/db';
 import filter from 'lodash.filter';
 
 export interface UserState {
   user?: DbUser;
   isLoggedin: boolean;
-  isOperator: boolean;
   isAdmin: boolean;
-  permissionRequests: ApiRequest[];
   imageRequests: ApiRequest[];
   myRequests: ApiRequest[];
 }
 
 const initialState: UserState = {
   isLoggedin: false,
-  isOperator: false,
   isAdmin: false,
-  permissionRequests: [],
   imageRequests: [],
   myRequests: []
 };
@@ -38,10 +33,9 @@ const initialState: UserState = {
 export const users = createModel<RootModel>()({
   state: initialState,
   reducers: {
-    permission(state, { isOperator, isAdmin }: { isOperator: boolean; isAdmin: boolean }) {
+    isAdmin(state, { isAdmin }: { isAdmin: boolean }) {
       return {
         ...state,
-        isOperator,
         isAdmin
       };
     },
@@ -55,15 +49,13 @@ export const users = createModel<RootModel>()({
     requests(state, requests: ApiRequest[]) {
       return {
         ...state,
-        permissionRequests: filter(requests, (req) => req.requestType === 'permission'),
         imageRequests: filter(requests, (req) => req.requestType === 'imageUpload')
       };
     },
     removeReq(state, _id) {
-      const { permissionRequests, imageRequests } = state;
+      const { imageRequests } = state;
       return {
         ...state,
-        permissionRequests: filter(permissionRequests, (req) => req._id !== _id),
         imageRequests: filter(imageRequests, (req) => req._id !== _id)
       };
     },
@@ -77,10 +69,7 @@ export const users = createModel<RootModel>()({
   effects: (dispatch) => ({
     // 传入需要的权限
     // 如果toast === true，则如果用户没有权限，会弹窗提示
-    checkPermission(
-      { requiredRole, toast = false }: { requiredRole: Role; toast?: boolean },
-      state
-    ): boolean {
+    checkPermission({ toast = false }, state): boolean {
       const { user } = state.users;
       if (!user) {
         toast &&
@@ -91,7 +80,7 @@ export const users = createModel<RootModel>()({
         return false; // not logged in
       }
 
-      if (checkPermission(requiredRole, user.roles)) {
+      if (user.isAdmin) {
         return true;
       }
 
@@ -112,9 +101,8 @@ export const users = createModel<RootModel>()({
           console.log(result);
           dispatch.users.user(result);
 
-          const isOperator = dispatch.users.checkPermission({ requiredRole: 'operator' });
-          const isAdmin = dispatch.users.checkPermission({ requiredRole: 'admin' });
-          dispatch.users.permission({ isAdmin, isOperator });
+          const isAdmin = dispatch.users.checkPermission({});
+          dispatch.users.isAdmin({ isAdmin });
         })
         .catch(console.error);
     },
@@ -122,16 +110,13 @@ export const users = createModel<RootModel>()({
     async getRequestsAsync() {
       const { checkPermission } = dispatch.users;
       console.log('Get Requests');
-      if (!checkPermission({ requiredRole: 'operator' })) {
+      if (!checkPermission({})) {
         console.error('No permission to get requests');
         return;
       }
 
       const query = {
-        status: { $eq: 'pending' },
-        ...(checkPermission({ requiredRole: 'admin' })
-          ? {}
-          : { requestType: { $neq: 'permission' } })
+        status: { $eq: 'pending' }
       };
 
       const { data } = await callApi(wxRequest.post('/requests/find', { query }));
@@ -139,10 +124,7 @@ export const users = createModel<RootModel>()({
       dispatch.users.requests(data);
     },
 
-    async createRequestAsync(
-      payload: Pick<DbRequest, 'requestType' | 'permissionInfo' | 'imageUploadInfo'>,
-      state
-    ) {
+    async createRequestAsync(payload: Pick<DbRequest, 'requestType' | 'imageUploadInfo'>, state) {
       if (!state.users.user?._id) {
         console.error('not logged in, cannot create request');
         return Promise.reject(Error('not logged in'));
@@ -150,35 +132,12 @@ export const users = createModel<RootModel>()({
 
       console.log('Create Requests', arguments);
       const { requestType } = payload;
-      const pendingCnt = state.users.myRequests.filter(
-        (req) => req.requestType === requestType && req.status === 'pending'
-      ).length;
-      if (requestType === 'permission' && pendingCnt > 0) {
-        return Promise.resolve();
-      }
+
       let request: Add<DbRequest> = {
         requestType,
         status: 'pending',
         applicant: state.users.user._id
       };
-      // argument check
-      if (requestType === 'permission') {
-        const { permissionInfo } = payload;
-        if (
-          !permissionInfo ||
-          !permissionInfo.name ||
-          !permissionInfo.department ||
-          !permissionInfo.schoolID
-        ) {
-          console.error('no permission info');
-          return Promise.reject(Error('no permission info'));
-        }
-
-        request = {
-          ...request,
-          permissionInfo
-        };
-      }
 
       if (requestType === 'imageUpload') {
         const { imageUploadInfo } = payload;

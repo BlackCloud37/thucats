@@ -208,6 +208,40 @@ async function migrateWebhooks(context, projectId) {
   await Promise.all(promises)
 }
 
+// 删除 users 表的 roles 字段，添加 isAdmin 字段
+const customUsersCollection = "users";
+async function migrateRemoveUserRolesAndAddIsAdmin(context, projectId) {
+  const { db, manager } = context
+
+  let result = await manager.database.checkCollectionExists(customUsersCollection)
+
+  if (!result.Exists) return
+
+  const { data: users } = await db.collection(customUsersCollection).where({}).get()
+
+  if (!users || !users.length) {
+    return
+  }
+
+  const $ = db.command
+
+  await db.collection(customUsersCollection).where({
+    roles: $.or(
+      $.elemMatch(
+        $.eq("admin")
+      ),
+      $.elemMatch(
+        $.eq("operator")
+      )
+    )
+  }).update({
+    data: {
+      isAdmin: true,
+      roles: $.remove()
+    }
+  })
+}
+
 module.exports = {
   async migrate(context) {
     const { db, manager } = context
@@ -246,6 +280,10 @@ module.exports = {
     console.log('开始迁移 Webhooks')
     await migrateWebhooks(context, projectId)
     console.log('Webhooks 迁移完成')
+
+    console.log('custom - 开始迁移用户')
+    await migrateRemoveUserRolesAndAddIsAdmin(context, projectId)
+    console.log('custom - 用户迁移完成')
 
     // 设置迁移完成
     console.log('存储迁移信息')

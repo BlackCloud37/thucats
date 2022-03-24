@@ -1,15 +1,4 @@
-import { Add, JsonDbObject, Role, Collections } from '@/typings/db';
-
-export const roles2RoleSet = (roles: Role[]): Set<Role> => {
-  if (roles.length === 0) {
-    return new Set();
-  }
-  const roleSet = new Set(roles);
-  if (roleSet.has('admin')) {
-    roleSet.add('operator');
-  }
-  return roleSet;
-};
+import { Add, JsonDbObject, Collections } from '@/typings/db';
 
 export async function update<T extends JsonDbObject>(
   collectionName: Collections,
@@ -64,17 +53,4 @@ export async function getById<T>(
   const { data } = await _db.collection(collectionName).doc(_id).get();
   console.log('getById result', data);
   return data;
-}
-
-export function checkPermission(requiredRole: Role, roles: Role[] | undefined): boolean {
-  console.log('checkpermission', 'roles', roles);
-  if (!roles) {
-    return false;
-  }
-
-  const roleSet = roles2RoleSet(roles);
-  if (roleSet.has(requiredRole)) {
-    return true;
-  }
-  return false;
 }

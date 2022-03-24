@@ -7,12 +7,10 @@ import {
   EApplicationActions,
   EController
 } from '@/typings/interfaces';
-import { checkPermission, getById, update } from '../../utils';
-// import { getRequestById, updateRequest } from './db';
+import { getById, update } from '../../utils';
 import { getCurrentUser } from '../user/db';
 import {
   DbUser,
-  Role,
   DbRequest,
   REQUEST_COLLECTION_NAME,
   USER_COLLECTION_NAME,
@@ -40,9 +38,8 @@ export default class ApplicationController
       return this.fail(500, 'Can only update pending request');
     }
 
-    const requiredRole: Role = record.requestType === 'imageUpload' ? 'operator' : 'admin';
-    if (!checkPermission(requiredRole, user.roles)) {
-      return this.fail(403, `No permission required role ${requiredRole}`);
+    if (!user.isAdmin) {
+      return this.fail(403, `No permission.`);
     }
 
     try {
@@ -56,20 +53,6 @@ export default class ApplicationController
         console.log('applicant', applicant);
         if (action === 'approve') {
           switch (requestType) {
-            case 'permission': {
-              const { permissionInfo } = record;
-              console.log('permissionInfo', permissionInfo);
-              if (!permissionInfo) {
-                await transaction.rollback('申请信息不能为空');
-              }
-              const newUser: DbUser = {
-                ...applicant,
-                roles: db.command.addToSet('operator' as Role),
-                ...permissionInfo
-              };
-              await update(USER_COLLECTION_NAME, newUser, transaction);
-              break;
-            }
             case 'imageUpload': {
               const { imageUploadInfo } = record;
               console.log('imageUploadInfo', imageUploadInfo);
