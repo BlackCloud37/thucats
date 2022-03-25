@@ -10,8 +10,7 @@ import Album from '@/components/album';
 const Request = (props: { req: ApiRequest }) => {
   const { updateRequestAsync } = useDispatch<Dispatch>().users;
   const { req } = props;
-  const { _id, applicant, requestType, imageUploadInfo } = req;
-  const { filePaths, catName } = imageUploadInfo ?? {};
+  const { _id, applicant, requestType, filePaths, catID } = req;
   const { nickName, avatarUrl } = applicant;
 
   const updateRequest = (action: 'approve' | 'deny') => {
@@ -53,7 +52,7 @@ const Request = (props: { req: ApiRequest }) => {
 
       {requestType === 'imageUpload' && (
         <View className="w-full flex flex-col">
-          <View>猫咪: {catName}</View>
+          <View>猫咪: {catID.name}</View>
           <Album urls={filePaths ?? []} />
         </View>
       )}

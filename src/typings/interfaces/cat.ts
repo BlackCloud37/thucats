@@ -1,4 +1,4 @@
-import { DbCat } from '../db';
+import { DbCat, DbRequest } from '../db';
 import { History } from '../db/history';
 
 export const enum ECatAcions {
@@ -38,6 +38,7 @@ export interface FinishLastHistoryResult {
   history: History[];
 }
 
-export interface ApiCat extends Omit<DbCat, 'relatedCats'> {
+export interface ApiCat extends Omit<DbCat, 'relatedCats' | '_relatedImageRequests'> {
   relatedCats: DbCat[];
+  _relatedImageRequests: DbRequest[];
 }

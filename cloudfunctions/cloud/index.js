@@ -232,29 +232,22 @@ class ApplicationController extends BaseController {
                 if (action === 'approve') {
                     switch (requestType) {
                         case 'imageUpload': {
-                            const { imageUploadInfo } = record;
-                            console.log('imageUploadInfo', imageUploadInfo);
-                            if (!imageUploadInfo) {
+                            console.log('filePaths', record.filePaths);
+                            if (!record || !record.filePaths || record.filePaths.length === 0 || !record.catID) {
                                 await transaction.rollback('图片信息不能为空');
                             }
-                            const { catID, filePaths, _createTime } = imageUploadInfo;
-                            const cat = await getById(CAT_COLLECTION_NAME, catID, transaction);
+                            const cat = await getById(CAT_COLLECTION_NAME, record.catID, transaction);
                             console.log('cat', cat);
+                            if (!cat) {
+                                await transaction.rollback('没有相关猫咪');
+                            }
                             const newCat = {
                                 ...cat,
-                                _userPhotos: db.command.addToSet({
-                                    $each: filePaths.map((url) => {
-                                        return {
-                                            url,
-                                            uploader: applicantID,
-                                            _createTime
-                                        };
-                                    })
-                                })
+                                _relatedImageRequests: db.command.addToSet(record._id)
                             };
                             const newUser = {
                                 ...applicant,
-                                imageUploadCount: db.command.inc(filePaths.length)
+                                imageUploadCount: db.command.inc(record.filePaths.length)
                             };
                             await update(USER_COLLECTION_NAME, newUser, transaction);
                             await update(CAT_COLLECTION_NAME, newCat, transaction);

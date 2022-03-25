@@ -34,7 +34,9 @@ import Album from '@/components/album';
 import { catLastHistory } from '@/models/cats';
 import { pageScrollTo, createSelectorQuery } from 'remax/wechat';
 import groupBy from 'lodash.groupby';
+import flatMap from 'lodash.flatmap';
 import LLoadMore from 'lin-ui/dist/loadmore';
+
 export interface CatProfilePayload {
   catKey: string;
 }
@@ -54,7 +56,7 @@ const parseForm = (form: any): History => {
 const scrollToBottom = () => {
   createSelectorQuery()
     .select('#page')
-    .boundingClientRect((rect) => {
+    .boundingClientRect((rect: any) => {
       pageScrollTo({
         scrollTop: rect.bottom
       });
@@ -124,7 +126,7 @@ const CatProfilePage = () => {
     birthday,
     age,
     history = [],
-    _userPhotos = []
+    _relatedImageRequests = []
   } = cat ?? {};
 
   const lastHistory = catLastHistory(cat);
@@ -168,7 +170,7 @@ const CatProfilePage = () => {
     }
     showActionSheet({
       itemList: ['寄养', '救助'],
-      success: (v) => {
+      success: (v: any) => {
         if (v.tapIndex === 0) {
           setFormType('寄养');
         } else if (v.tapIndex === 1) {
@@ -246,12 +248,8 @@ const CatProfilePage = () => {
 
           return createRequestAsync({
             requestType: 'imageUpload',
-            imageUploadInfo: {
-              catID: catKey,
-              filePaths: uploadFileIDs,
-              _createTime: new Date().getTime(),
-              catName: name!
-            }
+            catID: catKey,
+            filePaths: uploadFileIDs
           });
         })
         .then(() => {
@@ -289,6 +287,17 @@ const CatProfilePage = () => {
 
   // albums
   // 按日期分组并排序
+  const _userPhotos = flatMap(_relatedImageRequests, (req) => {
+    return (
+      req.filePaths?.map((url) => {
+        return {
+          url,
+          _createTime: req._createTime
+        };
+      }) || []
+    );
+  });
+
   const photosGroupByMon = groupBy(_userPhotos, ({ _createTime }) =>
     dayjs(_createTime).format('YYYY/M')
   );

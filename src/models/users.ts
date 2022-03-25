@@ -124,7 +124,7 @@ export const users = createModel<RootModel>()({
       dispatch.users.requests(data);
     },
 
-    async createRequestAsync(payload: Pick<DbRequest, 'requestType' | 'imageUploadInfo'>, state) {
+    async createRequestAsync(payload: Omit<DbRequest, '_id' | 'applicant' | 'status'>, state) {
       if (!state.users.user?._id) {
         console.error('not logged in, cannot create request');
         return Promise.reject(Error('not logged in'));
@@ -140,15 +140,16 @@ export const users = createModel<RootModel>()({
       };
 
       if (requestType === 'imageUpload') {
-        const { imageUploadInfo } = payload;
-        if (!imageUploadInfo || !imageUploadInfo.catID || !imageUploadInfo.filePaths) {
-          console.error('no image upload info', imageUploadInfo);
+        const { catID, filePaths } = payload;
+        if (!catID || !filePaths || filePaths.length === 0) {
+          console.error('no image upload info');
           return Promise.reject(Error('no image upload info'));
         }
 
         request = {
           ...request,
-          imageUploadInfo
+          catID,
+          filePaths
         };
       }
 

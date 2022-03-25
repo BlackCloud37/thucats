@@ -1,4 +1,4 @@
-import { DbRequest, DbUser } from '../db';
+import { DbCat, DbRequest, DbUser } from '../db';
 
 export const enum EApplicationActions {
   // 同意、取消申请
@@ -14,6 +14,7 @@ export interface UpdateApplicationResult {
   _id: string;
 }
 
-export interface ApiRequest extends Omit<DbRequest, 'applicant'> {
+export interface ApiRequest extends Omit<DbRequest, 'applicant' | 'catID'> {
   applicant: DbUser;
+  catID: DbCat;
 }

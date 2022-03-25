@@ -44,5 +44,6 @@
   "appid": "wx03ddd595380090e9",
   "projectname": "thucats",
   "cloudfunctionTemplateRoot": "cloudfunctionTemplate",
+  "libVersion": "2.23.1",
   "condition": {}
 }
