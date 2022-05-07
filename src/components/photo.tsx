@@ -1,7 +1,8 @@
+import classNames from 'classnames';
 import * as React from 'react';
 import { Image } from 'remax/wechat';
 
-const Photo = ({ src }: { src: string | undefined }) => {
+const Photo = ({ src, grey = false }: { src: string | undefined; grey?: boolean }) => {
   return src ? (
     <Image
       lazyLoad
@@ -9,7 +10,7 @@ const Photo = ({ src }: { src: string | undefined }) => {
       showMenuByLongpress
       src={src}
       mode="widthFix"
-      className="w-full rounded-xl mt-2 shadow-xl"
+      className={classNames('w-full rounded-xl mt-2 shadow-xl', grey && 'grayscale')}
     />
   ) : null;
 };

@@ -42,7 +42,10 @@ export default ({
       onClick={() => navigateTo('cat-profile', { catKey: cat._id })}
     >
       <View className="flex h-20">
-        <Avatar src={_avatar} className="h-20 w-20 rounded-lg" />
+        <Avatar
+          src={_avatar}
+          className={classNames('h-20 w-20 rounded-lg', status === '喵星' && 'grayscale')}
+        />
         <View className="pl-5 flex flex-col">
           <Text className="text-black text-lg">{name}</Text>
           <View className="flex flex-col items-start text-xs text-gray-500 gap-2">

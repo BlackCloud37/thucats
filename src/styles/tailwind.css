@@ -12285,6 +12285,11 @@ video {
   -moz-osx-font-smoothing: auto;
 }
 
+.grayscale {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+}
+
 .ordinal,
 .slashed-zero,
 .lining-nums,

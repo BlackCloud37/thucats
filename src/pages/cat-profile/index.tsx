@@ -412,7 +412,7 @@ const CatProfilePage = () => {
       <Loadable loading={!cat}>
         <View className="p-5 bg-white rounded-lg shadow-xl mb-5">
           {/* Avatar */}
-          <Photo src={_photos?.[0] ?? _avatar} />
+          <Photo src={_photos?.[0] ?? _avatar} grey={status === '喵星'} />
           {/* Notice */}
           {noticeDescription && noticeBlock}
           {/* Name and edit btn */}
@@ -426,7 +426,7 @@ const CatProfilePage = () => {
           <TabPanel tab="精选照片">
             <View className="p-5 pt-0">
               {_photos?.slice(1)?.map((src) => (
-                <Photo key={src} src={src} />
+                <Photo key={src} src={src} grey={status === '喵星'} />
               ))}
             </View>
           </TabPanel>
