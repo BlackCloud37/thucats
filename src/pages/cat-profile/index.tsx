@@ -289,7 +289,7 @@ const CatProfilePage = () => {
   // 按日期分组并排序
   const _userPhotos = flatMap(_relatedImageRequests, (req) => {
     return (
-      req.filePaths?.map((url) => {
+      req?.filePaths?.map((url) => {
         return {
           url,
           _createTime: req._createTime
