@@ -181,37 +181,6 @@ const CatProfilePage = () => {
     });
   };
 
-  const cancelEditBtn = (
-    <Button
-      onTap={() => {
-        setEditing(false);
-        setCat(allCats[catKey]);
-      }}
-      plain
-      shape="square"
-    >
-      取消
-    </Button>
-  );
-
-  const editBtn = (
-    <Button
-      onTap={() => {
-        if (editing && cat) {
-          updateCatAsync({
-            ...cat,
-            updatedFields: ['status', 'adoptContact', 'adoptDescription']
-          }).catch(console.error);
-        }
-        setEditing(!editing);
-      }}
-      plain
-      shape="square"
-    >
-      {editing ? '保存' : '编辑'}
-    </Button>
-  );
-
   const historyList = (folding ? [...history]?.slice(-1) : [...history].reverse())?.map(
     (history, index) => <HistoryCard key={index} history={history} showIcon catID={catKey} />
   );
@@ -321,6 +290,37 @@ const CatProfilePage = () => {
   });
 
   // Components
+  const cancelEditBtn = (
+    <Button
+      onTap={() => {
+        setEditing(false);
+        setCat(allCats[catKey]);
+      }}
+      plain
+      shape="square"
+    >
+      取消
+    </Button>
+  );
+
+  const editBtn = (
+    <Button
+      onTap={() => {
+        if (editing && cat) {
+          updateCatAsync({
+            ...cat,
+            updatedFields: ['status', 'adoptContact', 'adoptDescription']
+          }).catch(console.error);
+        }
+        setEditing(!editing);
+      }}
+      plain
+      shape="square"
+    >
+      {editing ? '保存' : '编辑'}
+    </Button>
+  );
+
   const noticeBlock = (
     <View
       className={classNames(
@@ -407,6 +407,83 @@ const CatProfilePage = () => {
     </View>
   );
 
+  const historyBlock = (
+    <View className="p-5 pt-0 flex flex-col items-start">
+      {historyList}
+      {history.length > 1 && (
+        <Button style={{ marginTop: '1rem' }} onTap={() => setFolding(!folding)}>
+          {folding ? '展开所有' : '收起'}
+        </Button>
+      )}
+
+      {/* 新增 */}
+      <Button
+        style={{
+          marginTop: '2rem',
+          alignSelf: 'center'
+        }}
+        onTap={onNewHistoryTap}
+        type="primary"
+        shape="circle"
+        icon={<Icon type="roundadd" color="#1890FF" size="50px" />}
+        ghost
+      />
+      {editingForm && (formType === '寄养' || formType === '救助') && (
+        <UniForm
+          onFinish={onCommit}
+          schemas={formType === '寄养' ? FOSTER_SCHEMA : RESCUE_SCHEMA}
+          onCancel={() => setEditingForm(false)}
+        />
+      )}
+    </View>
+  );
+
+  const imageUploadBlock = (
+    <>
+      <Button
+        type="primary"
+        shape="circle"
+        icon="picfill"
+        float
+        size="large"
+        style={{
+          position: 'fixed',
+          right: '10px',
+          bottom: '110px'
+        }}
+        onTap={() => {
+          if (openid) {
+            setUploading(true);
+            scrollToBottom();
+          } else {
+            getProfileAndLogin().then(() => {
+              setUploading(true);
+              scrollToBottom();
+            });
+          }
+        }}
+      />
+      <View
+        className={classNames('mt-2 rounded-lg bg-white', {
+          'p-5': uploading
+        })}
+      >
+        {uploading && (
+          <>
+            <ImageUpload
+              maxCount={9}
+              files={uploadFiles}
+              onChange={(files: any) => setUploadFiles(files)}
+            />
+            <Button style={{ marginTop: '10px' }} onTap={handleUploadImage}>
+              上传照片
+            </Button>
+          </>
+        )}
+      </View>
+    </>
+  );
+
   return (
     <View className="p-5" id="page">
       <Loadable loading={!cat}>
@@ -434,82 +511,11 @@ const CatProfilePage = () => {
             {albums}
             <LLoadMore line={true} show={true} type="end" end-text="到底啦" />
           </TabPanel>
-          {isAdmin && (
-            <TabPanel tab="记录">
-              <View className="p-5 pt-0 flex flex-col items-start">
-                {historyList}
-                {history.length > 1 && (
-                  <Button style={{ marginTop: '1rem' }} onTap={() => setFolding(!folding)}>
-                    {folding ? '展开所有' : '收起'}
-                  </Button>
-                )}
-
-                {/* 新增 */}
-                <Button
-                  style={{
-                    marginTop: '2rem',
-                    alignSelf: 'center'
-                  }}
-                  onTap={onNewHistoryTap}
-                  type="primary"
-                  shape="circle"
-                  icon={<Icon type="roundadd" color="#1890FF" size="50px" />}
-                  ghost
-                />
-                {editingForm && (formType === '寄养' || formType === '救助') && (
-                  <UniForm
-                    onFinish={onCommit}
-                    schemas={formType === '寄养' ? FOSTER_SCHEMA : RESCUE_SCHEMA}
-                    onCancel={() => setEditingForm(false)}
-                  />
-                )}
-              </View>
-            </TabPanel>
-          )}
+          {isAdmin && <TabPanel tab="记录">{historyBlock}</TabPanel>}
         </Tabs>
 
         {/* 上传按钮及图片上传器 */}
-        <Button
-          type="primary"
-          shape="circle"
-          icon="picfill"
-          float
-          size="large"
-          style={{
-            position: 'fixed',
-            right: '10px',
-            bottom: '110px'
-          }}
-          onTap={() => {
-            if (openid) {
-              setUploading(true);
-              scrollToBottom();
-            } else {
-              getProfileAndLogin().then(() => {
-                setUploading(true);
-                scrollToBottom();
-              });
-            }
-          }}
-        />
-        <View
-          className={classNames('mt-2 rounded-lg bg-white', {
-            'p-5': uploading
-          })}
-        >
-          {uploading && (
-            <>
-              <ImageUpload
-                maxCount={9}
-                files={uploadFiles}
-                onChange={(files: any) => setUploadFiles(files)}
-              />
-              <Button style={{ marginTop: '10px' }} onTap={handleUploadImage}>
-                上传照片
-              </Button>
-            </>
-          )}
-        </View>
+        {imageUploadBlock}
       </Loadable>
     </View>
   );
