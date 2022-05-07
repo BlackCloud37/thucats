@@ -319,97 +319,107 @@ const CatProfilePage = () => {
       </View>
     );
   });
+
+  // Components
+  const noticeBlock = (
+    <View
+      className={classNames(
+        'mt-2 w-full shadow-xl rounded-lg text-sm text-gray-500 p-2 font-light box-border',
+        {
+          'bg-red-200': noticeLevel === '高',
+          'bg-yellow-200': noticeLevel === '中',
+          'bg-blue-200': noticeLevel === '低'
+        }
+      )}
+    >
+      {noticeDescription}
+    </View>
+  );
+
+  const nameBlock = (
+    <View className="flex justify-between w-full mb-2 mt-2">
+      <Text className="block text-gray-700 text-xl font-bold">{name}</Text>
+      {isAdmin && (
+        <View className="flex gap-1">
+          {editing && cancelEditBtn}
+          {editBtn}
+        </View>
+      )}
+    </View>
+  );
+
+  const infomationBlock = (
+    <View className="mt-2 flex flex-wrap">
+      {/* 半行 */}
+      <InfoItem field="毛色" val={colorCategory} />
+      <InfoItem field="性别" val={sex} />
+
+      <InfoItem
+        field="状况"
+        val={status}
+        editable={editing}
+        range={CAT_STATUS_ENUM}
+        onEdit={onEditCat('status')}
+      />
+      <InfoItem field="年龄" val={age} />
+      <InfoItem field="生日" val={birthday} />
+      <InfoItem field="绝育情况" val={neuteringStatus} />
+      <InfoItem field="绝育时间" val={neuteringDate} />
+
+      {/* 整行 */}
+      <InfoItem field="健康状态" val={healthStatus} full />
+      <InfoItem field="健康描述" val={healthDescription} full />
+      <InfoItem field="性格" val={character} full />
+      <InfoItem field="外貌描述" val={colorDescription} full />
+      <InfoItem field="名字来源" val={nameOrigin} full />
+      <InfoItem field="出没地点" val={location} full hide={!isAdmin} />
+      {status === '待领养' && (
+        <>
+          <InfoItem
+            field="领养简介"
+            val={adoptDescription}
+            full
+            editable={editing}
+            onEdit={onEditCat('adoptDescription')}
+          />
+          <InfoItem
+            field="领养联系"
+            val={adoptContact}
+            full
+            clipable
+            editable={editing}
+            onEdit={onEditCat('adoptContact')}
+          />
+        </>
+      )}
+      <InfoItem field="备注" val={notes} full />
+      {/* 关联猫 */}
+      {(relatedCats ?? relatedCatsDescription) && (
+        <View className="flex flex-col w-full font-light mt-4">
+          <Text className="block text-xs text-gray-500">关联猫咪</Text>
+          {relatedCats?.map((cat, index) => {
+            return (
+              <RelatedCatItem key={cat._id} cat={cat} desc={relatedCatsDescription?.[index]} />
+            );
+          })}
+        </View>
+      )}
+    </View>
+  );
+
   return (
     <View className="p-5" id="page">
       <Loadable loading={!cat}>
         <View className="p-5 bg-white rounded-lg shadow-xl mb-5">
+          {/* Avatar */}
           <Photo src={_photos?.[0] ?? _avatar} />
-          {noticeDescription && (
-            <View
-              className={classNames(
-                'mt-2 w-full shadow-xl rounded-lg text-sm text-gray-500 p-2 font-light box-border',
-                {
-                  'bg-red-200': noticeLevel === '高',
-                  'bg-yellow-200': noticeLevel === '中',
-                  'bg-blue-200': noticeLevel === '低'
-                }
-              )}
-            >
-              {noticeDescription}
-            </View>
-          )}
-          <View className="flex justify-between w-full mb-2 mt-2">
-            <Text className="block text-gray-700 text-xl font-bold">{name}</Text>
-            {isAdmin && (
-              <View className="flex gap-1">
-                {editing && cancelEditBtn}
-                {editBtn}
-              </View>
-            )}
-          </View>
-
+          {/* Notice */}
+          {noticeDescription && noticeBlock}
+          {/* Name and edit btn */}
+          {nameBlock}
           {nickname && <Text className="block text-gray-500 text-sm mb-2 w-full">{nickname}</Text>}
-          <View className="mt-2 flex flex-wrap">
-            {/* 半行 */}
-            <InfoItem field="毛色" val={colorCategory} />
-            <InfoItem field="性别" val={sex} />
-            <InfoItem
-              field="状况"
-              val={status}
-              editable={editing}
-              range={CAT_STATUS_ENUM}
-              onEdit={onEditCat('status')}
-            />
-            <InfoItem field="年龄" val={age} />
-            <InfoItem field="生日" val={birthday} />
-            <InfoItem field="绝育情况" val={neuteringStatus} />
-            <InfoItem field="绝育时间" val={neuteringDate} />
-
-            {/* 整行 */}
-            <InfoItem field="健康状态" val={healthStatus} full />
-            <InfoItem field="健康描述" val={healthDescription} full />
-            <InfoItem field="性格" val={character} full />
-            <InfoItem field="外貌描述" val={colorDescription} full />
-            <InfoItem field="名字来源" val={nameOrigin} full />
-            <InfoItem field="出没地点" val={location} full hide={!isAdmin} />
-            {status === '待领养' && (
-              <>
-                <InfoItem
-                  field="领养简介"
-                  val={adoptDescription}
-                  full
-                  editable={editing}
-                  onEdit={onEditCat('adoptDescription')}
-                />
-                <InfoItem
-                  field="领养联系"
-                  val={adoptContact}
-                  full
-                  clipable
-                  editable={editing}
-                  onEdit={onEditCat('adoptContact')}
-                />
-              </>
-            )}
-            <InfoItem field="备注" val={notes} full />
-            {/* 关联猫 */}
-            {(relatedCats ?? relatedCatsDescription) && (
-              <View className="flex flex-col w-full font-light mt-4">
-                <Text className="block text-xs text-gray-500">关联猫咪</Text>
-                {relatedCats?.map((cat, index) => {
-                  return (
-                    cat && (
-                      <RelatedCatItem
-                        key={cat._id}
-                        cat={cat}
-                        desc={relatedCatsDescription?.[index]}
-                      />
-                    )
-                  );
-                })}
-              </View>
-            )}
-          </View>
+          {/* All infomations */}
+          {infomationBlock}
         </View>
 
         <Tabs className="shadow-xl bg-white">
@@ -422,7 +432,6 @@ const CatProfilePage = () => {
           </TabPanel>
           <TabPanel tab="用户上传">
             {albums}
-            {/* <Album urls={_userPhotos.map(({ url }) => url)} /> */}
             <LLoadMore line={true} show={true} type="end" end-text="到底啦" />
           </TabPanel>
           {isAdmin && (
@@ -445,7 +454,6 @@ const CatProfilePage = () => {
                   type="primary"
                   shape="circle"
                   icon={<Icon type="roundadd" color="#1890FF" size="50px" />}
-                  // disabled={!canAddHistory}
                   ghost
                 />
                 {editingForm && (formType === '寄养' || formType === '救助') && (
