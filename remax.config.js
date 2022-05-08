@@ -15,7 +15,11 @@ module.exports = {
           'createBLEPeripheralServer',
           'addPhoneContact',
           'addPhoneRepeatCalendar',
-          'addPhoneCalender'
+          'addPhoneCalender',
+          'chooseAddress',
+          'chooseLocatio',
+          'getLocation',
+          'onLocationChange'
         ]
           .map((search, index) => {
             const replace = `REPLACEMENT${index}`;
