@@ -50,14 +50,11 @@ const CatListPage = () => {
   }));
   const { fetchAllCatsAsync } = useDispatch<Dispatch>().cats;
 
-  const initData = () => {
-    fetchAllCatsAsync().catch(console.error);
-  };
   usePageEvent('onPullDownRefresh', () => {
-    initData();
+    fetchAllCatsAsync({ force: true }).catch(console.error);
   });
   React.useEffect(() => {
-    initData();
+    fetchAllCatsAsync({ force: false }).catch(console.error);
   }, []);
 
   React.useEffect(() => {
@@ -189,7 +186,7 @@ const CatListPage = () => {
           </View>
         )}
 
-        <Loadable loading={loading} loader="running-cat">
+        <Loadable loading={loading || allCatsList.length === 0} loader="running-cat">
           {catList}
         </Loadable>
       </View>

@@ -21,6 +21,7 @@ export interface CatState {
     [key: string]: ApiCat;
   };
   allCatsList: ApiCat[];
+  fetched: boolean;
 }
 
 const noticeOrder = {
@@ -32,7 +33,8 @@ const noticeOrder = {
 
 const initialState: CatState = {
   allCats: {},
-  allCatsList: []
+  allCatsList: [],
+  fetched: false
 };
 
 export const cats = createModel<RootModel>()({
@@ -70,12 +72,22 @@ export const cats = createModel<RootModel>()({
           'name'
         ).reverse()
       };
+    },
+    fetched(state, payload: boolean) {
+      return {
+        ...state,
+        fetched: payload
+      };
     }
   },
   effects: (dispatch) => ({
-    async fetchAllCatsAsync() {
-      const { data } = await callApi(wxRequest.get('/cats/?limit=1000'));
-      dispatch.cats.allCats(data);
+    async fetchAllCatsAsync(payload: { force?: boolean }, state) {
+      // 如果没fetch过或者强制或者当前没有猫，则fetch
+      if (!state.cats.fetched || payload.force || state.cats.allCatsList.length === 0) {
+        dispatch.cats.fetched(true);
+        const { data } = await callApi(wxRequest.get('/cats/?limit=1000'));
+        dispatch.cats.allCats(data);
+      }
     },
 
     async updateCatAsync(payload: UpdateCatRequest, state) {

@@ -18,9 +18,11 @@ const Index = () => {
   }));
 
   const { fetchSettingsAsync } = useDispatch<Dispatch>().settings;
+  const { fetchAllCatsAsync } = useDispatch<Dispatch>().cats;
 
   React.useEffect(() => {
     fetchSettingsAsync().catch(console.error);
+    fetchAllCatsAsync({ force: false }).catch(console.error);
   }, []);
 
   return (
