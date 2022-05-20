@@ -61,17 +61,6 @@ const CatListPage = () => {
     setSelectedCats(allCatsList);
   }, [allCatsList]);
 
-  const catList =
-    size(selectedCats) > 0 ? (
-      selectedCats.map((cat: ApiCat) => (
-        <CatItem key={cat._id} cat={cat} className="mb-5" showHistory={showHistory} />
-      ))
-    ) : (
-      <Text className="block w-full text-sm font-light text-gray-500 text-center">
-        这里似乎没有猫咪
-      </Text>
-    );
-
   // filters
   const filterByKeyValues = curry((k: keyof ApiCat, vs: string[]) => () => {
     setShowHistory(false);
@@ -79,7 +68,6 @@ const CatListPage = () => {
   });
   const filterByColorCategory = filterByKeyValues('colorCategory');
   const filterByStatus = filterByKeyValues('status');
-
   const filterAndSortByHistory = (pred: (c: ApiCat) => boolean) => {
     setShowHistory(true);
     setSelectedCats(sortCatByHistoryPriority(filter(allCatsList, pred)));
@@ -87,89 +75,107 @@ const CatListPage = () => {
   const filterByRescue = () => {
     filterAndSortByHistory((c) => {
       const lastHistory = catLastHistory(c);
-      console.log(lastHistory);
       return lastHistory?.historyType === '救助' && !lastHistory?.isDone;
     });
   };
-
   const filterByFoster = () => {
     filterAndSortByHistory((c) => {
       const lastHistory = catLastHistory(c);
       return lastHistory?.historyType === '寄养' && !lastHistory?.isDone;
     });
   };
+
+  const catList = (
+    <Loadable loading={loading || allCatsList.length === 0} loader="running-cat">
+      {size(selectedCats) > 0 ? (
+        selectedCats.map((cat: ApiCat) => (
+          <CatItem key={cat._id} cat={cat} className="mb-5" showHistory={showHistory} />
+        ))
+      ) : (
+        <Text className="block w-full text-sm font-light text-gray-500 text-center">
+          这里似乎没有猫咪
+        </Text>
+      )}
+    </Loadable>
+  );
+
+  const searchInput = (
+    <LInput
+      hide-label
+      clear
+      placeholder="搜索"
+      l-row-class="hidden"
+      l-class="text-center mb-5 rounded-lg bg-gray-400 bg-opacity-20 font-semibold text-lg shadow-inner"
+      bindlininput={throttle(({ detail: { value } }) => {
+        value
+          ? setSelectedCats(filter(allCatsList, (cat) => cat.name.includes(value)))
+          : setSelectedCats(allCatsList);
+      }, 500)}
+      bindlinclear={() => {
+        setSelectedCats(allCatsList);
+      }}
+    />
+  );
+
+  const filters = [
+    {
+      fieldName: '所有',
+      callback: () => {
+        setShowHistory(false);
+        setSelectedCats(allCatsList);
+      }
+    },
+    {
+      fieldName: '纯色',
+      callback: filterByColorCategory(['纯黑', '纯白'])
+    },
+    {
+      fieldName: '狸花',
+      callback: filterByColorCategory(['狸花', '狸白'])
+    },
+    {
+      fieldName: '奶牛',
+      callback: filterByColorCategory(['奶牛'])
+    },
+    {
+      fieldName: '橘猫',
+      callback: filterByColorCategory(['橘猫', '橘白'])
+    },
+    {
+      fieldName: '三花',
+      callback: filterByColorCategory(['三花'])
+    },
+    {
+      fieldName: '玳瑁',
+      callback: filterByColorCategory(['玳瑁'])
+    },
+    {
+      fieldName: '在野',
+      callback: filterByStatus(['在野'])
+    },
+    {
+      fieldName: '已送养',
+      callback: filterByStatus(['已送养'])
+    },
+    {
+      fieldName: '喵星',
+      callback: filterByStatus(['喵星'])
+    }
+  ];
+
   return (
     <>
       <View className="p-5 font-light">
-        <LInput
-          hide-label={true}
-          placeholder="搜索"
-          clear={true}
-          bindlininput={throttle(({ detail: { value } }) => {
-            value
-              ? setSelectedCats(filter(allCatsList, (cat) => cat.name.includes(value)))
-              : setSelectedCats(allCatsList);
-          }, 500)}
-          bindlinclear={() => {
-            setSelectedCats(allCatsList);
-          }}
-          l-class="text-center mb-5 rounded-lg bg-gray-400 bg-opacity-20 font-semibold text-lg shadow-inner"
-          l-row-class="hidden"
-        />
+        {searchInput}
         <View className="flex flex-nowrap gap-3 overflow-scroll">
-          <FilterItem
-            fieldName="所有"
-            filterCallback={() => {
-              setShowHistory(false);
-              setSelectedCats(allCatsList);
-            }}
-            bgImg={filterIconIcons[0]}
-          />
-          <FilterItem
-            fieldName="纯色"
-            filterCallback={filterByColorCategory(['纯黑', '纯白'])}
-            bgImg={filterIconIcons[1]}
-          />
-          <FilterItem
-            fieldName="狸花"
-            filterCallback={filterByColorCategory(['狸花', '狸白'])}
-            bgImg={filterIconIcons[2]}
-          />
-          <FilterItem
-            fieldName="奶牛"
-            filterCallback={filterByColorCategory(['奶牛'])}
-            bgImg={filterIconIcons[3]}
-          />
-          <FilterItem
-            fieldName="橘猫"
-            filterCallback={filterByColorCategory(['橘猫', '橘白'])}
-            bgImg={filterIconIcons[4]}
-          />
-          <FilterItem
-            fieldName="三花"
-            filterCallback={filterByColorCategory(['三花'])}
-            bgImg={filterIconIcons[5]}
-          />
-          <FilterItem
-            fieldName="玳瑁"
-            filterCallback={filterByColorCategory(['玳瑁'])}
-            bgImg={filterIconIcons[6]}
-          />
-          <FilterItem
-            fieldName="在野"
-            filterCallback={filterByStatus(['在野'])}
-            bgImg={filterIconIcons[7]}
-          />
-          <FilterItem
-            fieldName="已送养"
-            filterCallback={filterByStatus(['已送养'])}
-            bgImg={filterIconIcons[8]}
-          />
-          <FilterItem
-            fieldName="喵星"
-            filterCallback={filterByStatus(['喵星'])}
-            bgImg={filterIconIcons[9]}
-          />
+          {filters.map(({ fieldName, callback }, index) => (
+            <FilterItem
+              key={index}
+              fieldName={fieldName}
+              filterCallback={callback}
+              bgImg={filterIconIcons[index]}
+            />
+          ))}
         </View>
         {isAdmin && (
           <View className="flex flex-nowrap gap-3 overflow-scroll mb-3">
@@ -185,10 +191,7 @@ const CatListPage = () => {
             />
           </View>
         )}
-
-        <Loadable loading={loading || allCatsList.length === 0} loader="running-cat">
-          {catList}
-        </Loadable>
+        {catList}
       </View>
       <TabBar />
     </>

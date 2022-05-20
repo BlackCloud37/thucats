@@ -22,7 +22,7 @@ const Index = () => {
 
   React.useEffect(() => {
     fetchSettingsAsync().catch(console.error);
-    fetchAllCatsAsync({ force: false }).catch(console.error);
+    fetchAllCatsAsync({ force: true }).catch(console.error);
   }, []);
 
   return (

@@ -20,7 +20,6 @@ wxRequest.defaults.headers['Authorization'] = `Bearer ${process.env.REMAX_APP_AP
 const persistor = getPersistor();
 
 const App: React.FC = (props) => {
-  console.log(process.env.REMAX_APP_BASE_URL, process.env.REMAX_APP_ENVID);
   useAppEvent('onLaunch', () => {
     cloud.init({
       env: process.env.REMAX_APP_ENVID

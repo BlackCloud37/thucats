@@ -83,6 +83,7 @@ export const cats = createModel<RootModel>()({
   effects: (dispatch) => ({
     async fetchAllCatsAsync(payload: { force?: boolean }, state) {
       // 如果没fetch过或者强制或者当前没有猫，则fetch
+      console.log('fetchallcats', payload, state);
       if (!state.cats.fetched || payload.force || state.cats.allCatsList.length === 0) {
         dispatch.cats.fetched(true);
         const { data } = await callApi(wxRequest.get('/cats/?limit=1000'));

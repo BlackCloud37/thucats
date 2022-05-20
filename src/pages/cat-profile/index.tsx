@@ -71,22 +71,24 @@ const CatProfilePage = () => {
   const [uploadFiles, setUploadFiles] = React.useState([]);
   const [uploading, setUploading] = React.useState(false);
 
-  // TODO: 兜底没有这只猫的场景
   const { allCats, isAdmin, user } = useSelector((state: RootState) => ({
     allCats: state.cats.allCats,
     ...state.users
   }));
-  const { openid } = user ?? {};
-
   const {
     updateCatAsync,
     addHistoryToCatAsync: addHistoryToCat,
-    pullCatByIdAsync
-  } = useDispatch<Dispatch>().cats;
-  const { createRequestAsync, loginAsync } = useDispatch<Dispatch>().users;
+    pullCatByIdAsync,
+    createRequestAsync,
+    loginAsync
+  } = {
+    ...useDispatch<Dispatch>().cats,
+    ...useDispatch<Dispatch>().users
+  };
+
+  const { openid } = user ?? {};
 
   usePageEvent('onLoad', ({ payload }) => {
-    // TODO: fetch server
     const { catKey } = JSON.parse(payload) as CatProfilePayload;
     console.log(allCats[catKey]);
     setKey(catKey);

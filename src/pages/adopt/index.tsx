@@ -25,7 +25,7 @@ const AdoptPage = () => {
   const { fetchAllCatsAsync } = useDispatch<Dispatch>().cats;
 
   React.useEffect(() => {
-    fetchAllCatsAsync().catch(console.error);
+    fetchAllCatsAsync({}).catch(console.error);
   }, []);
 
   React.useEffect(() => {
